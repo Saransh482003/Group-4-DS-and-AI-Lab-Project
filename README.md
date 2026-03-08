@@ -206,6 +206,32 @@ traditional object announcement systems.
 
 ------------------------------------------------------------------------
 
+# Repository Structure
+
+```
+project-root
+│
+├── app
+│   └── app.py                     # Main application script
+│
+├── data
+│   └── dataset_links.md           # Dataset references and links
+│
+├── docs
+│   └── problem-statement.pdf      # Project problem statement
+│
+├── feedbacks
+│   ├── Milestone1.md              # Feedback for milestone 1
+│   └── Milestone2.md              # Feedback for milestone 2
+│
+├── reports
+│   ├── Milestone1.pdf             # Milestone 1 report
+│   └── Milestone2.pdf             # Milestone 2 report
+│
+├── CHANGELOG.md                   # Contribution log of team members
+│
+└── README.md                      # Project documentation
+```
 # Team Details
 
 **Group Number:** 4\
@@ -219,4 +245,3 @@ traditional object announcement systems.
 | Samyuktha Shriram  | [22f2001444@ds.study.iitm.ac.in](mailto:22f2001444@ds.study.iitm.ac.in) | SamyukthaSh24    |
 | Prasoon Shukla     | [23f3003434@ds.study.iitm.ac.in](mailto:23f3003434@ds.study.iitm.ac.in) | 23f3003434       |
 | Rohit Prajapat     | [22f1001536@ds.study.iitm.ac.in](mailto:22f1001536@ds.study.iitm.ac.in) | rohitblpprajapat |
-
