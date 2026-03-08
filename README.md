@@ -59,18 +59,25 @@ to generate **concise navigation prompts**.
 ------------------------------------------------------------------------
 
 # System Architecture
-
-Webcam Input\
-↓\
-Object Detection Model\
-↓\
-Monocular Depth Estimation\
-↓\
-Spatial Risk Assessment\
-↓\
-Rule-Based Reasoning Engine\
-↓\
-Navigation Guidance (Audio Output)
+```
+Webcam Input
+     │
+     ▼
+Object Detection Model
+     │
+     ▼
+Monocular Depth Estimation
+     │
+     ▼
+Spatial Risk Assessment
+     │
+     ▼
+Rule-Based Reasoning Engine
+     │
+     ▼
+Navigation Guidance
+(Audio Output)
+```
 
 ------------------------------------------------------------------------
 
