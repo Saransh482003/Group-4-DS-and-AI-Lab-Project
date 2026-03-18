@@ -4,7 +4,7 @@ import cv2
 from ultralytics import YOLO
 
 
-MODEL_PATH = Path(__file__).with_name("best.pt")
+MODEL_PATH = "./model_training/object_detection/YOLOv11n Best.pt"
 CAMERA_INDEX = 1
 CONFIDENCE = 0.70
 WINDOW_NAME = "YOLO Inference"

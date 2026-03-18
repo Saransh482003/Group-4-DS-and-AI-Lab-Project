@@ -1,0 +1,4 @@
+- Tried to combine all images together: Total 10335
+- Manually rectified JSON errors in 18 annotation2Dfinal file
+- Extracted out all unique classes out, found: 11363 unprocessed classes
+- Put through OpenRefine clustering to cluster similar classes
