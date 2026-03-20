@@ -5,7 +5,7 @@ from transformers import AutoImageProcessor, AutoModelForDepthEstimation
 MODEL_ID = "depth-anything/Depth-Anything-V2-Small-hf"
 
 # Create a directory in your CWD
-save_directory = "./depth_anything_weights"
+save_directory = "E:/dsai_group4_project/model_training/depth_estimation/model_weights"
 os.makedirs(save_directory, exist_ok=True)
 
 print(f"Downloading and saving weights to {save_directory}...")

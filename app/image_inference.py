@@ -6,20 +6,36 @@ import numpy as np
 import torch
 from transformers import AutoImageProcessor, AutoModelForDepthEstimation
 from ultralytics import YOLO
-from navigation_logic import NavigationLogic
+from nav_deterministic_logic import NavigationDeterministicLogic
+from nav_slm_augment_logic import NavigationSLMAugmentLogic
+from nav_tts_piper import PiperTTS
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-YOLO_WEIGHTS = os.path.join(BASE_DIR, "YOLOv8n-uni.pt")
+YOLO_WEIGHTS = os.path.join(BASE_DIR, "..", "model_training", "object_detection", 
+							"best-weights", "YOLOv8n-uni.pt")
 
-DEPTH_MODEL_ID = "depth-anything/Depth-Anything-V2-Small-hf"
+DEPTH_MODEL_DIR = os.path.abspath(
+	os.path.join(BASE_DIR, "..", "model_training", "depth_estimation", "model_weights")
+)
 IMAGE_PATHS = [
-	r"E:\dsai_group4_project\datasets\dsai-unified-dataset\images\train\IMG_000056.jpg",
+	r"E:\dsai_group4_project\datasets\dsai-unified-dataset\images\train\IMG_001234.jpg",
 	# r"E:\dsai_group4_project\datasets\dsai-unified-dataset\images\val\IMG_000056.jpg",
 	# r"E:\path\to\another_image.png",
 ]
 OUTPUT_DIR = os.path.join(BASE_DIR, "image_outputs")
 OUTPUT_JSON = os.path.join(BASE_DIR, "image_bbox_output.json")
+
+TTS_ENABLED = True
+TTS_PLAY_AUDIO = False
+TTS_DIRECT_PLAYBACK = True
+TTS_SPEAK_ONCE_PER_EXECUTION = True
+PIPER_EXE = os.path.join(BASE_DIR, "piper", "piper.exe")
+PIPER_VOICE_MODEL = os.path.join(BASE_DIR, "en_US-amy-medium.onnx")
+PIPER_VOICE_CONFIG = os.path.join(BASE_DIR, "en_US-amy-medium.onnx.json")
+
+# 0 = deterministic navigation, 1 = SLM-augmented navigation
+NAV_LOGIC_MODE = 0
 
 
 def clamp_bbox(x1, y1, x2, y2, width, height):
@@ -71,6 +87,17 @@ def estimate_distance_from_depth(depth_float, bbox):
 def validate_inputs():
 	if not os.path.exists(YOLO_WEIGHTS):
 		raise FileNotFoundError(f"YOLO weights not found: {YOLO_WEIGHTS}")
+	if not os.path.isdir(DEPTH_MODEL_DIR):
+		raise FileNotFoundError(f"Depth model directory not found: {DEPTH_MODEL_DIR}")
+	if NAV_LOGIC_MODE not in (0, 1):
+		raise ValueError("NAV_LOGIC_MODE must be 0 (deterministic) or 1 (SLM).")
+	if TTS_ENABLED:
+		if not os.path.exists(PIPER_EXE):
+			raise FileNotFoundError(f"Piper executable not found: {PIPER_EXE}")
+		if not os.path.exists(PIPER_VOICE_MODEL):
+			raise FileNotFoundError(f"Piper voice model not found: {PIPER_VOICE_MODEL}")
+		if not os.path.exists(PIPER_VOICE_CONFIG):
+			raise FileNotFoundError(f"Piper voice config not found: {PIPER_VOICE_CONFIG}")
 	if not IMAGE_PATHS:
 		raise ValueError("IMAGE_PATHS is empty. Add at least one image path.")
 	os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -78,8 +105,11 @@ def validate_inputs():
 
 def load_models(device):
 	yolo_model = YOLO(YOLO_WEIGHTS)
-	depth_processor = AutoImageProcessor.from_pretrained(DEPTH_MODEL_ID)
-	depth_model = AutoModelForDepthEstimation.from_pretrained(DEPTH_MODEL_ID).to(device)
+	depth_processor = AutoImageProcessor.from_pretrained(DEPTH_MODEL_DIR, local_files_only=True)
+	depth_model = AutoModelForDepthEstimation.from_pretrained(
+		DEPTH_MODEL_DIR,
+		local_files_only=True,
+	).to(device)
 	depth_model.eval()
 	return yolo_model, depth_processor, depth_model
 
@@ -102,7 +132,18 @@ def run_depth_inference(frame_rgb, depth_processor, depth_model, device):
 	return depth_float, depth_color
 
 
-def process_image(image_path, yolo_model, depth_processor, depth_model, device):
+def process_image(
+	image_path,
+	yolo_model,
+	depth_processor,
+	depth_model,
+	device,
+	navigation_logic,
+	slm_navigation_logic,
+	tts_engine,
+	tts_state,
+	nav_logic_mode,
+):
 	frame_bgr = cv2.imread(image_path)
 	if frame_bgr is None:
 		print(f"Skipping unreadable image: {image_path}")
@@ -185,14 +226,38 @@ def process_image(image_path, yolo_model, depth_processor, depth_model, device):
 		{
 			"class": det["class_name"],
 			"bbox": [det["x1"], det["y1"], det["x2"], det["y2"]],
+			"depth": det.get("depth_relative"),
 			"distance": det.get("distance_relative"),
 		}
 		for det in image_boxes
 	]
 
-	navigation_logic = NavigationLogic(frame_width=frame_bgr.shape[1])
 	zone_risks, nav_command = navigation_logic.process_detections(nav_detections)
+
+	if nav_logic_mode == 1:
+		slm_result = slm_navigation_logic.decide_instruction(zone_risks, nav_detections)
+		nav_command = slm_result["instruction"]
+		print("SLM Context:")
+		print(slm_result["context"])
+
 	navigation_logic.draw_overlays(frame_bgr, zone_risks, nav_command)
+
+	if tts_engine is not None:
+		try:
+			should_speak = (not TTS_SPEAK_ONCE_PER_EXECUTION) or (not tts_state["spoken"])
+			if should_speak:
+				if TTS_DIRECT_PLAYBACK:
+					playback_mode = tts_engine.speak_direct_safe(
+						nav_command,
+						fallback_play_audio=True,
+					)
+					print(f"TTS Output: {playback_mode}")
+				else:
+					wav_path = tts_engine.synthesize(nav_command, play_audio=TTS_PLAY_AUDIO)
+					print(f"TTS Output: {wav_path}")
+				tts_state["spoken"] = True
+		except Exception as exc:
+			print(f"TTS error: {exc}")
 
 	print(f"Navigation: L={zone_risks['left']:.2f}, C={zone_risks['center']:.2f}, R={zone_risks['right']:.2f}")
 	print(f"Navigation Command: {nav_command}")
@@ -217,8 +282,19 @@ def main():
 	validate_inputs()
 	device = "cuda" if torch.cuda.is_available() else "cpu"
 	print(f"Using device: {device}")
+	print(f"Navigation logic mode: {NAV_LOGIC_MODE} ({'deterministic' if NAV_LOGIC_MODE == 0 else 'slm'})")
 
 	yolo_model, depth_processor, depth_model = load_models(device)
+	navigation_logic = None
+	slm_navigation_logic = None
+	tts_engine = None
+	tts_state = {"spoken": False}
+	if TTS_ENABLED:
+		tts_engine = PiperTTS(
+			piper_executable=PIPER_EXE,
+			voice_model_path=PIPER_VOICE_MODEL,
+			voice_config_path=PIPER_VOICE_CONFIG,
+		)
 
 	all_bounding_boxes = []
 	processed_count = 0
@@ -227,7 +303,27 @@ def main():
 			print(f"Skipping missing image: {image_path}")
 			continue
 
-		result = process_image(image_path, yolo_model, depth_processor, depth_model, device)
+		if navigation_logic is None:
+			frame_bgr = cv2.imread(image_path)
+			if frame_bgr is None:
+				print(f"Skipping unreadable image: {image_path}")
+				continue
+			navigation_logic = NavigationDeterministicLogic(frame_width=frame_bgr.shape[1])
+			if NAV_LOGIC_MODE == 1:
+				slm_navigation_logic = NavigationSLMAugmentLogic(device=device)
+
+		result = process_image(
+			image_path,
+			yolo_model,
+			depth_processor,
+			depth_model,
+			device,
+			navigation_logic,
+			slm_navigation_logic,
+			tts_engine,
+			tts_state,
+			NAV_LOGIC_MODE,
+		)
 		if result is None:
 			continue
 
