@@ -45,8 +45,10 @@ TTS_SPEAK_ONCE_PER_EXECUTION = False
 TTS_SPEAK_ON_COMMAND_CHANGE = True
 TTS_MIN_INTERVAL_SECONDS = 1.2
 PIPER_EXE = os.path.join(BASE_DIR, "piper", "piper.exe")
-PIPER_VOICE_MODEL = os.path.join(BASE_DIR, "en_US-amy-medium.onnx")
-PIPER_VOICE_CONFIG = os.path.join(BASE_DIR, "en_US-amy-medium.onnx.json")
+PIPER_VOICE_MODEL = os.path.join(BASE_DIR, "piper_voices", "en_US-amy-medium.onnx")
+PIPER_VOICE_CONFIG = os.path.join(BASE_DIR, "piper_voices", "en_US-amy-medium.onnx.json")
+
+ZONE_SHADE_OPACITY = 0.1
 
 
 def validate_inputs():
@@ -74,6 +76,21 @@ def load_models(device):
 	).to(device)
 	depth_model.eval()
 	return yolo_model, depth_processor, depth_model
+
+
+def apply_zone_shading(frame, navigation_logic):
+	"""Apply subtle translucent shading for left/center/right navigation zones."""
+	h, w = frame.shape[:2]
+	left_end = int(getattr(navigation_logic, "left_end", int(0.30 * w)))
+	center_end = int(getattr(navigation_logic, "center_end", int(0.70 * w)))
+
+	overlay = frame.copy()
+	# Red side zones and green center zone.
+	cv2.rectangle(overlay, (0, 0), (left_end, h), (0, 0, 255), -1)
+	cv2.rectangle(overlay, (left_end, 0), (center_end, h), (0, 255, 0), -1)
+	cv2.rectangle(overlay, (center_end, 0), (w, h), (0, 0, 255), -1)
+
+	cv2.addWeighted(overlay, ZONE_SHADE_OPACITY, frame, 1.0 - ZONE_SHADE_OPACITY, 0, frame)
 
 
 def process_frame(
@@ -155,6 +172,7 @@ def process_frame(
 		)
 		nav_command = slm_result["instruction"]
 
+	apply_zone_shading(depth_with_boxes, navigation_logic)
 	navigation_logic.draw_overlays(depth_with_boxes, zone_risks, nav_command)
 
 	if tts_engine is not None:

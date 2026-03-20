@@ -257,8 +257,8 @@ if __name__ == "__main__":
 	cwd = os.getcwd()
 	
 	PIPER_EXE = os.path.abspath(os.path.join(cwd, "app", "piper", "piper.exe"))
-	VOICE_MODEL = os.path.abspath(os.path.join(cwd, "app", "en_US-amy-medium.onnx"))
-	VOICE_CONFIG = os.path.abspath(os.path.join(cwd, "app", "en_US-amy-medium.onnx.json"))
+	VOICE_MODEL = os.path.abspath(os.path.join(cwd, "app", "piper_voices", "en_US-amy-medium.onnx"))
+	VOICE_CONFIG = os.path.abspath(os.path.join(cwd, "app", "piper_voices", "en_US-amy-medium.onnx.json"))
 
 	tts = PiperTTS(
 		piper_executable=PIPER_EXE,

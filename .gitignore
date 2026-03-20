@@ -1,3 +1,4 @@
 datasets/
 env/
 app/piper/
+model_training/depth_estimation/model_weights

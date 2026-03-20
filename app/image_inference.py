@@ -31,8 +31,8 @@ TTS_PLAY_AUDIO = False
 TTS_DIRECT_PLAYBACK = True
 TTS_SPEAK_ONCE_PER_EXECUTION = True
 PIPER_EXE = os.path.join(BASE_DIR, "piper", "piper.exe")
-PIPER_VOICE_MODEL = os.path.join(BASE_DIR, "en_US-amy-medium.onnx")
-PIPER_VOICE_CONFIG = os.path.join(BASE_DIR, "en_US-amy-medium.onnx.json")
+PIPER_VOICE_MODEL = os.path.join(BASE_DIR, "piper_voices", "en_US-amy-medium.onnx")
+PIPER_VOICE_CONFIG = os.path.join(BASE_DIR, "piper_voices", "en_US-amy-medium.onnx.json")
 
 # 0 = deterministic navigation, 1 = SLM-augmented navigation
 NAV_LOGIC_MODE = 0
