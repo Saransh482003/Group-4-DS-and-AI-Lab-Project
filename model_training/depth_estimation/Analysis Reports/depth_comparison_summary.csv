@@ -1,0 +1,6 @@
+Rank,Model,Metric?,Params,AbsRel,RMSE,d1,Near-d1,GPU ms,RPi5 FPS,Score/10,RPi5 OK?
+1,ZoeDepth-N Indoor,YES,344.0M,0.075,0.0,0.955,0.9072,,0.3,7.32,NO-too slow
+2,DA-V2-Small Relative,no,24.8M,0.1744,0.559,0.769,0.6989,74.0,3.2,6.1,YES
+3,MiDaS v2.1 Small,no,21.0M,0.2341,0.7051,0.6651,0.6144,16.0,6.0,6.07,YES
+4,DA-V2-Small Metric Indoor,YES,24.8M,0.3574,1.1075,0.3657,0.3612,72.0,3.0,5.7,YES
+5,MiDaS v3.1 DPT-Hybrid,no,123.0M,0.2235,0.6942,0.6861,0.6093,111.0,0.8,5.06,NO-too slow
