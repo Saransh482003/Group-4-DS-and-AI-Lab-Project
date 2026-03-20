@@ -231,6 +231,10 @@ project-root
 │   ├── Milestone1.md              # Feedback for milestone 1
 │   └── Milestone2.md              # Feedback for milestone 2
 │
+├── Review Meeting PPTs
+│   ├── Milestone1_Presentation.md              # Presentation for milestone 1
+│   └── Milestone2_Presentation.md              # Presentation for milestone 2
+│
 ├── reports
 │   ├── Milestone1.pdf             # Milestone 1 report
 │   └── Milestone2.pdf             # Milestone 2 report
