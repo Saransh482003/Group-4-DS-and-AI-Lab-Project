@@ -134,6 +134,12 @@ for image_path in IMAGE_PATHS:
 	# We estimate each object's depth from the median depth value inside its bbox.
 	depth_float = depth_pred.cpu().numpy().astype(np.float32)
 	print(f"\nImage: {os.path.basename(image_path)}")
+	print("Detections (class + bbox):")
+	for det in image_boxes:
+		print(
+			f"- {det['class_name']}: bbox=({int(det['x1'])}, {int(det['y1'])}, {int(det['x2'])}, {int(det['y2'])})"
+		)
+
 	print("Object distances from camera (relative scale):")
 
 	for det in image_boxes:
