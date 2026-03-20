@@ -6,6 +6,7 @@ import numpy as np
 import torch
 from transformers import AutoImageProcessor, AutoModelForDepthEstimation
 from ultralytics import YOLO
+from navigation_logic import NavigationLogic
 
 print(torch.__version__)
 print(torch.version.cuda)
