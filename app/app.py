@@ -32,6 +32,9 @@ DEPTH_MODEL_DIR = os.path.abspath(
 VIDEO_SOURCE = 1
 SHOW_WINDOWS = True
 
+# 0 = plot overlays on RGB frame, 1 = plot overlays on depth map
+PLOT_STREAM_MODE = 0
+
 OUTPUT_JSON = os.path.join(BASE_DIR, "bbox_output.json")
 OUTPUT_VIDEO = os.path.join(BASE_DIR, "yolo_depth_output.mp4")
 
@@ -56,6 +59,8 @@ def validate_inputs():
 		raise FileNotFoundError(f"YOLO weights not found: {YOLO_WEIGHTS}")
 	if not os.path.isdir(DEPTH_MODEL_DIR):
 		raise FileNotFoundError(f"Depth model directory not found: {DEPTH_MODEL_DIR}")
+	if PLOT_STREAM_MODE not in (0, 1):
+		raise ValueError("PLOT_STREAM_MODE must be 0 (RGB) or 1 (depth map).")
 	if NAV_LOGIC_MODE not in (0, 1):
 		raise ValueError("NAV_LOGIC_MODE must be 0 (deterministic) or 1 (SLM).")
 	if TTS_ENABLED:
@@ -127,7 +132,10 @@ def process_frame(
 		frame_boxes.append(detection)
 
 	depth_float, depth_color = run_depth_inference(frame_rgb, depth_processor, depth_model, device)
-	depth_with_boxes = depth_color.copy()
+	if PLOT_STREAM_MODE == 0:
+		plot_frame = frame_bgr.copy()
+	else:
+		plot_frame = depth_color.copy()
 
 	for det in frame_boxes:
 		bbox = [det["x1"], det["y1"], det["x2"], det["y2"]]
@@ -140,9 +148,9 @@ def process_frame(
 		center_y = (y1 + y2) // 2
 		distance_label = "dist: N/A" if relative_distance is None else f"dist: {relative_distance:.3f}"
 
-		cv2.rectangle(depth_with_boxes, (x1, y1), (x2, y2), (0, 255, 0), 2)
+		cv2.rectangle(plot_frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
 		cv2.putText(
-			depth_with_boxes,
+			plot_frame,
 			f"{det['class_name']} {det['confidence']:.2f}",
 			(x1, max(20, y1 - 8)),
 			cv2.FONT_HERSHEY_SIMPLEX,
@@ -151,7 +159,7 @@ def process_frame(
 			2,
 		)
 
-		draw_centered_label(depth_with_boxes, distance_label, center_x, center_y)
+		draw_centered_label(plot_frame, distance_label, center_x, center_y)
 
 	nav_detections = [
 		{
@@ -172,8 +180,8 @@ def process_frame(
 		)
 		nav_command = slm_result["instruction"]
 
-	apply_zone_shading(depth_with_boxes, navigation_logic)
-	navigation_logic.draw_overlays(depth_with_boxes, zone_risks, nav_command)
+	apply_zone_shading(plot_frame, navigation_logic)
+	navigation_logic.draw_overlays(plot_frame, zone_risks, nav_command)
 
 	if tts_engine is not None:
 		now = time.time()
@@ -201,7 +209,7 @@ def process_frame(
 			except Exception as exc:
 				print(f"TTS error: {exc}")
 
-	combined_frame = depth_with_boxes
+	combined_frame = plot_frame
 	frame_record = {
 		"detections": frame_boxes,
 		"zone_risks": zone_risks,
@@ -214,6 +222,7 @@ def main():
 	validate_inputs()
 	device = "cuda" if torch.cuda.is_available() else "cpu"
 	print(f"Using device: {device}")
+	print(f"Plot stream mode: {PLOT_STREAM_MODE} ({'rgb' if PLOT_STREAM_MODE == 0 else 'depth'})")
 	print(f"Navigation logic mode: {NAV_LOGIC_MODE} ({'deterministic' if NAV_LOGIC_MODE == 0 else 'slm'})")
 
 	yolo_model, depth_processor, depth_model = load_models(device)
