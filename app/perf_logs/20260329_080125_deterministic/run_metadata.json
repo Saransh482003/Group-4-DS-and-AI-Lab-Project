@@ -1,0 +1,17 @@
+{
+  "run_id": "20260329_080125_deterministic",
+  "run_dir": "E:\\dsai_group4_project\\app\\perf_logs\\20260329_080125_deterministic",
+  "files": {
+    "yolo": "E:\\dsai_group4_project\\app\\perf_logs\\20260329_080125_deterministic\\yolo_metrics.jsonl",
+    "depth": "E:\\dsai_group4_project\\app\\perf_logs\\20260329_080125_deterministic\\depth_metrics.jsonl",
+    "navigation": "E:\\dsai_group4_project\\app\\perf_logs\\20260329_080125_deterministic\\navigation_metrics.jsonl",
+    "tts": "E:\\dsai_group4_project\\app\\perf_logs\\20260329_080125_deterministic\\tts_metrics.jsonl",
+    "overall": "E:\\dsai_group4_project\\app\\perf_logs\\20260329_080125_deterministic\\overall_metrics.jsonl",
+    "resources": "E:\\dsai_group4_project\\app\\perf_logs\\20260329_080125_deterministic\\resources_metrics.jsonl",
+    "module_summary": "E:\\dsai_group4_project\\app\\perf_logs\\20260329_080125_deterministic\\module_summary.json",
+    "architecture": "E:\\dsai_group4_project\\app\\perf_logs\\20260329_080125_deterministic\\architecture_metrics.json",
+    "run_metadata": "E:\\dsai_group4_project\\app\\perf_logs\\20260329_080125_deterministic\\run_metadata.json"
+  },
+  "duration_sec": 65.19210420000309,
+  "frames_processed": 216
+}
