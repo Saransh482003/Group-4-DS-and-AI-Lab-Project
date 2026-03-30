@@ -1,0 +1,27 @@
+Performance Insights Summary
+Generated at: 2026-03-29 08:28:20 UTC
+
+Frames processed: 363
+Duration (sec): 70.60328789999767
+Average FPS: 5.141403620099851
+App loop p50 latency (ms): 118.121
+App loop p95 latency (ms): 131.138
+App loop p99 latency (ms): 3794.088
+
+Module mean latencies (ms):
+- Depth: 90.988
+- TTS: 67.792
+- YOLO: 14.304
+- Capture: 7.964
+- Video Write: 3.863
+- Display: 1.902
+- Navigation: 0.017
+Primary latency bottleneck by mean: Depth (90.988 ms)
+Latency spike frames (>= p95): 19
+Spike frames with TTS trigger: 6
+
+Peak resource usage:
+- Peak process RSS (MB): 1537.26953125
+- Peak process CPU (%): 887.3
+- Peak system memory (%): 76.8
+- Peak GPU reserved memory (MB): 466.0

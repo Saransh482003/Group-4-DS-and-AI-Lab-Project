@@ -1,0 +1,348 @@
+{"timestamp": 1774775642.0235152, "frame": 1, "is_warmup": true, "sampled": false}
+{"timestamp": 1774775642.1665032, "frame": 2, "is_warmup": true, "sampled": false}
+{"timestamp": 1774775642.3080428, "frame": 3, "is_warmup": true, "sampled": false}
+{"timestamp": 1774775642.4500065, "frame": 4, "is_warmup": true, "sampled": false}
+{"timestamp": 1774775642.5853174, "frame": 5, "is_warmup": true, "sampled": false}
+{"timestamp": 1774775642.7084634, "frame": 6, "is_warmup": true, "sampled": false}
+{"timestamp": 1774775642.8412566, "frame": 7, "is_warmup": true, "sampled": false}
+{"timestamp": 1774775642.9734647, "frame": 8, "is_warmup": true, "sampled": false}
+{"timestamp": 1774775643.1076224, "frame": 9, "is_warmup": true, "sampled": false}
+{"timestamp": 1774775643.236736, "frame": 10, "is_warmup": true, "process_cpu_percent": 540.4, "process_rss_mb": 1521.4296875, "process_vms_mb": 3485.3359375, "system_memory_percent": 83.5, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.97705078125, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775643.3551824, "frame": 11, "is_warmup": true, "sampled": false}
+{"timestamp": 1774775643.484961, "frame": 12, "is_warmup": true, "sampled": false}
+{"timestamp": 1774775643.6119447, "frame": 13, "is_warmup": true, "sampled": false}
+{"timestamp": 1774775643.735785, "frame": 14, "is_warmup": true, "sampled": false}
+{"timestamp": 1774775643.8609414, "frame": 15, "is_warmup": true, "sampled": false}
+{"timestamp": 1774775643.977774, "frame": 16, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775644.095411, "frame": 17, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775644.219969, "frame": 18, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775644.3460991, "frame": 19, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775644.4701607, "frame": 20, "is_warmup": false, "process_cpu_percent": 786.7, "process_rss_mb": 1525.12109375, "process_vms_mb": 3488.92578125, "system_memory_percent": 83.5, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.97705078125, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775644.6025012, "frame": 21, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775644.7219346, "frame": 22, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775644.8499522, "frame": 23, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775644.9724753, "frame": 24, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775645.1011384, "frame": 25, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775645.223487, "frame": 26, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775645.3470037, "frame": 27, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775645.4680076, "frame": 28, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775645.5933664, "frame": 29, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775645.7148666, "frame": 30, "is_warmup": false, "process_cpu_percent": 792.1, "process_rss_mb": 1525.1953125, "process_vms_mb": 3488.73828125, "system_memory_percent": 83.5, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.97705078125, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775645.8391216, "frame": 31, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775645.9661753, "frame": 32, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775646.09201, "frame": 33, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775646.2225947, "frame": 34, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775646.3488178, "frame": 35, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775646.4678996, "frame": 36, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775646.5933642, "frame": 37, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775646.7173061, "frame": 38, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775646.8422272, "frame": 39, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775646.9675593, "frame": 40, "is_warmup": false, "process_cpu_percent": 785.8, "process_rss_mb": 1525.2734375, "process_vms_mb": 3492.5078125, "system_memory_percent": 83.5, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.97705078125, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775647.0892425, "frame": 41, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775647.2105856, "frame": 42, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775647.3315787, "frame": 43, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775647.4514537, "frame": 44, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775647.577434, "frame": 45, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775647.7044609, "frame": 46, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775647.8356614, "frame": 47, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775647.9623587, "frame": 48, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775648.08182, "frame": 49, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775648.207438, "frame": 50, "is_warmup": false, "process_cpu_percent": 791.4, "process_rss_mb": 1528.8125, "process_vms_mb": 3496.0390625, "system_memory_percent": 83.3, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.97705078125, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775648.329622, "frame": 51, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775648.4589474, "frame": 52, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775648.5804772, "frame": 53, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775648.6988764, "frame": 54, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775648.8120813, "frame": 55, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775648.9250996, "frame": 56, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775649.0367095, "frame": 57, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775649.1512384, "frame": 58, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775649.2697787, "frame": 59, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775649.389902, "frame": 60, "is_warmup": false, "process_cpu_percent": 787.6, "process_rss_mb": 1528.84765625, "process_vms_mb": 3496.03515625, "system_memory_percent": 83.3, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.97705078125, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775649.5078318, "frame": 61, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775649.6261034, "frame": 62, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775649.7468748, "frame": 63, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775649.8724003, "frame": 64, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775649.992137, "frame": 65, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775650.1105995, "frame": 66, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775650.2304373, "frame": 67, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775650.3460143, "frame": 68, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775650.4603426, "frame": 69, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775650.5739608, "frame": 70, "is_warmup": false, "process_cpu_percent": 794.4, "process_rss_mb": 1532.45703125, "process_vms_mb": 3499.59375, "system_memory_percent": 83.5, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.97705078125, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775650.69406, "frame": 71, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775650.818849, "frame": 72, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775650.9404323, "frame": 73, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775651.0636296, "frame": 74, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775651.1892917, "frame": 75, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775651.3089707, "frame": 76, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775651.431211, "frame": 77, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775651.5557861, "frame": 78, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775651.6758728, "frame": 79, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775651.798926, "frame": 80, "is_warmup": false, "process_cpu_percent": 770.4, "process_rss_mb": 1533.64453125, "process_vms_mb": 3500.50390625, "system_memory_percent": 83.6, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775651.9185152, "frame": 81, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775652.0619836, "frame": 82, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775652.1924264, "frame": 83, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775652.3143454, "frame": 84, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775652.4358718, "frame": 85, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775652.5576296, "frame": 86, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775652.6846292, "frame": 87, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775652.8109596, "frame": 88, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775652.9349658, "frame": 89, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775653.057428, "frame": 90, "is_warmup": false, "process_cpu_percent": 787.2, "process_rss_mb": 1534.40625, "process_vms_mb": 3501.421875, "system_memory_percent": 83.4, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775653.1766078, "frame": 91, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775653.3022377, "frame": 92, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775653.4403014, "frame": 93, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775653.558358, "frame": 94, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775653.6834793, "frame": 95, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775653.8121226, "frame": 96, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775653.9350946, "frame": 97, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775654.0573661, "frame": 98, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775654.1734574, "frame": 99, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775654.3012009, "frame": 100, "is_warmup": false, "process_cpu_percent": 781.4, "process_rss_mb": 1534.4375, "process_vms_mb": 3501.421875, "system_memory_percent": 83.3, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775654.4292977, "frame": 101, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775654.5478873, "frame": 102, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775654.667935, "frame": 103, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775654.8040473, "frame": 104, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775654.9275253, "frame": 105, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775655.048573, "frame": 106, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775655.1747682, "frame": 107, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775655.2966628, "frame": 108, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775655.4216456, "frame": 109, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775655.5372381, "frame": 110, "is_warmup": false, "process_cpu_percent": 792.6, "process_rss_mb": 1534.48046875, "process_vms_mb": 3501.41796875, "system_memory_percent": 83.3, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775655.6528199, "frame": 111, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775655.7808094, "frame": 112, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775655.9057543, "frame": 113, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775656.0259655, "frame": 114, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775656.1633668, "frame": 115, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775656.295079, "frame": 116, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775656.4233823, "frame": 117, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775656.549504, "frame": 118, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775656.6763377, "frame": 119, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775656.8068907, "frame": 120, "is_warmup": false, "process_cpu_percent": 781.5, "process_rss_mb": 1534.59375, "process_vms_mb": 3501.41796875, "system_memory_percent": 83.3, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775656.9285645, "frame": 121, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775657.0466213, "frame": 122, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775657.1741989, "frame": 123, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775657.297779, "frame": 124, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775657.4257314, "frame": 125, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775657.5544143, "frame": 126, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775657.676356, "frame": 127, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775657.801586, "frame": 128, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775657.9273722, "frame": 129, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775658.0455194, "frame": 130, "is_warmup": false, "process_cpu_percent": 782.1, "process_rss_mb": 1534.59765625, "process_vms_mb": 3501.42578125, "system_memory_percent": 83.3, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775658.1686208, "frame": 131, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775658.2930784, "frame": 132, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775658.4110787, "frame": 133, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775658.5263898, "frame": 134, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775658.6562195, "frame": 135, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775658.7915106, "frame": 136, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775658.9131296, "frame": 137, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775659.0341535, "frame": 138, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775659.155197, "frame": 139, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775659.274272, "frame": 140, "is_warmup": false, "process_cpu_percent": 792.2, "process_rss_mb": 1534.6484375, "process_vms_mb": 3501.421875, "system_memory_percent": 83.3, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775659.3990402, "frame": 141, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775659.5251758, "frame": 142, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775659.6504452, "frame": 143, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775659.7850914, "frame": 144, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775659.9236212, "frame": 145, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775660.0664499, "frame": 146, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775660.2050633, "frame": 147, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775660.337864, "frame": 148, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775660.463832, "frame": 149, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775660.6004107, "frame": 150, "is_warmup": false, "process_cpu_percent": 682.2, "process_rss_mb": 1535.421875, "process_vms_mb": 3502.125, "system_memory_percent": 83.4, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775660.7355783, "frame": 151, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775660.8584456, "frame": 152, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775660.9908452, "frame": 153, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775661.1234386, "frame": 154, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775661.2496207, "frame": 155, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775661.3808188, "frame": 156, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775661.5129502, "frame": 157, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775661.6483278, "frame": 158, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775661.7785196, "frame": 159, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775661.9007814, "frame": 160, "is_warmup": false, "process_cpu_percent": 803.9, "process_rss_mb": 1535.44921875, "process_vms_mb": 3502.09765625, "system_memory_percent": 83.5, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775662.0333803, "frame": 161, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775662.1596885, "frame": 162, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775662.282778, "frame": 163, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775662.409934, "frame": 164, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775662.5330775, "frame": 165, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775662.6575968, "frame": 166, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775662.787304, "frame": 167, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775662.9173627, "frame": 168, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775663.049767, "frame": 169, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775663.1725185, "frame": 170, "is_warmup": false, "process_cpu_percent": 782.6, "process_rss_mb": 1535.5, "process_vms_mb": 3502.09765625, "system_memory_percent": 83.5, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775663.2989337, "frame": 171, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775663.423936, "frame": 172, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775663.5501165, "frame": 173, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775663.6815777, "frame": 174, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775663.8135834, "frame": 175, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775663.948702, "frame": 176, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775664.0763483, "frame": 177, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775664.2125728, "frame": 178, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775664.341691, "frame": 179, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775664.4683537, "frame": 180, "is_warmup": false, "process_cpu_percent": 771.7, "process_rss_mb": 1535.62890625, "process_vms_mb": 3502.1171875, "system_memory_percent": 83.8, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775664.6105084, "frame": 181, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775664.7409136, "frame": 182, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775664.8773603, "frame": 183, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775665.0069637, "frame": 184, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775665.1312404, "frame": 185, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775665.2562847, "frame": 186, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775665.4011297, "frame": 187, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775665.5324688, "frame": 188, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775665.657365, "frame": 189, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775665.7873821, "frame": 190, "is_warmup": false, "process_cpu_percent": 761.7, "process_rss_mb": 1535.6484375, "process_vms_mb": 3502.09375, "system_memory_percent": 83.5, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775665.916827, "frame": 191, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775666.049971, "frame": 192, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775666.18491, "frame": 193, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775666.310373, "frame": 194, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775666.4392524, "frame": 195, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775666.5657291, "frame": 196, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775666.6986573, "frame": 197, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775666.831277, "frame": 198, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775666.957206, "frame": 199, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775667.0837069, "frame": 200, "is_warmup": false, "process_cpu_percent": 787.1, "process_rss_mb": 1535.671875, "process_vms_mb": 3502.09765625, "system_memory_percent": 83.4, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775667.2067873, "frame": 201, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775667.3290977, "frame": 202, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775667.4534216, "frame": 203, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775667.5759003, "frame": 204, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775667.6986778, "frame": 205, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775667.8272638, "frame": 206, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775667.9479342, "frame": 207, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775668.0729284, "frame": 208, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775668.2005854, "frame": 209, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775668.3231137, "frame": 210, "is_warmup": false, "process_cpu_percent": 796.8, "process_rss_mb": 1535.6875, "process_vms_mb": 3502.05859375, "system_memory_percent": 83.5, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775668.4488406, "frame": 211, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775668.5762084, "frame": 212, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775668.7083805, "frame": 213, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775668.8305397, "frame": 214, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775668.9517179, "frame": 215, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775669.0746481, "frame": 216, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775669.2044387, "frame": 217, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775669.3262968, "frame": 218, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775669.4474795, "frame": 219, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775669.5676625, "frame": 220, "is_warmup": false, "process_cpu_percent": 782.2, "process_rss_mb": 1535.69921875, "process_vms_mb": 3502.0234375, "system_memory_percent": 83.4, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775669.689586, "frame": 221, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775669.8182237, "frame": 222, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775669.9427674, "frame": 223, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775670.0649571, "frame": 224, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775670.1922855, "frame": 225, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775670.311691, "frame": 226, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775670.4346566, "frame": 227, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775670.5505977, "frame": 228, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775670.675365, "frame": 229, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775670.8029578, "frame": 230, "is_warmup": false, "process_cpu_percent": 785.5, "process_rss_mb": 1535.71875, "process_vms_mb": 3501.9765625, "system_memory_percent": 83.4, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775670.9192438, "frame": 231, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775671.0366194, "frame": 232, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775671.1612554, "frame": 233, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775671.278218, "frame": 234, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775671.4021294, "frame": 235, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775671.5184677, "frame": 236, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775671.6354916, "frame": 237, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775671.7551029, "frame": 238, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775671.8733993, "frame": 239, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775671.9967735, "frame": 240, "is_warmup": false, "process_cpu_percent": 790.5, "process_rss_mb": 1535.76953125, "process_vms_mb": 3501.9765625, "system_memory_percent": 83.4, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775672.1254773, "frame": 241, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775672.2503731, "frame": 242, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775672.3684487, "frame": 243, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775672.4934943, "frame": 244, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775672.6193676, "frame": 245, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775672.7359, "frame": 246, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775672.8528082, "frame": 247, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775672.9719303, "frame": 248, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775673.0869062, "frame": 249, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775673.2018054, "frame": 250, "is_warmup": false, "process_cpu_percent": 792.2, "process_rss_mb": 1535.83203125, "process_vms_mb": 3501.9765625, "system_memory_percent": 83.5, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775673.3234444, "frame": 251, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775673.440017, "frame": 252, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775673.559425, "frame": 253, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775673.6776032, "frame": 254, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775673.7969902, "frame": 255, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775673.9160867, "frame": 256, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775674.0364685, "frame": 257, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775674.1600556, "frame": 258, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775674.2740712, "frame": 259, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775674.3975081, "frame": 260, "is_warmup": false, "process_cpu_percent": 778.8, "process_rss_mb": 1535.875, "process_vms_mb": 3501.9765625, "system_memory_percent": 83.5, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775674.5237107, "frame": 261, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775674.642744, "frame": 262, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775674.7596922, "frame": 263, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775674.8796988, "frame": 264, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775674.9993129, "frame": 265, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775675.120058, "frame": 266, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775675.2404714, "frame": 267, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775675.359775, "frame": 268, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775675.477392, "frame": 269, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775675.6025796, "frame": 270, "is_warmup": false, "process_cpu_percent": 797.4, "process_rss_mb": 1535.87890625, "process_vms_mb": 3501.9765625, "system_memory_percent": 83.5, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775675.7191937, "frame": 271, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775675.841782, "frame": 272, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775675.9587934, "frame": 273, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775676.0755308, "frame": 274, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775676.1983976, "frame": 275, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775676.3178737, "frame": 276, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775676.4514928, "frame": 277, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775676.5734496, "frame": 278, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775676.6925297, "frame": 279, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775676.8079994, "frame": 280, "is_warmup": false, "process_cpu_percent": 789.4, "process_rss_mb": 1535.89453125, "process_vms_mb": 3501.9765625, "system_memory_percent": 83.5, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775676.9334512, "frame": 281, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775677.0537627, "frame": 282, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775677.1740394, "frame": 283, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775677.2940216, "frame": 284, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775677.4122186, "frame": 285, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775677.536707, "frame": 286, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775677.662192, "frame": 287, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775677.7828918, "frame": 288, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775677.9077702, "frame": 289, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775678.0302086, "frame": 290, "is_warmup": false, "process_cpu_percent": 782.4, "process_rss_mb": 1535.94140625, "process_vms_mb": 3501.9765625, "system_memory_percent": 83.5, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775678.1575649, "frame": 291, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775678.2855399, "frame": 292, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775678.4093056, "frame": 293, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775678.5338979, "frame": 294, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775678.6635876, "frame": 295, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775678.793981, "frame": 296, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775678.9210234, "frame": 297, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775679.0444334, "frame": 298, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775679.1669514, "frame": 299, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775679.293631, "frame": 300, "is_warmup": false, "process_cpu_percent": 790.3, "process_rss_mb": 1535.97265625, "process_vms_mb": 3501.9765625, "system_memory_percent": 83.6, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775679.421459, "frame": 301, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775679.5456846, "frame": 302, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775679.6676366, "frame": 303, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775679.8004556, "frame": 304, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775679.9229624, "frame": 305, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775680.0476604, "frame": 306, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775680.1720135, "frame": 307, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775680.304369, "frame": 308, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775680.4261003, "frame": 309, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775680.5666254, "frame": 310, "is_warmup": false, "process_cpu_percent": 780.6, "process_rss_mb": 1536.01171875, "process_vms_mb": 3501.9765625, "system_memory_percent": 83.4, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775680.6895266, "frame": 311, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775680.8163402, "frame": 312, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775680.9413211, "frame": 313, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775681.0687287, "frame": 314, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775681.1940255, "frame": 315, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775681.3189657, "frame": 316, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775681.4515963, "frame": 317, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775681.5822227, "frame": 318, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775681.7065234, "frame": 319, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775681.8345733, "frame": 320, "is_warmup": false, "process_cpu_percent": 788.7, "process_rss_mb": 1536.0546875, "process_vms_mb": 3501.96875, "system_memory_percent": 83.4, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775681.9581933, "frame": 321, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775682.0841124, "frame": 322, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775682.2060602, "frame": 323, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775682.3327854, "frame": 324, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775682.4672418, "frame": 325, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775682.5959895, "frame": 326, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775682.7202787, "frame": 327, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775682.8463979, "frame": 328, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775682.9738271, "frame": 329, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775683.0977697, "frame": 330, "is_warmup": false, "process_cpu_percent": 790.4, "process_rss_mb": 1536.109375, "process_vms_mb": 3501.97265625, "system_memory_percent": 83.4, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775683.2253127, "frame": 331, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775683.3508034, "frame": 332, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775683.4720328, "frame": 333, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775683.6000996, "frame": 334, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775683.725493, "frame": 335, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775683.8459005, "frame": 336, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775683.9818933, "frame": 337, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775684.1061702, "frame": 338, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775684.2386403, "frame": 339, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775684.3610475, "frame": 340, "is_warmup": false, "process_cpu_percent": 789.1, "process_rss_mb": 1536.1796875, "process_vms_mb": 3501.97265625, "system_memory_percent": 83.4, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
+{"timestamp": 1774775684.4910235, "frame": 341, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775684.6196597, "frame": 342, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775684.7429683, "frame": 343, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775684.86683, "frame": 344, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775684.996114, "frame": 345, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775685.118431, "frame": 346, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775685.2434206, "frame": 347, "is_warmup": false, "sampled": false}
+{"timestamp": 1774775685.3668962, "frame": 348, "is_warmup": false, "process_cpu_percent": 789.1, "process_rss_mb": 1536.2578125, "process_vms_mb": 3501.97265625, "system_memory_percent": 83.4, "gpu_available": true, "gpu_utilization_percent": null, "gpu_memory_allocated_mb": 139.9775390625, "gpu_memory_reserved_mb": 466.0, "gpu_memory_total_mb": null, "gpu_memory_used_mb": null, "gpu_source": "torch", "sampled": true}
