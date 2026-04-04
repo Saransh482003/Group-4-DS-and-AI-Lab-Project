@@ -1,115 +1,94 @@
-import json
 import os
-import queue
-import threading
 import time
 
 import cv2
-import numpy as np
 import torch
-from transformers import AutoImageProcessor, AutoModelForDepthEstimation
-from ultralytics import YOLO
 
-from image_inference import draw_centered_label
-from image_inference import estimate_distance_from_depth
-from image_inference import run_depth_inference
-from nav_deterministic_logic import NavigationDeterministicLogic
-from nav_slm_augment_logic import NavigationSLMAugmentLogic
-from nav_tts_piper import PiperTTS
-from performance_metrics import PerformanceMetricsLogger
+from mechanics.depth_estimation import estimate_distance_from_depth
+from mechanics.depth_estimation import DepthEstimator
+from mechanics.navigation_logic import NavigationLogic
+from mechanics.object_detection import draw_centered_label
+from mechanics.object_detection import ObjectDetector
+from mechanics.performance_pipeline import PipelinePerformanceTracker
+from mechanics.text_to_speech import TextToSpeech
+from mechanics.text_to_speech import TTSRuntimeController
+# from nav_slm_augment_logic import NavigationSLMAugmentLogic
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-YOLO_WEIGHTS = os.path.join(
-	BASE_DIR,
-	"..",
-	"model_training",
-	"object_detection",
-	"best-weights",
-	"YOLOv8n-uni.pt",
+ENV_FILE = os.path.abspath(os.path.join(BASE_DIR, "..", ".env"))
+
+
+
+def env_rel_path(env_key, default_rel_path):
+	return os.path.abspath(os.path.join(BASE_DIR, os.getenv(env_key, default_rel_path)))
+
+
+def load_env_file(env_file_path):
+	if not os.path.exists(env_file_path):
+		return
+	with open(env_file_path, "r", encoding="utf-8") as f:
+		for raw_line in f:
+			line = raw_line.strip()
+			if not line or line.startswith("#") or "=" not in line:
+				continue
+			key, value = line.split("=", 1)
+			key = key.strip()
+			value = value.strip().strip('"').strip("'")
+			if key and key not in os.environ:
+				os.environ[key] = value
+
+
+load_env_file(ENV_FILE)
+
+YOLO_WEIGHTS = env_rel_path(
+	"YOLO_WEIGHTS_REL",
+	os.path.join("..", "model_training", "object_detection", "best-weights", "YOLOv8n-uni.pt"),
 )
-DEPTH_MODEL_DIR = os.path.abspath(
-	os.path.join(BASE_DIR, "..", "model_training", "depth_estimation", "model_weights")
+DEPTH_MODEL_DIR = env_rel_path(
+	"DEPTH_MODEL_DIR_REL",
+	# os.path.join("..", "model_training", "depth_estimation", "model_weights"),
+	os.path.join(
+		"..",
+		"model_training",
+		"depth_estimation",
+		"model_weights",
+		"depth_anything_v2_metric_hypersim_vits.pth",
+	),
 )
 
-VIDEO_SOURCE = 1
-SHOW_WINDOWS = True
+VIDEO_SOURCE = int(os.getenv("VIDEO_SOURCE", "1"))
+SHOW_WINDOWS = os.getenv("SHOW_WINDOWS", "1") == "1"
 
 # 0 = plot overlays on RGB frame, 1 = plot overlays on depth map
-PLOT_STREAM_MODE = 0
+PLOT_STREAM_MODE = int(os.getenv("PLOT_STREAM_MODE", "0"))
 
-OUTPUT_JSON = os.path.join(BASE_DIR, "bbox_output.json")
-OUTPUT_VIDEO = os.path.join(BASE_DIR, "yolo_depth_output.mp4")
-INFERENCE_DURATION_MINUTES = 10
-WARMUP_FRAMES = 15
-RESOURCE_SAMPLE_EVERY_N_FRAMES = 10
-DISABLE_DISPLAY_FOR_BENCHMARK = False
-ENABLE_ASYNC_TTS = True
-GPU_TIMING_STRICT_SYNC = False
+INFERENCE_DURATION_MINUTES = int(os.getenv("INFERENCE_DURATION_MINUTES", "10"))
+WARMUP_FRAMES = int(os.getenv("WARMUP_FRAMES", "15"))
+RESOURCE_SAMPLE_EVERY_N_FRAMES = int(os.getenv("RESOURCE_SAMPLE_EVERY_N_FRAMES", "10"))
+DISABLE_DISPLAY_FOR_BENCHMARK = os.getenv("DISABLE_DISPLAY_FOR_BENCHMARK", "0") == "1"
+ENABLE_ASYNC_TTS = os.getenv("ENABLE_ASYNC_TTS", "1") == "1"
+GPU_TIMING_STRICT_SYNC = os.getenv("GPU_TIMING_STRICT_SYNC", "0") == "1"
 
 # 0 = deterministic navigation, 1 = SLM-augmented navigation
-NAV_LOGIC_MODE = 0
+NAV_LOGIC_MODE = int(os.getenv("NAV_LOGIC_MODE", "0"))
 
-TTS_ENABLED = True
-TTS_PLAY_AUDIO = False
-TTS_DIRECT_PLAYBACK = True
-TTS_SPEAK_ONCE_PER_EXECUTION = False
-TTS_SPEAK_ON_COMMAND_CHANGE = True
-TTS_MIN_INTERVAL_SECONDS = 1.2
-PIPER_EXE = os.path.join(BASE_DIR, "piper", "piper.exe")
-PIPER_VOICE_MODEL = os.path.join(BASE_DIR, "piper_voices", "en_US-amy-medium.onnx")
-PIPER_VOICE_CONFIG = os.path.join(BASE_DIR, "piper_voices", "en_US-amy-medium.onnx.json")
+TTS_ENABLED = os.getenv("TTS_ENABLED", "1") == "1"
+TTS_PLAY_AUDIO = os.getenv("TTS_PLAY_AUDIO", "0") == "1"
+TTS_DIRECT_PLAYBACK = os.getenv("TTS_DIRECT_PLAYBACK", "1") == "1"
+TTS_SPEAK_ONCE_PER_EXECUTION = os.getenv("TTS_SPEAK_ONCE_PER_EXECUTION", "0") == "1"
+TTS_SPEAK_ON_COMMAND_CHANGE = os.getenv("TTS_SPEAK_ON_COMMAND_CHANGE", "1") == "1"
+TTS_MIN_INTERVAL_SECONDS = float(os.getenv("TTS_MIN_INTERVAL_SECONDS", "1.2"))
+TTS_QUEUE_MAXSIZE = int(os.getenv("TTS_QUEUE_MAXSIZE", "5"))
+PIPER_EXE = env_rel_path("PIPER_EXE_REL", os.path.join("piper", "piper.exe"))
+PIPER_VOICE_MODEL = env_rel_path(
+	"PIPER_VOICE_MODEL_REL", os.path.join("piper_voices", "en_US-amy-medium.onnx")
+)
+PIPER_VOICE_CONFIG = env_rel_path(
+	"PIPER_VOICE_CONFIG_REL", os.path.join("piper_voices", "en_US-amy-medium.onnx.json")
+)
 
-ZONE_SHADE_OPACITY = 0.1
-
-
-class AsyncTTSWorker:
-	def __init__(self, tts_engine, direct_playback=True, play_audio=False):
-		self.tts_engine = tts_engine
-		self.direct_playback = direct_playback
-		self.play_audio = play_audio
-		self.queue = queue.Queue(maxsize=5)
-		self._stop_event = threading.Event()
-		self._thread = threading.Thread(target=self._run, daemon=True)
-		self.last_error = None
-
-	def start(self):
-		self._thread.start()
-
-	def stop(self):
-		self._stop_event.set()
-		try:
-			self.queue.put_nowait(None)
-		except queue.Full:
-			pass
-		self._thread.join(timeout=2.0)
-
-	def enqueue(self, text):
-		try:
-			self.queue.put_nowait(text)
-			return True
-		except queue.Full:
-			self.last_error = "tts_queue_full"
-			return False
-
-	def _run(self):
-		while not self._stop_event.is_set():
-			try:
-				item = self.queue.get(timeout=0.1)
-			except queue.Empty:
-				continue
-			if item is None:
-				self.queue.task_done()
-				continue
-			try:
-				if self.direct_playback:
-					self.tts_engine.speak_direct_safe(item, fallback_play_audio=True)
-				else:
-					self.tts_engine.synthesize(item, play_audio=self.play_audio)
-			except Exception as exc:
-				self.last_error = str(exc)
-			finally:
-				self.queue.task_done()
+ZONE_SHADE_OPACITY = float(os.getenv("ZONE_SHADE_OPACITY", "0.1"))
 
 
 def sync_cuda_if_needed(device):
@@ -120,8 +99,8 @@ def sync_cuda_if_needed(device):
 def validate_inputs():
 	if not os.path.exists(YOLO_WEIGHTS):
 		raise FileNotFoundError(f"YOLO weights not found: {YOLO_WEIGHTS}")
-	if not os.path.isdir(DEPTH_MODEL_DIR):
-		raise FileNotFoundError(f"Depth model directory not found: {DEPTH_MODEL_DIR}")
+	if not os.path.isfile(DEPTH_MODEL_DIR):
+		raise FileNotFoundError(f"Depth model file not found: {DEPTH_MODEL_DIR}")
 	if PLOT_STREAM_MODE not in (0, 1):
 		raise ValueError("PLOT_STREAM_MODE must be 0 (RGB) or 1 (depth map).")
 	if NAV_LOGIC_MODE not in (0, 1):
@@ -136,14 +115,11 @@ def validate_inputs():
 
 
 def load_models(device):
-	yolo_model = YOLO(YOLO_WEIGHTS)
-	depth_processor = AutoImageProcessor.from_pretrained(DEPTH_MODEL_DIR, local_files_only=True)
-	depth_model = AutoModelForDepthEstimation.from_pretrained(
-		DEPTH_MODEL_DIR,
-		local_files_only=True,
-	).to(device)
-	depth_model.eval()
-	return yolo_model, depth_processor, depth_model
+	object_detector = ObjectDetector(YOLO_WEIGHTS)
+	object_detector.load_model()
+	depth_estimator = DepthEstimator(DEPTH_MODEL_DIR, device=device)
+	depth_estimator.load_model()
+	return object_detector, depth_estimator
 
 
 def apply_zone_shading(frame, navigation_logic):
@@ -153,7 +129,6 @@ def apply_zone_shading(frame, navigation_logic):
 	center_end = int(getattr(navigation_logic, "center_end", int(0.70 * w)))
 
 	overlay = frame.copy()
-	# Red side zones and green center zone.
 	cv2.rectangle(overlay, (0, 0), (left_end, h), (0, 0, 255), -1)
 	cv2.rectangle(overlay, (left_end, 0), (center_end, h), (0, 255, 0), -1)
 	cv2.rectangle(overlay, (center_end, 0), (w, h), (0, 0, 255), -1)
@@ -164,74 +139,30 @@ def apply_zone_shading(frame, navigation_logic):
 def process_frame(
 	frame_idx,
 	frame_bgr,
-	yolo_model,
-	depth_processor,
-	depth_model,
+	object_detector,
+	depth_estimator,
 	device,
 	navigation_logic,
 	slm_navigation_logic,
-	tts_engine,
-	tts_worker,
-	tts_state,
+	tts_controller,
+	performance_tracker,
 ):
 	frame_start = time.perf_counter()
-	frame_metrics = {
-		"yolo_latency_ms": None,
-		"depth_latency_ms": None,
-		"spatial_latency_ms": None,
-		"navigation_latency_ms": None,
-		"deterministic_nav_latency_ms": None,
-		"slm_nav_latency_ms": None,
-		"visualization_latency_ms": None,
-		"tts_latency_ms": 0.0,
-		"tts_should_speak": False,
-		"tts_skip_reason": None,
-		"tts_mode": None,
-		"tts_error": None,
-		"detection_count": 0,
-		"frame_total_latency_ms": None,
-		"nav_mode_name": "deterministic" if NAV_LOGIC_MODE == 0 else "slm",
-		"is_warmup": frame_idx <= WARMUP_FRAMES,
-		"resource_sampled": False,
-		"tts_enqueue_ok": None,
-	}
+	frame_metrics = performance_tracker.init_frame_metrics(frame_idx, NAV_LOGIC_MODE, WARMUP_FRAMES)
 
 	frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
 	yolo_start = time.perf_counter()
-	yolo_result = yolo_model(frame_bgr, verbose=False)[0]
+	_, frame_boxes = object_detector.predict(frame_bgr)
 	sync_cuda_if_needed(device)
 	frame_metrics["yolo_latency_ms"] = (time.perf_counter() - yolo_start) * 1000.0
-
-	frame_boxes = []
-
-	for box in yolo_result.boxes:
-		x1, y1, x2, y2 = [int(v) for v in box.xyxy[0].tolist()]
-		conf = float(box.conf[0])
-		cls_id = int(box.cls[0])
-		cls_name = yolo_model.names[cls_id]
-
-		detection = {
-			"class_id": cls_id,
-			"class_name": cls_name,
-			"confidence": conf,
-			"x1": x1,
-			"y1": y1,
-			"x2": x2,
-			"y2": y2,
-		}
-		frame_boxes.append(detection)
-
 	frame_metrics["detection_count"] = len(frame_boxes)
 
 	depth_start = time.perf_counter()
-	depth_float, depth_color = run_depth_inference(frame_rgb, depth_processor, depth_model, device)
+	depth_float, depth_color = depth_estimator.predict(frame_rgb)
 	if GPU_TIMING_STRICT_SYNC:
 		sync_cuda_if_needed(device)
 	frame_metrics["depth_latency_ms"] = (time.perf_counter() - depth_start) * 1000.0
-	if PLOT_STREAM_MODE == 0:
-		plot_frame = frame_bgr.copy()
-	else:
-		plot_frame = depth_color.copy()
+	plot_frame = frame_bgr.copy() if PLOT_STREAM_MODE == 0 else depth_color.copy()
 
 	spatial_start = time.perf_counter()
 	for det in frame_boxes:
@@ -255,7 +186,6 @@ def process_frame(
 			(0, 255, 0),
 			2,
 		)
-
 		draw_centered_label(plot_frame, distance_label, center_x, center_y)
 
 	nav_detections = [
@@ -287,65 +217,29 @@ def process_frame(
 	frame_metrics["navigation_latency_ms"] = (time.perf_counter() - navigation_start) * 1000.0
 
 	visualization_start = time.perf_counter()
-
 	apply_zone_shading(plot_frame, navigation_logic)
 	navigation_logic.draw_overlays(plot_frame, zone_risks, nav_command)
 	frame_metrics["visualization_latency_ms"] = (time.perf_counter() - visualization_start) * 1000.0
 
-	if tts_engine is not None:
+	if tts_controller is not None:
 		tts_start = time.perf_counter()
-		now = time.time()
-		should_speak = (not TTS_SPEAK_ONCE_PER_EXECUTION) or (not tts_state["spoken"])
-		if not should_speak:
-			frame_metrics["tts_skip_reason"] = "once_per_execution"
-		if should_speak and TTS_SPEAK_ON_COMMAND_CHANGE:
-			if tts_state.get("last_command") == nav_command:
-				should_speak = False
-				frame_metrics["tts_skip_reason"] = "command_unchanged"
-		if should_speak and (now - tts_state.get("last_spoken_at", 0.0)) < TTS_MIN_INTERVAL_SECONDS:
-			should_speak = False
-			frame_metrics["tts_skip_reason"] = "rate_limited"
-
-		frame_metrics["tts_should_speak"] = should_speak
-
-		if should_speak:
-			try:
-				if ENABLE_ASYNC_TTS and tts_worker is not None:
-					enqueue_ok = tts_worker.enqueue(nav_command)
-					frame_metrics["tts_enqueue_ok"] = enqueue_ok
-					frame_metrics["tts_mode"] = "async_queue"
-					if not enqueue_ok and tts_worker.last_error:
-						frame_metrics["tts_error"] = tts_worker.last_error
-				elif TTS_DIRECT_PLAYBACK:
-					playback_mode = tts_engine.speak_direct_safe(nav_command, fallback_play_audio=True)
-					print(f"TTS Output: {playback_mode}")
-					frame_metrics["tts_mode"] = playback_mode
-				else:
-					wav_path = tts_engine.synthesize(nav_command, play_audio=TTS_PLAY_AUDIO)
-					print(f"TTS Output: {wav_path}")
-					frame_metrics["tts_mode"] = "file"
-
-				# Update TTS state at enqueue/dispatch time to preserve anti-chatter behavior.
-				tts_state["spoken"] = True
-				tts_state["last_command"] = nav_command
-				tts_state["last_spoken_at"] = now
-			except Exception as exc:
-				print(f"TTS error: {exc}")
-				frame_metrics["tts_error"] = str(exc)
+		try:
+			tts_result = tts_controller.handle_command(nav_command)
+			frame_metrics["tts_should_speak"] = tts_result["tts_should_speak"]
+			frame_metrics["tts_skip_reason"] = tts_result["tts_skip_reason"]
+			frame_metrics["tts_mode"] = tts_result["tts_mode"]
+			frame_metrics["tts_error"] = tts_result["tts_error"]
+			frame_metrics["tts_enqueue_ok"] = tts_result["tts_enqueue_ok"]
+		except Exception as exc:
+			print(f"TTS error: {exc}")
+			frame_metrics["tts_error"] = str(exc)
 
 		frame_metrics["tts_latency_ms"] = (time.perf_counter() - tts_start) * 1000.0
 
-	combined_frame = plot_frame
 	frame_metrics["frame_total_latency_ms"] = (time.perf_counter() - frame_start) * 1000.0
 	frame_metrics["zone_risks"] = zone_risks
 	frame_metrics["nav_command"] = nav_command
-	frame_record = {
-		"detections": frame_boxes,
-		"zone_risks": zone_risks,
-		"navigation_command": nav_command,
-		"performance": frame_metrics,
-	}
-	return combined_frame, frame_record, frame_metrics
+	return plot_frame, frame_metrics
 
 
 def main():
@@ -359,7 +253,8 @@ def main():
 	print(f"Resource sampling interval: every {RESOURCE_SAMPLE_EVERY_N_FRAMES} frames")
 	print(f"Async TTS enabled: {ENABLE_ASYNC_TTS}")
 	print(f"Benchmark display disabled: {DISABLE_DISPLAY_FOR_BENCHMARK}")
-	profiler = PerformanceMetricsLogger(
+
+	performance_tracker = PipelinePerformanceTracker(
 		base_dir=BASE_DIR,
 		nav_logic_mode=NAV_LOGIC_MODE,
 		plot_stream_mode=PLOT_STREAM_MODE,
@@ -371,8 +266,8 @@ def main():
 	)
 
 	model_load_start = time.perf_counter()
-	yolo_model, depth_processor, depth_model = load_models(device)
-	profiler.set_model_load_ms((time.perf_counter() - model_load_start) * 1000.0)
+	object_detector, depth_estimator = load_models(device)
+	performance_tracker.set_model_load_ms((time.perf_counter() - model_load_start) * 1000.0)
 
 	cap = cv2.VideoCapture(VIDEO_SOURCE)
 	if not cap.isOpened():
@@ -380,26 +275,26 @@ def main():
 
 	navigation_logic = None
 	slm_navigation_logic = None
-	tts_engine = None
-	tts_worker = None
-	tts_state = {"spoken": False, "last_command": None, "last_spoken_at": 0.0}
-	video_writer = None
-	all_frames = []
+	tts_controller = None
 	frame_idx = 0
 
 	if TTS_ENABLED:
-		tts_engine = PiperTTS(
+		tts_engine = TextToSpeech(
 			piper_executable=PIPER_EXE,
 			voice_model_path=PIPER_VOICE_MODEL,
 			voice_config_path=PIPER_VOICE_CONFIG,
 		)
-		if ENABLE_ASYNC_TTS:
-			tts_worker = AsyncTTSWorker(
-				tts_engine=tts_engine,
-				direct_playback=TTS_DIRECT_PLAYBACK,
-				play_audio=TTS_PLAY_AUDIO,
-			)
-			tts_worker.start()
+		tts_engine.load_engine()
+		tts_controller = TTSRuntimeController(
+			tts_engine=tts_engine,
+			enable_async=ENABLE_ASYNC_TTS,
+			direct_playback=TTS_DIRECT_PLAYBACK,
+			play_audio=TTS_PLAY_AUDIO,
+			speak_once_per_execution=TTS_SPEAK_ONCE_PER_EXECUTION,
+			speak_on_command_change=TTS_SPEAK_ON_COMMAND_CHANGE,
+			min_interval_seconds=TTS_MIN_INTERVAL_SECONDS,
+			queue_maxsize=TTS_QUEUE_MAXSIZE,
+		)
 
 	print("Press 'q' to stop.")
 	print("If preview windows are unavailable, press Ctrl+C to stop.")
@@ -420,97 +315,71 @@ def main():
 				break
 
 			frame_idx += 1
-
 			if navigation_logic is None:
-				navigation_logic = NavigationDeterministicLogic(frame_width=frame_bgr.shape[1])
-				if NAV_LOGIC_MODE == 1:
-					slm_navigation_logic = NavigationSLMAugmentLogic(device=device)
+				navigation_logic = NavigationLogic(frame_width=frame_bgr.shape[1])
+				# if NAV_LOGIC_MODE == 1:
+				# 	slm_navigation_logic = NavigationSLMAugmentLogic(device=device)
 
-			combined, frame_record, frame_metrics = process_frame(
+			combined, frame_metrics = process_frame(
 				frame_idx,
 				frame_bgr,
-				yolo_model,
-				depth_processor,
-				depth_model,
+				object_detector,
+				depth_estimator,
 				device,
 				navigation_logic,
 				slm_navigation_logic,
-				tts_engine,
-				tts_worker,
-				tts_state,
+				tts_controller,
+				performance_tracker,
 			)
 
-			frame_record["frame"] = frame_idx
-			all_frames.append(frame_record)
-
-			if video_writer is None:
-				fps = cap.get(cv2.CAP_PROP_FPS)
-				if fps <= 0:
-					fps = 20
-				h, w = combined.shape[:2]
-				fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-				video_writer = cv2.VideoWriter(OUTPUT_VIDEO, fourcc, fps, (w, h))
-
-			video_write_start = time.perf_counter()
-			video_writer.write(combined)
-			video_write_latency_ms = (time.perf_counter() - video_write_start) * 1000.0
+			video_write_latency_ms = 0.0
 
 			display_latency_ms = 0.0
-
 			if SHOW_WINDOWS and (not DISABLE_DISPLAY_FOR_BENCHMARK):
 				display_start = time.perf_counter()
 				try:
 					cv2.imshow("Depth + BBoxes + Navigation", combined)
 					if cv2.waitKey(1) & 0xFF == ord("q"):
 						display_latency_ms = (time.perf_counter() - display_start) * 1000.0
-						frame_metrics["capture_latency_ms"] = capture_latency_ms
-						frame_metrics["video_write_latency_ms"] = video_write_latency_ms
-						frame_metrics["display_latency_ms"] = display_latency_ms
-						frame_metrics["app_loop_latency_ms"] = (time.perf_counter() - loop_start) * 1000.0
-						frame_metrics["fps_instant"] = (
-							1000.0 / frame_metrics["app_loop_latency_ms"]
-							if frame_metrics["app_loop_latency_ms"] > 0
-							else None
+						performance_tracker.attach_loop_metrics(
+							frame_metrics,
+							loop_start,
+							capture_latency_ms,
+							video_write_latency_ms,
+							display_latency_ms,
 						)
-						resource_snapshot = profiler.sample_resources(device)
-						profiler.log_frame(frame_idx, frame_metrics, resource_snapshot)
+						resource_snapshot = performance_tracker.sample_resources(device)
+						performance_tracker.log_frame(frame_idx, frame_metrics, resource_snapshot)
 						break
 				except cv2.error:
 					print("OpenCV GUI is not available. Continuing without preview windows.")
 				display_latency_ms = (time.perf_counter() - display_start) * 1000.0
 
-			frame_metrics["capture_latency_ms"] = capture_latency_ms
-			frame_metrics["video_write_latency_ms"] = video_write_latency_ms
-			frame_metrics["display_latency_ms"] = display_latency_ms
-			frame_metrics["app_loop_latency_ms"] = (time.perf_counter() - loop_start) * 1000.0
-			frame_metrics["fps_instant"] = (
-				1000.0 / frame_metrics["app_loop_latency_ms"]
-				if frame_metrics["app_loop_latency_ms"] > 0
-				else None
+			performance_tracker.attach_loop_metrics(
+				frame_metrics,
+				loop_start,
+				capture_latency_ms,
+				video_write_latency_ms,
+				display_latency_ms,
 			)
-			resource_snapshot = None
-			if frame_idx % max(1, RESOURCE_SAMPLE_EVERY_N_FRAMES) == 0:
-				resource_snapshot = profiler.sample_resources(device)
-				frame_metrics["resource_sampled"] = True
-			profiler.log_frame(frame_idx, frame_metrics, resource_snapshot)
+			resource_snapshot = performance_tracker.maybe_sample_resources(
+				frame_idx,
+				frame_metrics,
+				device,
+				RESOURCE_SAMPLE_EVERY_N_FRAMES,
+			)
+			performance_tracker.log_frame(frame_idx, frame_metrics, resource_snapshot)
 
 	except KeyboardInterrupt:
 		print("Stopped by user (Ctrl+C).")
 	finally:
-		if tts_worker is not None:
-			tts_worker.stop()
+		if tts_controller is not None:
+			tts_controller.stop()
 		cap.release()
-		if video_writer is not None:
-			video_writer.release()
 		cv2.destroyAllWindows()
 
-	with open(OUTPUT_JSON, "w", encoding="utf-8") as f:
-		json.dump(all_frames, f, indent=2)
-	profiler.finalize(OUTPUT_JSON, OUTPUT_VIDEO)
-
-	print(f"Saved bounding boxes to: {OUTPUT_JSON}")
-	print(f"Saved output video to: {OUTPUT_VIDEO}")
-	print(f"Saved performance logs to: {profiler.run_dir}")
+	performance_tracker.finalize_run()
+	print(f"Saved performance logs to: {performance_tracker.run_dir}")
 
 
 if __name__ == "__main__":

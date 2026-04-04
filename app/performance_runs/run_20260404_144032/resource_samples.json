@@ -1,0 +1,858 @@
+[
+  {
+    "timestamp_epoch": 1775293836.8311913,
+    "device": "cuda",
+    "cpu_percent": 43.3,
+    "ram_percent": 70.1,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293838.056175,
+    "device": "cuda",
+    "cpu_percent": 85.0,
+    "ram_percent": 69.4,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293839.2834115,
+    "device": "cuda",
+    "cpu_percent": 84.5,
+    "ram_percent": 69.3,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293840.5034823,
+    "device": "cuda",
+    "cpu_percent": 84.3,
+    "ram_percent": 68.8,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293841.7064056,
+    "device": "cuda",
+    "cpu_percent": 75.9,
+    "ram_percent": 68.7,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293842.8933694,
+    "device": "cuda",
+    "cpu_percent": 70.5,
+    "ram_percent": 68.9,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293844.1151187,
+    "device": "cuda",
+    "cpu_percent": 73.4,
+    "ram_percent": 68.8,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293845.3103242,
+    "device": "cuda",
+    "cpu_percent": 76.5,
+    "ram_percent": 68.6,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293846.5338693,
+    "device": "cuda",
+    "cpu_percent": 68.1,
+    "ram_percent": 68.6,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293847.734799,
+    "device": "cuda",
+    "cpu_percent": 65.8,
+    "ram_percent": 68.6,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293848.9395642,
+    "device": "cuda",
+    "cpu_percent": 62.5,
+    "ram_percent": 68.7,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293850.174552,
+    "device": "cuda",
+    "cpu_percent": 74.4,
+    "ram_percent": 68.6,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293851.4012709,
+    "device": "cuda",
+    "cpu_percent": 73.0,
+    "ram_percent": 68.6,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293852.573833,
+    "device": "cuda",
+    "cpu_percent": 63.6,
+    "ram_percent": 68.6,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293853.7603972,
+    "device": "cuda",
+    "cpu_percent": 67.3,
+    "ram_percent": 68.6,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293854.9637907,
+    "device": "cuda",
+    "cpu_percent": 72.9,
+    "ram_percent": 68.6,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293856.1541276,
+    "device": "cuda",
+    "cpu_percent": 69.3,
+    "ram_percent": 68.6,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293857.3346517,
+    "device": "cuda",
+    "cpu_percent": 69.2,
+    "ram_percent": 68.7,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293858.5108082,
+    "device": "cuda",
+    "cpu_percent": 74.0,
+    "ram_percent": 68.4,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293859.6732013,
+    "device": "cuda",
+    "cpu_percent": 61.1,
+    "ram_percent": 68.3,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293860.833917,
+    "device": "cuda",
+    "cpu_percent": 55.1,
+    "ram_percent": 68.3,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293861.9889536,
+    "device": "cuda",
+    "cpu_percent": 56.5,
+    "ram_percent": 68.3,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293863.150847,
+    "device": "cuda",
+    "cpu_percent": 56.0,
+    "ram_percent": 68.3,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293864.2895033,
+    "device": "cuda",
+    "cpu_percent": 54.2,
+    "ram_percent": 67.8,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293865.4404888,
+    "device": "cuda",
+    "cpu_percent": 59.4,
+    "ram_percent": 68.4,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293866.6273541,
+    "device": "cuda",
+    "cpu_percent": 63.3,
+    "ram_percent": 68.6,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293867.800854,
+    "device": "cuda",
+    "cpu_percent": 58.8,
+    "ram_percent": 68.5,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293869.0096302,
+    "device": "cuda",
+    "cpu_percent": 65.9,
+    "ram_percent": 68.5,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293870.1725237,
+    "device": "cuda",
+    "cpu_percent": 56.1,
+    "ram_percent": 68.5,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293871.3243084,
+    "device": "cuda",
+    "cpu_percent": 54.6,
+    "ram_percent": 68.5,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293872.4564688,
+    "device": "cuda",
+    "cpu_percent": 55.8,
+    "ram_percent": 68.5,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293873.621231,
+    "device": "cuda",
+    "cpu_percent": 58.4,
+    "ram_percent": 68.5,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293874.7911155,
+    "device": "cuda",
+    "cpu_percent": 57.7,
+    "ram_percent": 68.5,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293875.9479952,
+    "device": "cuda",
+    "cpu_percent": 54.7,
+    "ram_percent": 68.5,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293877.0893207,
+    "device": "cuda",
+    "cpu_percent": 57.5,
+    "ram_percent": 68.5,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293878.240976,
+    "device": "cuda",
+    "cpu_percent": 58.1,
+    "ram_percent": 68.5,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293879.3995686,
+    "device": "cuda",
+    "cpu_percent": 65.7,
+    "ram_percent": 68.5,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293880.5292072,
+    "device": "cuda",
+    "cpu_percent": 56.1,
+    "ram_percent": 68.5,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293881.6979642,
+    "device": "cuda",
+    "cpu_percent": 62.8,
+    "ram_percent": 68.4,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293882.8657951,
+    "device": "cuda",
+    "cpu_percent": 58.8,
+    "ram_percent": 68.4,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293884.0214777,
+    "device": "cuda",
+    "cpu_percent": 57.9,
+    "ram_percent": 68.4,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293885.1576333,
+    "device": "cuda",
+    "cpu_percent": 56.1,
+    "ram_percent": 68.4,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293886.3094387,
+    "device": "cuda",
+    "cpu_percent": 54.9,
+    "ram_percent": 68.4,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293887.452975,
+    "device": "cuda",
+    "cpu_percent": 56.3,
+    "ram_percent": 68.3,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293888.5991466,
+    "device": "cuda",
+    "cpu_percent": 58.5,
+    "ram_percent": 68.3,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293889.7691991,
+    "device": "cuda",
+    "cpu_percent": 60.7,
+    "ram_percent": 68.3,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293890.9350297,
+    "device": "cuda",
+    "cpu_percent": 65.1,
+    "ram_percent": 68.3,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293892.1026428,
+    "device": "cuda",
+    "cpu_percent": 64.7,
+    "ram_percent": 68.3,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293893.2713985,
+    "device": "cuda",
+    "cpu_percent": 60.7,
+    "ram_percent": 68.3,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293894.440643,
+    "device": "cuda",
+    "cpu_percent": 67.9,
+    "ram_percent": 68.3,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293895.6103778,
+    "device": "cuda",
+    "cpu_percent": 58.4,
+    "ram_percent": 68.2,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293896.7967424,
+    "device": "cuda",
+    "cpu_percent": 64.8,
+    "ram_percent": 68.2,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293897.9907706,
+    "device": "cuda",
+    "cpu_percent": 64.5,
+    "ram_percent": 67.9,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293899.2140214,
+    "device": "cuda",
+    "cpu_percent": 78.9,
+    "ram_percent": 69.0,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293900.4977572,
+    "device": "cuda",
+    "cpu_percent": 88.8,
+    "ram_percent": 68.7,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293901.7194054,
+    "device": "cuda",
+    "cpu_percent": 80.0,
+    "ram_percent": 69.0,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293902.9848974,
+    "device": "cuda",
+    "cpu_percent": 83.8,
+    "ram_percent": 68.6,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293904.2390065,
+    "device": "cuda",
+    "cpu_percent": 83.8,
+    "ram_percent": 68.7,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293905.4445293,
+    "device": "cuda",
+    "cpu_percent": 70.3,
+    "ram_percent": 68.6,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293906.6197405,
+    "device": "cuda",
+    "cpu_percent": 73.7,
+    "ram_percent": 68.6,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293907.8312624,
+    "device": "cuda",
+    "cpu_percent": 73.2,
+    "ram_percent": 68.6,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293909.0445921,
+    "device": "cuda",
+    "cpu_percent": 69.7,
+    "ram_percent": 68.5,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293910.256494,
+    "device": "cuda",
+    "cpu_percent": 64.3,
+    "ram_percent": 68.4,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293911.500617,
+    "device": "cuda",
+    "cpu_percent": 63.3,
+    "ram_percent": 68.3,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293912.6575654,
+    "device": "cuda",
+    "cpu_percent": 62.7,
+    "ram_percent": 68.3,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293913.8683293,
+    "device": "cuda",
+    "cpu_percent": 61.1,
+    "ram_percent": 68.3,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293915.1561759,
+    "device": "cuda",
+    "cpu_percent": 64.0,
+    "ram_percent": 68.3,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293916.4503145,
+    "device": "cuda",
+    "cpu_percent": 65.2,
+    "ram_percent": 68.5,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293917.630131,
+    "device": "cuda",
+    "cpu_percent": 62.3,
+    "ram_percent": 68.5,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293918.8825846,
+    "device": "cuda",
+    "cpu_percent": 63.5,
+    "ram_percent": 68.5,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293920.0985577,
+    "device": "cuda",
+    "cpu_percent": 67.0,
+    "ram_percent": 68.4,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293921.3954964,
+    "device": "cuda",
+    "cpu_percent": 64.3,
+    "ram_percent": 68.4,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293922.5741053,
+    "device": "cuda",
+    "cpu_percent": 62.8,
+    "ram_percent": 68.4,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293923.7411397,
+    "device": "cuda",
+    "cpu_percent": 61.3,
+    "ram_percent": 68.4,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293924.9458733,
+    "device": "cuda",
+    "cpu_percent": 63.3,
+    "ram_percent": 68.6,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293926.105077,
+    "device": "cuda",
+    "cpu_percent": 54.3,
+    "ram_percent": 68.6,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293927.282302,
+    "device": "cuda",
+    "cpu_percent": 60.0,
+    "ram_percent": 68.6,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293928.4610896,
+    "device": "cuda",
+    "cpu_percent": 58.1,
+    "ram_percent": 68.5,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293929.6246982,
+    "device": "cuda",
+    "cpu_percent": 56.9,
+    "ram_percent": 68.5,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293930.7887585,
+    "device": "cuda",
+    "cpu_percent": 55.0,
+    "ram_percent": 68.5,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293931.9634678,
+    "device": "cuda",
+    "cpu_percent": 64.3,
+    "ram_percent": 68.1,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293933.1583965,
+    "device": "cuda",
+    "cpu_percent": 67.3,
+    "ram_percent": 68.6,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293934.4573672,
+    "device": "cuda",
+    "cpu_percent": 75.9,
+    "ram_percent": 69.0,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293935.710337,
+    "device": "cuda",
+    "cpu_percent": 64.6,
+    "ram_percent": 69.5,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293936.9126606,
+    "device": "cuda",
+    "cpu_percent": 56.1,
+    "ram_percent": 68.9,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293938.1039903,
+    "device": "cuda",
+    "cpu_percent": 56.3,
+    "ram_percent": 68.8,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293939.3516405,
+    "device": "cuda",
+    "cpu_percent": 59.6,
+    "ram_percent": 68.7,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293940.5247517,
+    "device": "cuda",
+    "cpu_percent": 54.7,
+    "ram_percent": 68.7,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293941.6855707,
+    "device": "cuda",
+    "cpu_percent": 54.4,
+    "ram_percent": 68.7,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293942.8338652,
+    "device": "cuda",
+    "cpu_percent": 55.1,
+    "ram_percent": 68.6,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293944.033445,
+    "device": "cuda",
+    "cpu_percent": 57.6,
+    "ram_percent": 68.3,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293945.1942983,
+    "device": "cuda",
+    "cpu_percent": 59.8,
+    "ram_percent": 68.3,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293946.3576875,
+    "device": "cuda",
+    "cpu_percent": 55.4,
+    "ram_percent": 68.3,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293947.5091002,
+    "device": "cuda",
+    "cpu_percent": 57.1,
+    "ram_percent": 68.2,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293948.8394458,
+    "device": "cuda",
+    "cpu_percent": 64.0,
+    "ram_percent": 68.4,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293950.0752976,
+    "device": "cuda",
+    "cpu_percent": 56.7,
+    "ram_percent": 68.4,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293951.2814243,
+    "device": "cuda",
+    "cpu_percent": 65.5,
+    "ram_percent": 68.9,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293952.4650264,
+    "device": "cuda",
+    "cpu_percent": 60.7,
+    "ram_percent": 68.5,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293953.593104,
+    "device": "cuda",
+    "cpu_percent": 58.4,
+    "ram_percent": 68.4,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293954.7263713,
+    "device": "cuda",
+    "cpu_percent": 55.6,
+    "ram_percent": 68.4,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293955.8889995,
+    "device": "cuda",
+    "cpu_percent": 64.2,
+    "ram_percent": 68.4,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293957.0083337,
+    "device": "cuda",
+    "cpu_percent": 55.3,
+    "ram_percent": 68.4,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293958.1494308,
+    "device": "cuda",
+    "cpu_percent": 56.7,
+    "ram_percent": 68.4,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293959.3518374,
+    "device": "cuda",
+    "cpu_percent": 67.3,
+    "ram_percent": 68.3,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293960.6015615,
+    "device": "cuda",
+    "cpu_percent": 62.3,
+    "ram_percent": 68.3,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293961.7794747,
+    "device": "cuda",
+    "cpu_percent": 63.8,
+    "ram_percent": 68.3,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  },
+  {
+    "timestamp_epoch": 1775293962.2361088,
+    "device": "cuda",
+    "cpu_percent": 56.2,
+    "ram_percent": 68.2,
+    "gpu_mem_allocated_mb": 139.98,
+    "gpu_mem_reserved_mb": 466.0
+  }
+]
