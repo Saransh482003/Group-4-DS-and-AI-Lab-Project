@@ -243,6 +243,99 @@ project-root
 │
 └── README.md                      # Project documentation
 ```
+
+------------------------------------------------------------------------
+
+# How to Run
+
+This project uses **Poetry** for dependency management, and instructions are provided for Windows PowerShell.
+
+### 1. Install Poetry (Windows)
+
+If you do not have Poetry installed, you can install it via PowerShell:
+
+```powershell
+(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python -
+```
+
+Make sure to add the Poetry `bin` directory to your PATH (e.g., `%APPDATA%\Python\Scripts` or `%USERPROFILE%\AppData\Roaming\Python\Scripts`).
+
+### 2. Install Dependencies
+
+Once Poetry is installed, navigate to the project root and install the dependencies:
+
+```powershell
+poetry install
+```
+
+### 3. CLI Execution
+
+The main application entry point is `app/main.py`. You can run it via the CLI using Poetry:
+
+**Live Mode (Webcam):**
+```powershell
+poetry run python -m app.main --mode live
+```
+
+**Dataset Evaluation Mode:**
+```powershell
+poetry run python -m app.main --mode dataset_eval --dataset egoblind
+poetry run python -m app.main --mode dataset_eval --source-path data_cache/kaggle/egoblind-short-context-frames/extracted/...
+```
+
+**Benchmark Mode:**
+```powershell
+poetry run python -m app.main --mode benchmark --dataset egoblind --execution-mode sequential
+poetry run python -m app.main --mode benchmark --dataset egoblind --execution-mode threaded_parallel
+```
+
+### 4. Supported CLI Flags
+
+The CLI supports various flags to customize the execution:
+- `--max-frames`: Limit the maximum number of frames to process.
+- `--stride`: Set the frame stride for dataset evaluation.
+- `--enable-tts`: Enable text-to-speech audio output.
+- `--save-annotated-video`: Save the processed and annotated video output.
+- `--show-windows`: Display the visualizer windows during execution.
+- `--device`: Specify the device to run models on (e.g., `cpu`, `cuda`).
+- `--output-dir`: Set the directory where output artifacts will be saved.
+
+------------------------------------------------------------------------
+
+# Testing Requirements
+
+Tests have been added for the new architecture. You can run the test suite using `pytest`:
+
+```powershell
+poetry run pytest tests/
+```
+
+### Covered Test Areas
+
+*   **`test_frame_sources.py`**:
+    *   Video source initialization
+    *   Frame folder ordering
+    *   Graceful empty folder handling
+*   **`test_pipeline_executor.py`**:
+    *   Sequential executor basic behavior
+    *   Threaded parallel executor basic behavior
+    *   Merge of detector and depth outputs
+*   **`test_metrics_aggregation.py`**:
+    *   Average/median/p95 calculations
+    *   Command distribution
+    *   Slowest frame extraction
+    *   Top risk frame extraction
+*   **`test_kaggle_data.py`**:
+    *   Path resolution
+    *   Cache hit logic
+    *   No-download when cache exists
+    *   Command construction for Kaggle download
+    *   Unzip/extract logic with mocks
+
+External systems and models are mocked within tests to ensure reliable and fast execution.
+
+------------------------------------------------------------------------
+
 # Team Details
 
 **Group Number:** 4\
