@@ -4,8 +4,10 @@ import torch
 import sys
 import os
 
+from app.utils.paths import get_depth_repo_path
+
 # 1. Point Python to the cloned GitHub repository
-REPO_PATH = r"E:\dsai_group4_project\Depth-Anything-V2"
+REPO_PATH = get_depth_repo_path()
 
 # The metric depth logic has its own specialized files inside the 'metric_depth' folder.
 # We insert it at the front of sys.path (index 0) so Python prioritizes it over the base model.

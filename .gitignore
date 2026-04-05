@@ -1,7 +1,23 @@
 datasets/
 env/
 app/piper/
-# model_training/depth_estimation/model_weights
+app/piper_voices/
+app/performance_runs/
+data_cache/
+outputs/
+*.zip
+__pycache__/
 */__pycache__/
+.pytest_cache/
+.ipynb_checkpoints/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.env
 */.log/
 Depth-Anything-V2/
