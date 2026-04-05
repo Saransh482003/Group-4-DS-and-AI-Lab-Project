@@ -3,11 +3,26 @@ import subprocess
 import json
 from app.config.pipeline_schema import KaggleSettings
 
+def load_kaggle_secrets():
+    """Load Kaggle credentials from kaggle_secrets.txt at the root."""
+    from app.utils.paths import get_base_dir
+    secrets_path = get_base_dir() / "kaggle_secrets.txt"
+    if secrets_path.exists():
+        with open(secrets_path, "r") as f:
+            for line in f:
+                line = line.strip()
+                if "=" in line and not line.startswith("#"):
+                    k, v = line.split("=", 1)
+                    os.environ[k.strip()] = v.strip().strip('"').strip("'")
+
 def check_kaggle_credentials() -> bool:
+    load_kaggle_secrets()
     kaggle_json = os.path.expanduser("~/.kaggle/kaggle.json")
     if os.path.exists(kaggle_json):
         return True
     if os.environ.get("KAGGLE_USERNAME") and os.environ.get("KAGGLE_KEY"):
+        return True
+    if os.environ.get("KAGGLE_API_TOKEN"): # Optional: support the user's specific token key
         return True
     return False
 
@@ -39,9 +54,12 @@ def ensure_egoblind_dataset(settings: KaggleSettings) -> str:
 
     try:
         # Use Kaggle CLI to download
+        cmd = ["kaggle", "datasets", "download", "-d", settings.dataset_slug, "-p", str(raw_path), "--unzip"]
+        # On Windows, shell=True is often needed to find the .exe in the environment's Scripts folder
         subprocess.run(
-            ["kaggle", "datasets", "download", "-d", settings.dataset_slug, "-p", str(raw_path), "--unzip"],
-            check=True
+            cmd,
+            check=True,
+            shell=(os.name == 'nt')
         )
 
         # If the zip is downloaded and unzipped by kaggle directly into raw, we should move it or just use it.

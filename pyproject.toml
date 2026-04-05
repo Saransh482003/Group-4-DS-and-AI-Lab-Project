@@ -42,9 +42,13 @@ dependencies = [
     "tornado (>=6.5.5,<7.0.0)",
     "ultralytics (>=8.4.33,<9.0.0)",
     "ultralytics-thop (>=2.0.18,<3.0.0)",
-    "urllib3 (>=2.6.3,<3.0.0)"
+    "urllib3 (>=2.6.3,<3.0.0)",
+    "kaggle (>=1.6.0,<2.0.0)"
 ]
 
+
+[tool.poetry]
+package-mode = false
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

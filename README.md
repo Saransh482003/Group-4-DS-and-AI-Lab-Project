@@ -258,15 +258,43 @@ If you do not have Poetry installed, you can install it via PowerShell:
 (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python -
 ```
 
-Make sure to add the Poetry `bin` directory to your PATH (e.g., `%APPDATA%\Python\Scripts` or `%USERPROFILE%\AppData\Roaming\Python\Scripts`).
+After installation, add the Poetry `bin` directory to your PATH (e.g., `%APPDATA%\Python\Scripts` or `%USERPROFILE%\AppData\Roaming\Python\Scripts`). You can verify it by running `poetry --version`.
 
-### 2. Install Dependencies
+### 2. Model Setup & Dependencies
 
-Once Poetry is installed, navigate to the project root and install the dependencies:
+This system requires external models that are not included in the main repository due to their size.
+
+#### A. Depth-Anything-V2 Repository
+You must clone the Depth-Anything-V2 repository into the project root:
+```powershell
+git clone https://github.com/DepthAnything/Depth-Anything-V2.git
+```
+
+#### B. TTS Setup (Piper)
+The Piper TTS engine is required for audio feedback. If you see `app/piper_windows_amd64.zip`, extract it to the project root so you have a `piper/` folder containing `piper.exe`.
+```powershell
+Expand-Archive -Path "app\piper_windows_amd64.zip" -DestinationPath "." -Force
+```
+
+#### C. Model Weights
+Weights should be placed in `model_training/`:
+- **YOLO Weights**: `model_training/object_detection/best-weights/YOLOv8n-uni.pt`
+- **Depth Weights**: `model_training/depth_estimation/model_weights/depth_anything_v2_metric_hypersim_vits.pth`
+
+You can override weights via CLI flags (see below).
+
+### 3. Install Python Dependencies
+Once Poetry is installed and models are set up, install the Python library dependencies:
 
 ```powershell
 poetry install
 ```
+
+#### D. Kaggle API for Datasets
+To evaluate the system using datasets like `egoblind`, you need to configure your Kaggle API credentials:
+1. Log in to your Kaggle account and go to [Settings](https://www.kaggle.com/settings).
+2. Click "Create New API Token" to download `kaggle.json`.
+3. You can either place this file in `~/.kaggle/kaggle.json` or open your `.env` file and set the `KAGGLE_USERNAME` and `KAGGLE_KEY` values directly.
 
 ### 3. CLI Execution
 
@@ -276,6 +304,7 @@ The main application entry point is `app/main.py`. You can run it via the CLI us
 ```powershell
 poetry run python -m app.main --mode live
 ```
+*Note: If your camera doesn't open, ensure `VIDEO_SOURCE=0` in `.env` (or use the flag `--source-path 0`).*
 
 **Dataset Evaluation Mode:**
 ```powershell
@@ -297,7 +326,7 @@ The CLI supports various flags to customize the execution:
 - `--enable-tts`: Enable text-to-speech audio output.
 - `--save-annotated-video`: Save the processed and annotated video output.
 - `--show-windows`: Display the visualizer windows during execution.
-- `--device`: Specify the device to run models on (e.g., `cpu`, `cuda`).
+- `--yolo-weights`: Specify a custom YOLO weight file (.pt). Falls back to `yolov8n.pt` if missing.
 - `--output-dir`: Set the directory where output artifacts will be saved.
 
 ------------------------------------------------------------------------

@@ -11,7 +11,8 @@ def env_rel_path(env_key: str, default_rel_path: str) -> Path:
     """Resolve an environment-configured path relative to the base directory."""
     val = os.getenv(env_key)
     if val:
-        return Path(val).resolve()
+        path = Path(val)
+        return path if path.is_absolute() else (get_base_dir() / path).resolve()
     return get_base_dir() / default_rel_path
 
 

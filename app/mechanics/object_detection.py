@@ -8,7 +8,12 @@ class ObjectDetector:
 		self.model = None
 
 	def load_model(self):
-		self.model = YOLO(self.weights_path)
+		import os
+		if not os.path.exists(self.weights_path):
+			print(f"Warning: Custom weights not found at {self.weights_path}. Falling back to default yolov8n.pt")
+			self.model = YOLO("yolov8n.pt")
+		else:
+			self.model = YOLO(self.weights_path)
 		return self.model
 
 	def predict(self, frame_bgr):

@@ -21,3 +21,5 @@ Thumbs.db
 .env
 */.log/
 Depth-Anything-V2/
+piper/
+kaggle_secrets.txt

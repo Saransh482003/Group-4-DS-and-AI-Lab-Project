@@ -51,6 +51,7 @@ def main():
     parser.add_argument("--save-annotated-video", action="store_true", help="Save annotated video output")
     parser.add_argument("--show-windows", action="store_true", help="Show display windows")
     parser.add_argument("--device", type=str, help="Device to run models on")
+    parser.add_argument("--yolo-weights", type=str, help="Path to custom YOLO weights (.pt)")
     parser.add_argument("--output-dir", type=str, help="Output directory for artifacts")
 
     args = parser.parse_args()
@@ -81,6 +82,8 @@ def main():
         config.pipeline.save_annotated_video = True
     if args.device is not None:
         config.models.device = args.device
+    if args.yolo_weights is not None:
+        config.models.yolo_weights_path = args.yolo_weights
 
     # Dataset resolution if kaggle util is available
     if args.dataset == "egoblind":
@@ -93,6 +96,7 @@ def main():
             return
 
     print(f"Starting pipeline in {args.mode} mode.")
+    print(f"YOLO Weights Path: {config.models.yolo_weights_path}")
 
     components = setup_components(config)
 
