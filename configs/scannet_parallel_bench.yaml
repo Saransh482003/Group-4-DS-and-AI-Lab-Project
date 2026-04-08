@@ -1,0 +1,14 @@
+# Parallel Benchmark on ScanNet
+# Tests threaded parallel performance on indoor sequence data.
+
+mode: "benchmark"
+dataset: "scannet"
+source_path: "data_cache/test_datasets/scannet" # Default mock path or main path
+max_frames: 200
+stride: 2
+
+execution_mode: "threaded_parallel"
+enable_tts: true
+show_windows: false
+save_annotated_video: true
+benchmark_config: "app/config/benchmark_suite.yaml"

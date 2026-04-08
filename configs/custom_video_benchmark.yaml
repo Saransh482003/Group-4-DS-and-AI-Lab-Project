@@ -1,0 +1,18 @@
+# Benchmark for Custom Video Source
+# Runs 8 different configurations (Seq/Par, TTS on/off) on a single video file.
+
+mode: "benchmark"
+source_path: "path/to/your/video.mp4" # REPLACE with your actual video path
+max_frames: 300
+stride: 1
+
+# This will trigger the BenchmarkRunner which automatically tests:
+# 1. Detection Only
+# 2. Depth Only
+# 3. Sequential (Det+Dep)
+# 4. Parallel (Det+Dep)
+# 5. Sequential Full (with and without TTS)
+# 6. Parallel Full (with and without TTS)
+
+benchmark_config: "app/config/benchmark_suite.yaml"
+save_annotated_video: true

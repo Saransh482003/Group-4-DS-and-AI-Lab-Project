@@ -1,0 +1,21 @@
+# Unified Runner Configuration
+# This file consolidates all command-line arguments into a single reusable profile.
+
+# Execution Mode: live, dataset_eval, benchmark
+mode: "benchmark"
+
+# Dataset Selection
+dataset: "egoblind"
+
+# Evaluation Parameters
+max_frames: 100
+stride: 5
+
+# Feature Toggles
+enable_tts: false
+show_windows: false
+save_annotated_video: true
+
+# Advanced Paths
+# benchmark_config: "app/config/benchmark_suite.yaml"
+# yolo_weights: "model_training/object_detection/best-weights/YOLOv8n-uni.pt"

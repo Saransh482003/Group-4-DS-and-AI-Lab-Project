@@ -96,6 +96,27 @@ class MetricsTracker:
         # Export CSVs using aggregator
         self._export_csvs()
 
+        # Copy video to a unified results folder if it exists
+        self._copy_video_to_results()
+
+    def _copy_video_to_results(self):
+        video_path = os.path.join(self.run_dir, "annotated_video.mp4")
+        if os.path.exists(video_path):
+            import shutil
+            results_dir = os.path.join(self.base_dir, "results")
+            os.makedirs(results_dir, exist_ok=True)
+            
+            # Use run_name and timestamp for the unified filename
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            dest_name = f"{self.run_name}_{timestamp}.mp4"
+            dest_path = os.path.join(results_dir, dest_name)
+            
+            try:
+                shutil.copy2(video_path, dest_path)
+                print(f"Annotated video copied to unified folder: {dest_path}")
+            except Exception as e:
+                print(f"Could not copy video to results folder: {e}")
+
     def _export_csvs(self):
         from app.metrics.aggregator import MetricsAggregator
         from app.metrics.exporters import export_to_csv

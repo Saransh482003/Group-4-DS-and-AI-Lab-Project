@@ -1,0 +1,12 @@
+# Fast EgoBlind Evaluation
+# Samples every 10th frame for quick validation.
+
+mode: "dataset_eval"
+dataset: "egoblind"
+stride: 10
+max_frames: 100
+
+execution_mode: "sequential"
+enable_tts: false
+show_windows: true
+save_annotated_video: true

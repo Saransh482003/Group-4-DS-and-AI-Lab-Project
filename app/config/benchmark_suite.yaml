@@ -1,0 +1,51 @@
+# Configuration for the benchmark suite.
+# Each entry defines a pipeline combination to be tested.
+
+test_suites:
+  - name: "detection_only"
+    det: true
+    dep: false
+    tts: false
+    exec: "sequential"
+
+  - name: "depth_only"
+    det: false
+    dep: true
+    tts: false
+    exec: "sequential"
+
+  - name: "sequential_det_dep"
+    det: true
+    dep: true
+    tts: false
+    exec: "sequential"
+
+  - name: "parallel_det_dep"
+    det: true
+    dep: true
+    tts: false
+    exec: "threaded_parallel"
+
+  - name: "sequential_full_no_tts"
+    det: true
+    dep: true
+    tts: false
+    exec: "sequential"
+
+  - name: "sequential_full_with_tts"
+    det: true
+    dep: true
+    tts: true
+    exec: "sequential"
+
+  - name: "parallel_full_no_tts"
+    det: true
+    dep: true
+    tts: false
+    exec: "threaded_parallel"
+
+  - name: "parallel_full_with_tts"
+    det: true
+    dep: true
+    tts: true
+    exec: "threaded_parallel"

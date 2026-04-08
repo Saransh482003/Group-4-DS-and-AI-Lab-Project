@@ -33,7 +33,7 @@ class FrameFolderSource(FrameSource):
             images = [f for f in files if self._is_image_file(f)]
             if images:
                 # Use the relative path from root_dir to the current folder as the sequence_id
-                rel_path = os.path.relpath(root, self.root_dir)
+                rel_path = os.path.relpath(os.path.abspath(root), os.path.abspath(self.root_dir))
                 seq_id = "root" if rel_path == "." else rel_path
                 
                 for img in sorted(images):

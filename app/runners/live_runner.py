@@ -23,13 +23,21 @@ class LiveRunner:
         if not self.source.open():
             raise RuntimeError(f"Cannot open live source.")
 
-        print("Press 'q' to stop.")
+        print("Starting live stream... Press 'q' in the window or Ctrl+C in terminal to stop.")
 
         frame_idx = 0
         run_start_time = time.time()
+        video_writer = None
+        max_frames = self.config.benchmark.max_frames
+        stride = max(1, self.config.benchmark.stride)
+        processed_count = 0
 
         try:
             while True:
+                if max_frames and processed_count >= max_frames:
+                    print(f"Reached max frames ({max_frames}). Stopping live stream.")
+                    break
+
                 loop_start = time.perf_counter()
 
                 capture_start = time.perf_counter()
@@ -40,7 +48,12 @@ class LiveRunner:
                     break
 
                 frame_idx += 1
+                
+                # Apply stride for live processing (drops heavy inference steps)
+                if frame_idx % stride != 0:
+                    continue
 
+                processed_count += 1
                 ctx = FrameContext(frame_idx=frame_idx, source_id=source_id, frame_bgr=frame_bgr)
 
                 # Execute pipeline
@@ -75,12 +88,23 @@ class LiveRunner:
                 if ctx.metrics["loop_total_latency_ms"] > 0:
                     ctx.metrics["fps_instant"] = 1000.0 / ctx.metrics["loop_total_latency_ms"]
 
+                # Video recording
+                if self.config.pipeline.save_annotated_video and ctx.annotated_frame is not None:
+                    if video_writer is None:
+                        h, w = ctx.annotated_frame.shape[:2]
+                        out_path = os.path.join(self.tracker.run_dir, "annotated_video.mp4")
+                        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+                        video_writer = cv2.VideoWriter(out_path, fourcc, 20.0, (w, h))
+                    video_writer.write(ctx.annotated_frame)
+
                 # Hand over to metrics tracker
                 self.tracker.log_frame(ctx)
 
         except KeyboardInterrupt:
             print("Stopped by user (Ctrl+C).")
         finally:
+            if video_writer is not None:
+                video_writer.release()
             self.source.close()
             cv2.destroyAllWindows()
             self.tracker.finalize()

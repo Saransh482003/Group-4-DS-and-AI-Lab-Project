@@ -1,7 +1,7 @@
 import time
 import os
 import copy
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 from app.config.pipeline_schema import AppConfig
 from app.runners.dataset_runner import DatasetRunner
@@ -11,18 +11,22 @@ from app.metrics.tracker import MetricsTracker
 from app.metrics.exporters import export_to_csv
 
 
+import yaml
+
 class BenchmarkRunner:
     """Runs multiple configurations on the same source and exports a comparison."""
 
-    def __init__(self, base_config: AppConfig, base_components: dict, base_dir: str, source: Any):
+    def __init__(self, base_config: AppConfig, base_components: dict, base_dir: str, source: Any, suite_config_path: Optional[str] = None, suite_targets: Optional[List[str]] = None):
         self.base_config = base_config
         self.base_components = base_components
         self.base_dir = base_dir
         self.source = source
+        self.suite_config_path = suite_config_path
+        self.suite_targets = suite_targets
 
-    def run(self):
-        # The 8 modes we want to benchmark
-        configs_to_test = [
+    def _load_configs(self) -> List[Dict[str, Any]]:
+        # Default hardcoded configs if YAML is missing
+        default_configs = [
             {"name": "detection_only", "det": True, "dep": False, "tts": False, "exec": "sequential"},
             {"name": "depth_only", "det": False, "dep": True, "tts": False, "exec": "sequential"},
             {"name": "sequential_det_dep", "det": True, "dep": True, "tts": False, "exec": "sequential"},
@@ -32,6 +36,27 @@ class BenchmarkRunner:
             {"name": "parallel_full_no_tts", "det": True, "dep": True, "tts": False, "exec": "threaded_parallel"},
             {"name": "parallel_full_with_tts", "det": True, "dep": True, "tts": True, "exec": "threaded_parallel"},
         ]
+
+        if not self.suite_config_path or not os.path.exists(self.suite_config_path):
+            print(f"Benchmark suite config not found at {self.suite_config_path}, using defaults.")
+            return default_configs
+
+        try:
+            with open(self.suite_config_path, 'r') as f:
+                data = yaml.safe_load(f)
+                return data.get('test_suites', default_configs)
+        except Exception as e:
+            print(f"Error loading benchmark YAML: {e}. Using defaults.")
+            return default_configs
+
+    def run(self):
+        configs_to_test = self._load_configs()
+
+        if self.suite_targets:
+            configs_to_test = [c for c in configs_to_test if c["name"] in self.suite_targets]
+            if not configs_to_test:
+                print(f"Warning: No benchmark suites matching {self.suite_targets} were found. Check your names in benchmark_suite.yaml.")
+                return
 
         results: List[Dict[str, Any]] = []
 
@@ -66,9 +91,9 @@ class BenchmarkRunner:
 
             orchestrator = PipelineOrchestrator(executor, run_components)
 
-            # We don't want windows or video saving during benchmark to isolate performance
+            # By default windows are off to isolate performance, but we honor video saving if requested
             run_config.pipeline.show_windows = False
-            run_config.pipeline.save_annotated_video = False
+            # run_config.pipeline.save_annotated_video remains as requested in base_config
 
             tracker = MetricsTracker(base_dir=self.base_dir, run_name=f"bench_{cfg['name']}", config=run_config)
             runner = DatasetRunner(run_config, orchestrator, tracker, self.source)

@@ -374,6 +374,35 @@ The flags work together to define your test coverage:
 
 ---
 
+# Automation with YAML Configurations
+
+To simplify the execution of complex experiments and benchmarks, the system supports YAML-based configuration files.
+
+### 1. Unified Runner Profiles (`--runner-config`)
+Instead of typing long CLI commands, you can consolidate all your parameters (mode, dataset, limits, feature toggles) into a single profile in the `configs/` directory.
+
+**Example execution:**
+```powershell
+# Run a pre-defined live webcam test
+poetry run python -m app.main --runner-config configs/live_webcam.yaml
+
+# Run a custom video benchmark sweep
+poetry run python -m app.main --runner-config configs/custom_video_benchmark.yaml
+```
+
+### 2. Customizing Benchmark Suites (`--benchmark-config`)
+The **Benchmark Mode** runs a sweep of several pipeline configurations. You can customize exactly which combinations are tested by editing `app/config/benchmark_suite.yaml`.
+
+### 3. Filtering Benchmark Targets (`--benchmark-target`)
+If you only care about specific configurations from your suite, you can use the `--benchmark-target` flag to skip the others and run only the named targets:
+
+```powershell
+# Only run two specific modes from the suite
+poetry run python -m app.main --mode benchmark --dataset egoblind --benchmark-target detection_only parallel_full_with_tts
+```
+
+---
+
 ------------------------------------------------------------------------
 
 # End-to-End Testing (ScanNet / Ego4D)
