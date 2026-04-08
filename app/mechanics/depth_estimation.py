@@ -17,7 +17,10 @@ if os.path.exists(METRIC_PATH) and METRIC_PATH not in sys.path:
 elif REPO_PATH not in sys.path:
     sys.path.append(REPO_PATH)
 
-from depth_anything_v2.dpt import DepthAnythingV2
+try:
+    from depth_anything_v2.dpt import DepthAnythingV2
+except ImportError:
+    DepthAnythingV2 = None
 
 class DepthEstimator:
     """
@@ -46,6 +49,10 @@ class DepthEstimator:
         self.max_depth = 80 if self.dataset == 'vkitti' else 20
 
     def load_model(self):
+        if DepthAnythingV2 is None:
+            raise ImportError(
+                "Depth-Anything-V2 code not found. Please clone the repository as described in README if using this model."
+            )
         print(f"Loading Depth-Anything-V2 ({self.encoder}, {self.dataset}) from {self.model_dir}...")
         
         config = self.model_configs[self.encoder]
@@ -111,3 +118,12 @@ def estimate_distance_from_depth(depth_map, bbox):
 
     # The depth_value is now actual distance in meters, not a relative signal!
     return depth_value, depth_value
+
+
+# --- TEAM IMPLEMENTATION SWITCH ---
+# The depth team can define their own engines below (e.g., class DepthEstimatorRohit).
+# To swap implementations, simply point the 'DepthEstimator' alias to your class.
+
+# Example:
+# class DepthEstimatorRohit(DepthEstimator): pass
+# DepthEstimator = DepthEstimatorRohit

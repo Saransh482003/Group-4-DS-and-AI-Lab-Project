@@ -2,7 +2,7 @@
 # Runs 8 different configurations (Seq/Par, TTS on/off) on a single video file.
 
 mode: "benchmark"
-source_path: "path/to/your/video.mp4" # REPLACE with your actual video path
+source_path: "data_cache/Custom_Videos/indore_test_divyang_vid.mp4" # REPLACE with your actual filename
 max_frames: 300
 stride: 1
 
@@ -15,4 +15,8 @@ stride: 1
 # 6. Parallel Full (with and without TTS)
 
 benchmark_config: "app/config/benchmark_suite.yaml"
+show_windows: false
 save_annotated_video: true
+
+# Run Command:
+# python -m app.main --runner-config e2e_runner_configs/custom_video_benchmark.yaml

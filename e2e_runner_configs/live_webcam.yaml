@@ -7,4 +7,7 @@ execution_mode: "sequential"
 
 enable_tts: true
 show_windows: true
-save_annotated_video: false
+save_annotated_video: true
+
+# Run Command:
+# python -m app.main --runner-config e2e_runner_configs/live_webcam.yaml

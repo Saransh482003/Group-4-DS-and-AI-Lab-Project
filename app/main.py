@@ -24,9 +24,14 @@ def setup_components(config):
         components["detector"] = DetectorComponent(config.models.yolo_weights_path)
 
     if config.pipeline.enable_depth:
-        components["depth"] = DepthComponent(
-            config.models.depth_model_path, config.models.device
-        )
+        try:
+            components["depth"] = DepthComponent(
+                config.models.depth_model_path, config.models.device
+            )
+        except Exception as e:
+            print(f"Warning: Depth component failed to load: {e}")
+            print("The pipeline will continue without real-time distance estimation.")
+            config.pipeline.enable_depth = False
 
     if config.pipeline.enable_visualization:
         components["visualization"] = VisualizationComponent(
@@ -91,14 +96,15 @@ def main():
     )
     parser.add_argument("--max-frames", type=int, help="Max frames to process")
     parser.add_argument("--stride", type=int, help="Frame stride for dataset eval")
-    parser.add_argument("--enable-tts", action="store_true", help="Enable TTS output")
+    parser.add_argument("--enable-tts", action="store_true", default=None, help="Enable TTS output")
     parser.add_argument(
         "--save-annotated-video",
         action="store_true",
+        default=None,
         help="Save annotated video output",
     )
     parser.add_argument(
-        "--show-windows", action="store_true", help="Show display windows"
+        "--show-windows", action="store_true", default=None, help="Show display windows"
     )
     parser.add_argument("--device", type=str, help="Device to run models on")
     parser.add_argument(
@@ -120,21 +126,26 @@ def main():
     args = parser.parse_args()
 
     # If a runner config is provided, load it and override defaults
-    if args.runner_config and os.path.exists(args.runner_config):
-        import yaml
+    if args.runner_config:
+        if os.path.exists(args.runner_config):
+            import yaml
 
-        print(f"Loading runner configuration from: {args.runner_config}")
-        with open(args.runner_config, "r") as f:
-            runner_data = yaml.safe_load(f)
-            if runner_data:
-                # Update args namespace with values from YAML if they exist
-                for key, value in runner_data.items():
-                    if hasattr(args, key):
-                        # Use CLI value if it's not the default, otherwise use YAML
-                        # For simplicity, we'll let YAML override unless explicitly overridden via CLI
-                        # (Checking CLI overrides is complex with argparse,
-                        # so we'll just prioritize YAML for now if explicitly requested)
-                        setattr(args, key, value)
+            print(f"Loading runner configuration from: {args.runner_config}")
+            with open(args.runner_config, "r") as f:
+                runner_data = yaml.safe_load(f)
+                if runner_data:
+                    # Update args namespace with values from YAML if they exist
+                    for key, value in runner_data.items():
+                        if hasattr(args, key):
+                            # Use CLI value if it's not the default, otherwise use YAML
+                            # For simplicity, we'll let YAML override unless explicitly overridden via CLI
+                            # (Checking CLI overrides is complex with argparse,
+                            # so we'll just prioritize YAML for now if explicitly requested)
+                            setattr(args, key, value)
+        else:
+            print(f"Error: Runner configuration file not found at: {args.runner_config}")
+            print(f"Make sure the path is correct (e.g., 'e2e_runner_configs/custom_video_benchmark.yaml').")
+            return
 
     config = load_config()
 
@@ -148,18 +159,15 @@ def main():
     if args.stride is not None:
         config.benchmark.stride = args.stride
 
-    if args.mode == "dataset_eval":
-        # In dataset eval, we default GUI/TTS off unless explicitly turned on
+    # For boolean flags, if they were provided in the runner_config (YAML), 
+    # we should use those values directly. If they were provided via CLI, they will be True.
+    # The current logic is a bit tangled, let's simplify:
+    if args.show_windows is not None:
         config.pipeline.show_windows = args.show_windows
+    if args.enable_tts is not None:
         config.pipeline.enable_tts = args.enable_tts
-    else:
-        if args.enable_tts:
-            config.pipeline.enable_tts = True
-        if args.show_windows:
-            config.pipeline.show_windows = True
-
-    if args.save_annotated_video:
-        config.pipeline.save_annotated_video = True
+    if args.save_annotated_video is not None:
+        config.pipeline.save_annotated_video = args.save_annotated_video
     if args.device is not None:
         config.models.device = args.device
     if args.yolo_weights is not None:

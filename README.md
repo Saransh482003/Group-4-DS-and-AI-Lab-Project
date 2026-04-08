@@ -267,9 +267,9 @@ After installation, add the Poetry `bin` directory to your PATH (e.g., `%APPDATA
 
 This system requires external models that are not included in the main repository due to their size.
 
-#### A. Depth-Anything-V2 Repository
+#### A. Depth-Anything-V2 Repository (Optional)
 
-You must clone the Depth-Anything-V2 repository into the project root:
+You should clone the Depth-Anything-V2 repository into the project root:
 
 ```powershell
 git clone https://github.com/DepthAnything/Depth-Anything-V2.git
@@ -299,6 +299,31 @@ Once Poetry is installed and models are set up, install the Python library depen
 ```powershell
 poetry install
 ```
+
+---
+
+### Alternative: Standard `pip` & `venv` (No Poetry)
+
+If you prefer not to use Poetry, you can use standard Python tools. Since the project uses PEP 621, `pip` can install dependencies directly from `pyproject.toml`.
+
+**1. Create & Activate Virtual Environment:**
+```powershell
+python -m venv venv
+.\venv\Scripts\activate
+```
+
+**2. Install Dependencies:**
+```powershell
+pip install .
+```
+
+**3. Run the Application:**
+Simply omit `poetry run` from any command:
+```powershell
+python -m app.main --mode live
+```
+
+---
 
 #### D. Kaggle API for Datasets
 
@@ -351,26 +376,33 @@ The CLI supports various flags to customize the execution:
 When evaluating the system on large datasets or video files, you can control the sampling density using the `--max-frames` and `--stride` flags.
 
 #### 1. Frame Stride (`--stride`)
+
 The **stride** determines how many frames the system skips before processing the next one.
+
 - **Stride = 1**: Processes every single frame (highest fidelity, slowest).
 - **Stride = 5**: Processes every 5th frame (jumps 4 frames, faster).
 - **Impact**: Higher stride values significantly reduce processing time while still providing a representative look at the sequence. In **Video Databases**, this allows the system to "fast-forward" through the footage. In **Image Databases** (frame folders), it simply skips alphabetical files.
 
 #### 2. Max Frames (`--max-frames`)
+
 This flag limits the **total number of frames actually processed** by the pipeline.
+
 - **Example**: If you set `--max-frames 100`, the system will stop immediately after a successful processing of 100 frames, regardless of the dataset size.
 
 #### 3. How they combine
+
 The flags work together to define your test coverage:
+
 - **`--stride 5 --max-frames 100`**: The system will jump through the dataset in steps of 5 frames. It will stop once it has processed 100 frames. This means it effectively "looks" at 500 total frames of raw video/sequence but only runs inference on 100 of them.
 - **Relationship**: `Total Source Frames Inspected = Stride * Max Frames`.
 
 #### 4. Effects on different Database Types
-| Database Type | Stride Effect | Max Frames Effect |
-| :--- | :--- | :--- |
-| **Image Folder** | Skips `N-1` files in the directory. | Stops after `M` files are processed. |
-| **Video File** | Skips `N-1` frames in the video stream. | Stops after `M` frames are processed. |
-| **Live Webcam** | Ignored (system runs in real-time). | Closes the app after `M` frames are handled. |
+
+| Database Type    | Stride Effect                           | Max Frames Effect                            |
+| :--------------- | :-------------------------------------- | :------------------------------------------- |
+| **Image Folder** | Skips `N-1` files in the directory.     | Stops after `M` files are processed.         |
+| **Video File**   | Skips `N-1` frames in the video stream. | Stops after `M` frames are processed.        |
+| **Live Webcam**  | Ignored (system runs in real-time).     | Closes the app after `M` frames are handled. |
 
 ---
 
@@ -379,21 +411,25 @@ The flags work together to define your test coverage:
 To simplify the execution of complex experiments and benchmarks, the system supports YAML-based configuration files.
 
 ### 1. Unified Runner Profiles (`--runner-config`)
-Instead of typing long CLI commands, you can consolidate all your parameters (mode, dataset, limits, feature toggles) into a single profile in the `configs/` directory.
+
+Instead of typing long CLI commands, you can consolidate all your parameters (mode, dataset, limits, feature toggles) into a single profile in the `e2e_runner_configs/` directory.
 
 **Example execution:**
+
 ```powershell
 # Run a pre-defined live webcam test
-poetry run python -m app.main --runner-config configs/live_webcam.yaml
+poetry run python -m app.main --runner-config e2e_runner_configs/live_webcam.yaml
 
 # Run a custom video benchmark sweep
-poetry run python -m app.main --runner-config configs/custom_video_benchmark.yaml
+poetry run python -m app.main --runner-config e2e_runner_configs/custom_video_benchmark.yaml
 ```
 
 ### 2. Customizing Benchmark Suites (`--benchmark-config`)
+
 The **Benchmark Mode** runs a sweep of several pipeline configurations. You can customize exactly which combinations are tested by editing `app/config/benchmark_suite.yaml`.
 
 ### 3. Filtering Benchmark Targets (`--benchmark-target`)
+
 If you only care about specific configurations from your suite, you can use the `--benchmark-target` flag to skip the others and run only the named targets:
 
 ```powershell
@@ -403,31 +439,78 @@ poetry run python -m app.main --mode benchmark --dataset egoblind --benchmark-ta
 
 ---
 
-------------------------------------------------------------------------
+---
 
 # End-to-End Testing (ScanNet / Ego4D)
 
 For high-fidelity testing of the navigation pipeline, you can use continuous sequence datasets like **ScanNet** (indoor walking) or **Ego4D** (first-person videos).
 
 ### 1. Generating Mock Data for Testing
+
 If you don't have the full ScanNet dataset, you can generate a small mock sequence to test the pipeline:
+
 ```powershell
 poetry run python scripts/setup_datasets.py --type scannet_mock
 ```
 
 ### 2. Running ScanNet Evaluation
+
 ScanNet expects a folder containing scene subfolders (with `color/` and `depth/` subdirs):
+
 ```powershell
 poetry run python -m app.main --mode dataset_eval --dataset scannet --source-path data_cache/test_datasets/scannet
 ```
 
 ### 3. Running Ego4D or Custom Video
+
 Ego4D videos can be processed as a "live" stream (real-time simulation):
+
 ```powershell
-poetry run python -m app.main --mode live --source-path path/to/ego4d_clip.mp4
+poetry run python -m app.main --mode live --source-path data_cache/Custom_Videos/indore_test_divyang_vid.mp4
 ```
 
-------------------------------------------------------------------------
+---
+
+# Custom Depth Engine Integration
+
+The pipeline is modular and supports swapping the default depth estimator for a custom one.
+
+### 1. Where to Implement
+All depth estimation logic is encapsulated in:
+👉 `app/mechanics/depth_estimation.py`
+
+### 2. Implementation Interface
+To plug in a new engine, the custom class must implement the following interface:
+
+```python
+### 2. Implementation Interface (Multi-implementation example)
+If multiple team members (e.g., Rohit, Samyuktha) are testing different engines, you can define them as separate classes and choose the active one.
+
+**File to edit: `app/mechanics/depth_estimation.py`**
+
+```python
+# app/mechanics/depth_estimation.py
+
+class DepthEstimatorRohit:
+    def predict(self, frame): 
+        # Rohit's logic
+        return d, c
+
+class DepthEstimatorSamyuktha:
+    def predict(self, frame):
+        # Samyuktha's logic
+        return d, c
+
+# ACTIVE IMPLEMENTATION
+DepthEstimator = DepthEstimatorRohit  # Just swap this line to switch engines
+```
+```
+
+### 3. Graceful Skipping
+If the external `Depth-Anything-V2` dependencies are not found, the system will automatically alert the user and continue running ONLY the detection and navigation logic.
+
+---
+
 
 # Testing Requirements
 

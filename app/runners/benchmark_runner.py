@@ -91,8 +91,8 @@ class BenchmarkRunner:
 
             orchestrator = PipelineOrchestrator(executor, run_components)
 
-            # By default windows are off to isolate performance, but we honor video saving if requested
-            run_config.pipeline.show_windows = False
+            # Honor the show_windows request from the configuration, though it may impact FPS metrics
+            run_config.pipeline.show_windows = self.base_config.pipeline.show_windows
             # run_config.pipeline.save_annotated_video remains as requested in base_config
 
             tracker = MetricsTracker(base_dir=self.base_dir, run_name=f"bench_{cfg['name']}", config=run_config)

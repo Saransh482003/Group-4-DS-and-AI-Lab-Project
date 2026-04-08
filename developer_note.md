@@ -68,9 +68,51 @@ poetry run python -m app.main --mode dataset_eval --dataset egoblind
 
 ---
 
-## 🛠️ 4. Debugging & Logs
+## ⚙️ 5. Automation & Configurations (YAML)
+
+To simplify the execution of complex experiments and eliminate long CLI strings, the system supports unified configuration files in the `e2e_runner_configs/` folder.
+
+### A. Run Command Format
+Use the `--runner-config` flag to load a YAML profile. Every YAML file includes its specific run command as a comment at the bottom for easy copy-pasting.
+```powershell
+poetry run python -m app.main --runner-config e2e_runner_configs/your_config.yaml
+```
+
+### B. Standard Templates
+| Config File | Use Case |
+| :--- | :--- |
+| `live_webcam.yaml` | Real-time navigation with webcam and TTS. |
+| `egoblind_benchmark.yaml` | Performance sweep (8 modes) on the EgoBlind dataset. |
+| `custom_video_eval.yaml` | Single evaluation pass on custom recorded videos. |
+| `custom_video_benchmark.yaml`| Performance sweep (8 modes) on custom videos. |
+| `scannet_parallel_bench.yaml`| High-fidelity testing of the **Threaded Parallel Executor**. |
+
+### C. Configuration Parameters
+| Parameter | Description |
+| :--- | :--- |
+| `mode` | `live`, `dataset_eval`, or `benchmark`. |
+| `dataset` | `egoblind`, `scannet`, or `ego4d` (handles auto-pathing). |
+| `source_path` | Webcam ID (`0`), or path to a video file / frame folder. |
+| `execution_mode` | `sequential` or `threaded_parallel`. |
+| `max_frames` | Stops processing and exports results after $M$ frames. |
+| `stride` | Only processes every $N$-th frame (helps performance). |
+| `enable_tts` | Toggles text-to-speech audio feedback. |
+| `save_annotated_video`| Saves annotated output to `results/` folder. |
+
+### D. Benchmark Suite Customization
+The performance sweep logic is defined in `app/config/benchmark_suite.yaml`. You can customize the combinations or use `--benchmark-target` to filter them:
+```powershell
+# Only run the most critical modes from the suite
+poetry run python -m app.main --mode benchmark --benchmark-target detection_only parallel_full_with_tts
+```
+
+---
+
+## 🛠️ 6. Debugging & Results
 
 *   **Outputs:** Every run creates a timestamped folder in `outputs/`.
+*   **Results Folder:** Annotated videos are automatically copied to the central `results/` folder for convenience.
 *   **Metrics:** Check `outputs/run_name_timestamp/frame_metrics.csv` for per-frame FPS and navigation decisions.
 *   **Dashboard:** Use `--save-annotated-video` to generate a playback of the run with bboxes and depth maps overlaid.
 *   **Source Issues:** If the camera or video fails to open, verify the `--source-path` (e.g. `0` for default webcam, or absolute path for files).
+
