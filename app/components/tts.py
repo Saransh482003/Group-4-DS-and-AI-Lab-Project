@@ -3,6 +3,9 @@ from app.pipeline.frame_context import FrameContext
 from app.mechanics.text_to_speech import TextToSpeech, TTSRuntimeController
 
 class TTSComponent:
+    """
+    Component responsible for managing the Text-To-Speech (TTS) system and announcing navigation commands.
+    """
     def __init__(
         self,
         piper_exe: str,

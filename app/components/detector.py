@@ -6,6 +6,9 @@ from app.mechanics.object_detection import ObjectDetector
 
 
 class DetectorComponent:
+    """
+    Component responsible for managing the ObjectDetector and performing object detection on frames in the pipeline.
+    """
     def __init__(self, yolo_weights_path: str):
         self.detector = ObjectDetector(yolo_weights_path)
         self.detector.load_model()

@@ -4,29 +4,27 @@ import os
 from typing import Optional
 
 from app.config.pipeline_schema import AppConfig
-from app.sources.frame_folder_source import FrameFolderSource
+from app.sources.base import FrameSource
 from app.pipeline.frame_context import FrameContext
 from app.pipeline.orchestrator import PipelineOrchestrator
 from app.metrics.tracker import MetricsTracker
 
 class DatasetRunner:
-    """Runs the pipeline over a dataset (frame folders)."""
+    """
+    Execution loop for processing datasets (image folders or videos) for evaluation and benchmarking.
+    """
 
-    def __init__(self, config: AppConfig, orchestrator: PipelineOrchestrator, metrics_tracker: MetricsTracker):
+    def __init__(self, config: AppConfig, orchestrator: PipelineOrchestrator, metrics_tracker: MetricsTracker, source: FrameSource):
         self.config = config
         self.orchestrator = orchestrator
         self.tracker = metrics_tracker
+        self.source = source
 
     def run(self):
-        source_path = self.config.pipeline.source_path
-        if not source_path or not os.path.isdir(source_path):
-            raise ValueError(f"Invalid dataset source path: {source_path}")
+        if not self.source.open():
+            raise RuntimeError(f"Cannot open dataset source.")
 
-        source = FrameFolderSource(source_path)
-        if not source.open():
-            raise RuntimeError(f"Cannot open dataset source: {source_path}")
-
-        print(f"Running dataset evaluation on {source_path}...")
+        print(f"Running dataset evaluation...")
 
         video_writer = None
 
@@ -45,10 +43,10 @@ class DatasetRunner:
                 loop_start = time.perf_counter()
 
                 # Advance according to stride
-                ok, frame_bgr, source_id = source.read()
+                ok, frame_bgr, source_id = self.source.read()
                 while ok and (frame_idx % stride != 0):
                     frame_idx += 1
-                    ok, frame_bgr, source_id = source.read()
+                    ok, frame_bgr, source_id = self.source.read()
 
                 if not ok:
                     break
@@ -75,6 +73,7 @@ class DatasetRunner:
                 if self.config.pipeline.save_annotated_video and ctx.annotated_frame is not None:
                     if video_writer is None:
                         h, w = ctx.annotated_frame.shape[:2]
+                        # Use tracker's dir
                         out_path = os.path.join(self.tracker.run_dir, "annotated_video.mp4")
                         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
                         video_writer = cv2.VideoWriter(out_path, fourcc, 10.0, (w, h))
@@ -97,7 +96,7 @@ class DatasetRunner:
         finally:
             if video_writer is not None:
                 video_writer.release()
-            source.close()
+            self.source.close()
             cv2.destroyAllWindows()
             self.tracker.finalize()
             print(f"Dataset run complete. Outputs saved to: {self.tracker.run_dir}")

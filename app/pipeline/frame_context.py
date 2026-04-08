@@ -5,7 +5,9 @@ import numpy as np
 
 @dataclass
 class FrameContext:
-    """Holds all state and metrics for a single frame as it moves through the pipeline."""
+    """
+    Data container that holds the state, outputs, and metrics of a single frame as it passes through the pipeline.
+    """
 
     # Core identifying info
     frame_idx: int

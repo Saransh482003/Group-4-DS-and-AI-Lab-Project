@@ -4,12 +4,17 @@ from app.pipeline.frame_context import FrameContext
 from app.pipeline.fusion import fuse_detections_and_depth
 
 class PipelineExecutor(abc.ABC):
+    """
+    Abstract base class defining the interface for executing pipeline components.
+    """
     @abc.abstractmethod
     def execute(self, ctx: FrameContext, components: dict) -> None:
         pass
 
 class SequentialExecutor(PipelineExecutor):
-    """Executes detection and depth estimation sequentially, then fuses."""
+    """
+    Executes detector and depth estimator components sequentially within the pipeline.
+    """
 
     def execute(self, ctx: FrameContext, components: dict) -> None:
         detector = components.get("detector")
@@ -24,7 +29,9 @@ class SequentialExecutor(PipelineExecutor):
         fuse_detections_and_depth(ctx)
 
 class ThreadedParallelExecutor(PipelineExecutor):
-    """Executes detection and depth estimation in parallel threads, then fuses."""
+    """
+    Executes detector and depth estimator components in parallel threads to optimize pipeline performance.
+    """
 
     def execute(self, ctx: FrameContext, components: dict) -> None:
         detector = components.get("detector")

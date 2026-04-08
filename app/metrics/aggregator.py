@@ -2,6 +2,9 @@ import numpy as np
 from typing import List, Dict, Any
 
 class MetricsAggregator:
+    """
+    Aggregates and processes raw frame metrics to generate summaries, statistics, and identifies high-risk or slow frames.
+    """
     def __init__(self, frames_data: List[Dict[str, Any]]):
         self.frames = frames_data
 

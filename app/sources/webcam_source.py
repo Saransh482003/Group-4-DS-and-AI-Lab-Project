@@ -3,7 +3,9 @@ from typing import Tuple, Any, Optional
 from app.sources.base import FrameSource
 
 class WebcamFrameSource(FrameSource):
-    """Reads frames from a local webcam or camera device."""
+    """
+    Captures real-time video frames from a local webcam or connected camera device.
+    """
 
     def __init__(self, source_path: str):
         # We try to interpret source_path as an integer first

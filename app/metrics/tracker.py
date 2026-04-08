@@ -8,7 +8,9 @@ from app.config.pipeline_schema import AppConfig
 from app.pipeline.frame_context import FrameContext
 
 class MetricsTracker:
-    """Collects frame metrics during a run and exports them on completion."""
+    """
+    Collects, aggregates, and exports performance metrics and resource usage data during a pipeline run.
+    """
 
     def __init__(self, base_dir: str, run_name: str, config: AppConfig):
         self.base_dir = base_dir
@@ -58,8 +60,9 @@ class MetricsTracker:
             "metrics": ctx.metrics,
         }
 
-        # Sample resources periodically
-        if ctx.frame_idx % max(1, self.config.pipeline.sample_resources_every_n_frames) == 0:
+        # Sample resources periodically based on the number of processed frames
+        processed_count = len(self.frames)
+        if processed_count % max(1, self.config.pipeline.sample_resources_every_n_frames) == 0:
             resource = self.sample_resources()
             entry["resource"] = resource
             ctx.metrics["resource_sampled"] = True

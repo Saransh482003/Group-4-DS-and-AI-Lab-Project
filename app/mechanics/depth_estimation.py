@@ -20,6 +20,10 @@ elif REPO_PATH not in sys.path:
 from depth_anything_v2.dpt import DepthAnythingV2
 
 class DepthEstimator:
+    """
+    Handles the initialization and execution of Depth-Anything-V2 models 
+    to estimate physical distances from monocular video frames.
+    """
     def __init__(self, model_dir, device="cpu"):
         # model_dir is expected to be the full path to the .pth file
         self.model_dir = model_dir

@@ -4,6 +4,10 @@ import cv2
 
 
 class NavigationLogic:
+	"""
+	Implements the core decision-making logic for navigation, calculating zone risks 
+	and generating movement commands based on object proximity and location.
+	"""
 	def __init__(
 		self,
 		frame_width,

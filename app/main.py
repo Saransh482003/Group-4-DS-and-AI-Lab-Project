@@ -12,6 +12,9 @@ from app.pipeline.executor import SequentialExecutor
 from app.pipeline.orchestrator import PipelineOrchestrator
 from app.metrics.tracker import MetricsTracker
 from app.utils.paths import get_base_dir
+from app.sources.frame_folder_source import FrameFolderSource
+from app.sources.webcam_source import WebcamFrameSource
+from app.sources.scannet_source import ScanNetSource
 
 def setup_components(config):
     components = {}
@@ -22,20 +25,22 @@ def setup_components(config):
     if config.pipeline.enable_depth:
         components["depth"] = DepthComponent(config.models.depth_model_path, config.models.device)
 
-    if config.pipeline.enable_navigation:
-        # Assuming frame width from typical webcam 640
-        components["navigation"] = NavigationComponent(frame_width=640)
-
     if config.pipeline.enable_visualization:
         components["visualization"] = VisualizationComponent(plot_stream_mode=config.pipeline.plot_stream_mode)
 
+    tts_comp = None
     if config.pipeline.enable_tts:
         from app.utils.paths import env_rel_path
-        components["tts"] = TTSComponent(
+        tts_comp = TTSComponent(
             piper_exe=str(env_rel_path("PIPER_EXE_REL", os.path.join("piper", "piper.exe"))),
             voice_model_path=str(env_rel_path("PIPER_VOICE_MODEL_REL", os.path.join("piper_voices", "en_US-amy-medium.onnx"))),
             voice_config_path=str(env_rel_path("PIPER_VOICE_CONFIG_REL", os.path.join("piper_voices", "en_US-amy-medium.onnx.json")))
         )
+        components["tts"] = tts_comp
+
+    if config.pipeline.enable_navigation:
+        # Assuming frame width from typical webcam 640
+        components["navigation"] = NavigationComponent(frame_width=640, tts_component=tts_comp)
 
     return components
 
@@ -85,15 +90,43 @@ def main():
     if args.yolo_weights is not None:
         config.models.yolo_weights_path = args.yolo_weights
 
-    # Dataset resolution if kaggle util is available
-    if args.dataset == "egoblind":
-        from app.utils.kaggle_data import ensure_egoblind_dataset
-        resolved_path = ensure_egoblind_dataset(config.kaggle)
-        if resolved_path:
-            config.pipeline.source_path = resolved_path
+    base_dir = args.output_dir if args.output_dir else str(get_base_dir())
+
+    # Resolve Frame Source
+    source = None
+    if args.mode == "live":
+        source = WebcamFrameSource(config.pipeline.source_path)
+    elif args.mode == "dataset_eval" or args.mode == "benchmark":
+        if args.dataset == "egoblind":
+            from app.utils.kaggle_data import ensure_egoblind_dataset
+            resolved_path = ensure_egoblind_dataset(config.kaggle)
+            if resolved_path:
+                source = FrameFolderSource(resolved_path)
+        elif args.dataset == "scannet":
+            if config.pipeline.source_path and os.path.isdir(config.pipeline.source_path):
+                source = ScanNetSource(config.pipeline.source_path)
+            else:
+                print("Error: ScanNet requires --source-path to be a directory containing scene folders.")
+                return
+        elif args.dataset == "ego4d":
+            # Ego4D is typically video files or frame folders
+            if config.pipeline.source_path and os.path.isfile(config.pipeline.source_path):
+                source = WebcamFrameSource(config.pipeline.source_path) # Handles video files
+            elif config.pipeline.source_path and os.path.isdir(config.pipeline.source_path):
+                source = FrameFolderSource(config.pipeline.source_path)
+            else:
+                print("Error: Ego4D requires --source-path to be a video file or frame directory.")
+                return
         else:
-            print("Failed to resolve Kaggle dataset.")
-            return
+            # Default to frame folder if source_path is a dir, or video if it's a file/id
+            if config.pipeline.source_path and os.path.isdir(config.pipeline.source_path):
+                source = FrameFolderSource(config.pipeline.source_path)
+            else:
+                source = WebcamFrameSource(config.pipeline.source_path)
+
+    if source is None:
+        print("Error: Could not determine frame source. Check --mode and --source-path.")
+        return
 
     print(f"Starting pipeline in {args.mode} mode.")
     print(f"YOLO Weights Path: {config.models.yolo_weights_path}")
@@ -108,19 +141,17 @@ def main():
 
     orchestrator = PipelineOrchestrator(executor, components)
 
-    base_dir = args.output_dir if args.output_dir else str(get_base_dir())
-
     if args.mode == "live":
         tracker = MetricsTracker(base_dir=base_dir, run_name="live_run", config=config)
-        runner = LiveRunner(config, orchestrator, tracker)
+        runner = LiveRunner(config, orchestrator, tracker, source) 
         runner.run()
     elif args.mode == "dataset_eval":
         tracker = MetricsTracker(base_dir=base_dir, run_name="dataset_eval", config=config)
-        runner = DatasetRunner(config, orchestrator, tracker)
+        runner = DatasetRunner(config, orchestrator, tracker, source)
         runner.run()
     elif args.mode == "benchmark":
         from app.runners.benchmark_runner import BenchmarkRunner
-        runner = BenchmarkRunner(config, components, base_dir)
+        runner = BenchmarkRunner(config, components, base_dir, source)
         runner.run()
     else:
         print(f"Mode {args.mode} not fully implemented yet.")

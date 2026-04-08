@@ -3,6 +3,10 @@ from ultralytics import YOLO
 
 
 class ObjectDetector:
+	"""
+	Handles the initialization and execution of YOLO-based object detection models 
+	to identify obstacles and pathways in video frames.
+	"""
 	def __init__(self, weights_path):
 		self.weights_path = weights_path
 		self.model = None

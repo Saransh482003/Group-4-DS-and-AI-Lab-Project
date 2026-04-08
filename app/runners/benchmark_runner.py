@@ -14,10 +14,11 @@ from app.metrics.exporters import export_to_csv
 class BenchmarkRunner:
     """Runs multiple configurations on the same source and exports a comparison."""
 
-    def __init__(self, base_config: AppConfig, base_components: dict, base_dir: str):
+    def __init__(self, base_config: AppConfig, base_components: dict, base_dir: str, source: Any):
         self.base_config = base_config
         self.base_components = base_components
         self.base_dir = base_dir
+        self.source = source
 
     def run(self):
         # The 8 modes we want to benchmark
@@ -70,7 +71,7 @@ class BenchmarkRunner:
             run_config.pipeline.save_annotated_video = False
 
             tracker = MetricsTracker(base_dir=self.base_dir, run_name=f"bench_{cfg['name']}", config=run_config)
-            runner = DatasetRunner(run_config, orchestrator, tracker)
+            runner = DatasetRunner(run_config, orchestrator, tracker, self.source)
 
             # RUN
             runner.run()

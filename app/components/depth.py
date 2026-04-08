@@ -5,6 +5,9 @@ from app.mechanics.depth_estimation import DepthEstimator
 
 
 class DepthComponent:
+    """
+    Component responsible for managing the DepthEstimator and computing depth maps for frames in the pipeline.
+    """
     def __init__(self, depth_model_path: str, device: str = "cpu"):
         self.estimator = DepthEstimator(depth_model_path, device=device)
         self.estimator.load_model()

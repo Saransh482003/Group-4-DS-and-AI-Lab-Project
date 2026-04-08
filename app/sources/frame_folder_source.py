@@ -5,8 +5,8 @@ from app.sources.base import FrameSource
 
 class FrameFolderSource(FrameSource):
     """
-    Reads frames from a directory of images.
-    Supports either a flat folder of images, or a folder containing sequence subfolders.
+    Reads and sequences image frames from a directory, supporting both flat 
+    folder structures and nested sequence subfolders.
     """
 
     SUPPORTED_EXTS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
@@ -27,23 +27,20 @@ class FrameFolderSource(FrameSource):
 
         self.image_files = []
 
-        # Check if the root directory itself contains subfolders
-        entries = os.listdir(self.root_dir)
-        subdirs = [e for e in entries if os.path.isdir(os.path.join(self.root_dir, e))]
-
-        if subdirs:
-            # Multi-sequence mode
-            # Sort subdirectories to maintain predictable order
-            for subdir in sorted(subdirs):
-                seq_dir = os.path.join(self.root_dir, subdir)
-                images = [f for f in os.listdir(seq_dir) if self._is_image_file(f)]
+        # We'll use os.walk to find all image files
+        for root, dirs, files in os.walk(self.root_dir):
+            # Sort files to ensure frames are in order
+            images = [f for f in files if self._is_image_file(f)]
+            if images:
+                # Use the relative path from root_dir to the current folder as the sequence_id
+                rel_path = os.path.relpath(root, self.root_dir)
+                seq_id = "root" if rel_path == "." else rel_path
+                
                 for img in sorted(images):
-                    self.image_files.append((subdir, os.path.join(seq_dir, img)))
-        else:
-            # Flat folder mode
-            images = [f for f in entries if self._is_image_file(f)]
-            for img in sorted(images):
-                self.image_files.append(("seq_0", os.path.join(self.root_dir, img)))
+                    self.image_files.append((seq_id, os.path.join(root, img)))
+
+        # Sort all image files by sequence and then filename to maintain overall order
+        self.image_files.sort(key=lambda x: (x[0], x[1]))
 
         self.current_idx = 0
         return len(self.image_files) > 0

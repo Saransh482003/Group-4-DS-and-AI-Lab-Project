@@ -4,6 +4,9 @@ from app.pipeline.frame_context import FrameContext
 from app.mechanics.object_detection import draw_centered_label
 
 class VisualizationComponent:
+    """
+    Component responsible for drawing detections, depth maps, and navigation overlays on frames for display or recording.
+    """
     def __init__(
         self,
         plot_stream_mode: int = 0, # 0 = RGB, 1 = Depth

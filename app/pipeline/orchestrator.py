@@ -10,7 +10,9 @@ from app.components.visualization import VisualizationComponent
 from app.components.tts import TTSComponent
 
 class PipelineOrchestrator:
-    """Coordinates the execution of components per frame according to the chosen executor."""
+    """
+    Orchestrates the overall flow of frame processing by scheduling component execution and managing data transition.
+    """
 
     def __init__(
         self,

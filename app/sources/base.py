@@ -2,7 +2,9 @@ import abc
 from typing import Tuple, Any, Optional
 
 class FrameSource(abc.ABC):
-    """Base interface for all frame sources."""
+    """
+    Abstract base class for all frame input sources (e.g., webcam, video files, image folders).
+    """
 
     @abc.abstractmethod
     def open(self) -> bool:

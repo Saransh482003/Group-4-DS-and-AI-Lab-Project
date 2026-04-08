@@ -3,23 +3,25 @@ import cv2
 from typing import Optional
 
 from app.config.pipeline_schema import AppConfig
-from app.sources.webcam_source import WebcamFrameSource
+from app.sources.base import FrameSource
 from app.pipeline.frame_context import FrameContext
 from app.pipeline.orchestrator import PipelineOrchestrator
 from app.metrics.tracker import MetricsTracker
 
 class LiveRunner:
-    """Runs the continuous webcam live loop."""
+    """
+    Main execution loop for real-time processing of camera or video stream inputs.
+    """
 
-    def __init__(self, config: AppConfig, orchestrator: PipelineOrchestrator, metrics_tracker: MetricsTracker):
+    def __init__(self, config: AppConfig, orchestrator: PipelineOrchestrator, metrics_tracker: MetricsTracker, source: FrameSource):
         self.config = config
         self.orchestrator = orchestrator
         self.tracker = metrics_tracker
+        self.source = source
 
     def run(self):
-        source = WebcamFrameSource(self.config.pipeline.source_path)
-        if not source.open():
-            raise RuntimeError(f"Cannot open webcam source: {self.config.pipeline.source_path}")
+        if not self.source.open():
+            raise RuntimeError(f"Cannot open live source.")
 
         print("Press 'q' to stop.")
 
@@ -31,7 +33,7 @@ class LiveRunner:
                 loop_start = time.perf_counter()
 
                 capture_start = time.perf_counter()
-                ok, frame_bgr, source_id = source.read()
+                ok, frame_bgr, source_id = self.source.read()
                 capture_ms = (time.perf_counter() - capture_start) * 1000.0
 
                 if not ok:
@@ -79,7 +81,7 @@ class LiveRunner:
         except KeyboardInterrupt:
             print("Stopped by user (Ctrl+C).")
         finally:
-            source.close()
+            self.source.close()
             cv2.destroyAllWindows()
             self.tracker.finalize()
             print(f"Saved run outputs to: {self.tracker.run_dir}")
