@@ -4,8 +4,10 @@ import torch
 import sys
 import os
 
+from app.utils.paths import get_depth_repo_path
+
 # 1. Point Python to the cloned GitHub repository
-REPO_PATH = r"E:\dsai_group4_project\Depth-Anything-V2"
+REPO_PATH = get_depth_repo_path()
 
 # The metric depth logic has its own specialized files inside the 'metric_depth' folder.
 # We insert it at the front of sys.path (index 0) so Python prioritizes it over the base model.
@@ -15,9 +17,16 @@ if os.path.exists(METRIC_PATH) and METRIC_PATH not in sys.path:
 elif REPO_PATH not in sys.path:
     sys.path.append(REPO_PATH)
 
-from depth_anything_v2.dpt import DepthAnythingV2
+try:
+    from depth_anything_v2.dpt import DepthAnythingV2
+except ImportError:
+    DepthAnythingV2 = None
 
 class DepthEstimator:
+    """
+    Handles the initialization and execution of Depth-Anything-V2 models 
+    to estimate physical distances from monocular video frames.
+    """
     def __init__(self, model_dir, device="cpu"):
         # model_dir is expected to be the full path to the .pth file
         self.model_dir = model_dir
@@ -40,6 +49,10 @@ class DepthEstimator:
         self.max_depth = 80 if self.dataset == 'vkitti' else 20
 
     def load_model(self):
+        if DepthAnythingV2 is None:
+            raise ImportError(
+                "Depth-Anything-V2 code not found. Please clone the repository as described in README if using this model."
+            )
         print(f"Loading Depth-Anything-V2 ({self.encoder}, {self.dataset}) from {self.model_dir}...")
         
         config = self.model_configs[self.encoder]
@@ -105,3 +118,12 @@ def estimate_distance_from_depth(depth_map, bbox):
 
     # The depth_value is now actual distance in meters, not a relative signal!
     return depth_value, depth_value
+
+
+# --- TEAM IMPLEMENTATION SWITCH ---
+# The depth team can define their own engines below (e.g., class DepthEstimatorRohit).
+# To swap implementations, simply point the 'DepthEstimator' alias to your class.
+
+# Example:
+# class DepthEstimatorRohit(DepthEstimator): pass
+# DepthEstimator = DepthEstimatorRohit

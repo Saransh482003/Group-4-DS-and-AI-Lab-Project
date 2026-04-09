@@ -1,0 +1,13 @@
+# Live Navigation Mode (Webcam)
+# Optimised for real-time responsiveness.
+
+mode: "live"
+source_path: "0"  # Default webcam ID
+execution_mode: "sequential"
+
+enable_tts: true
+show_windows: true
+save_annotated_video: true
+
+# Run Command:
+# python -m app.main --runner-config e2e_runner_configs/live_webcam.yaml

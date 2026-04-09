@@ -1,0 +1,15 @@
+# Custom Video Evaluation
+# Runs a single evaluation pass on a specific video file.
+
+mode: "dataset_eval"
+source_path: "data_cache/Custom_Videos/indore_test_divyang_vid.mp4" # REPLACE with your actual filename
+max_frames: 1000
+stride: 2
+
+execution_mode: "sequential"
+enable_tts: true
+show_windows: true
+save_annotated_video: true
+
+# Run Command:
+# python -m app.main --runner-config e2e_runner_configs/custom_video_eval.yaml

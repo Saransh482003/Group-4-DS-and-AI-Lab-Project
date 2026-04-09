@@ -1,0 +1,22 @@
+# Benchmark for Custom Video Source
+# Runs 8 different configurations (Seq/Par, TTS on/off) on a single video file.
+
+mode: "benchmark"
+source_path: "data_cache/Custom_Videos/indore_test_divyang_vid.mp4" # REPLACE with your actual filename
+max_frames: 300
+stride: 1
+
+# This will trigger the BenchmarkRunner which automatically tests:
+# 1. Detection Only
+# 2. Depth Only
+# 3. Sequential (Det+Dep)
+# 4. Parallel (Det+Dep)
+# 5. Sequential Full (with and without TTS)
+# 6. Parallel Full (with and without TTS)
+
+benchmark_config: "app/config/benchmark_suite.yaml"
+show_windows: false
+save_annotated_video: true
+
+# Run Command:
+# python -m app.main --runner-config e2e_runner_configs/custom_video_benchmark.yaml

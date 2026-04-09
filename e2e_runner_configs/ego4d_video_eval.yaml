@@ -1,0 +1,11 @@
+# Ego4D Video File Evaluation
+# Simulates live input using a pre-recorded Ego4D clip.
+
+mode: "live"
+source_path: "data/videos/ego4d_sample.mp4" # UPDATE THIS PATH to your video file
+execution_mode: "sequential"
+
+enable_tts: true
+show_windows: true
+save_annotated_video: true
+max_frames: 1000

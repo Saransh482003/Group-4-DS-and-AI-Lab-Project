@@ -6,6 +6,10 @@ from .nav_tts_piper import PiperTTS
 
 
 class TextToSpeech:
+	"""
+	Wrapper for the Piper TTS engine, handling audio synthesis and playback
+	of navigation instructions.
+	"""
 	def __init__(self, piper_executable, voice_model_path, voice_config_path=None):
 		self.piper_executable = piper_executable
 		self.voice_model_path = voice_model_path
@@ -81,6 +85,10 @@ class _AsyncTTSWorker:
 
 
 class TTSRuntimeController:
+	"""
+	Manages the timing and frequency of TTS announcements to ensure clear 
+	communication without overwhelming the user.
+	"""
 	def __init__(
 		self,
 		tts_engine,
