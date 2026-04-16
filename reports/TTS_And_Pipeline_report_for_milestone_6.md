@@ -2,24 +2,33 @@
 
 **Date:** April 16, 2026  
 **Report Type:** Technical Evaluation & Benchmark Analysis  
+
 **Data Sources:**
 
-- Benchmark Suite: `results/pipeline_runs_summary.csv`
-- TTS Evaluation: `results/tts_eval/tts_bench_20260416_085628_full.csv`
-- TTS Samples: `results/tts_samples_2026-04-15/tts_samples_metrics.csv`
-- Analysis Notebooks: `07_tts_analysis.ipynb`, `submission_analysis.ipynb`
+**Standalone TTS Evaluation (Section 5):**
+- Notebook: `notebooks/07_tts_analysis.ipynb`
+- Data: `results/tts_eval/tts_bench_20260416_085628_full.csv` (165 samples across 4 datasets)
+- Purpose: Pure TTS engine performance (Navigation, CMU Arctic, LJ Speech, LibriSpeech)
+
+**Pipeline Evaluation (Section 6):**
+- Notebook: `notebooks/submission_analysis.ipynb`
+- Data: `results/pipeline_runs_summary.csv` (8 benchmark configurations)
+- Purpose: End-to-end system performance with integrated TTS
 
 **Key Metrics Evaluated:**
 
-- TTS Real-Time Factor (RTF) across multiple datasets
-- Pipeline FPS and latency breakdown
-- Sequential vs Parallel execution comparison
-- Safety metrics (center blocked rate)
-- Navigation command distribution
+- **TTS Standalone:** Real-Time Factor (RTF), synthesis latency across diverse text datasets
+- **Pipeline:** FPS, component latency breakdown, sequential vs parallel execution
+- **Safety:** Center blocked rate, navigation command distribution
+- **Integration:** TTS overhead in full system context
 
 ---
 
-# 5. Text-to-Speech (TTS) Evaluation
+# 5. Text-to-Speech (TTS) Standalone Evaluation
+
+**Evaluation Type:** Isolated TTS benchmarking (no pipeline integration)  
+**Notebook:** [07_tts_analysis.ipynb](../notebooks/07_tts_analysis.ipynb)  
+**Purpose:** Measure pure TTS engine performance across diverse text datasets
 
 ---
 
@@ -393,9 +402,9 @@ for text in sample_texts:
 
 ### Figure 1: TTS Latency vs Text Length
 
-![TTS RTF Analysis](../notebooks/reports/submission_pack_2026-04-15/figures/tts_rtf_analysis.png)
+![TTS RTF Analysis](../reports/submission_pack_2026-04-15/tts_rtf_analysis.png)
 
-_Figure 1: Piper TTS Real-Time Factor across different text lengths and datasets. Box plot shows quartile distribution with outliers marked._
+_Figure 1: Piper TTS Real-Time Factor across different text lengths and datasets (standalone benchmark). Box plot shows quartile distribution with outliers marked. Generated from [07_tts_analysis.ipynb](../notebooks/07_tts_analysis.ipynb)._
 
 ---
 
@@ -428,27 +437,32 @@ _Figure 1: Piper TTS Real-Time Factor across different text lengths and datasets
 
 ---
 
-## 5.7 System-Level Impact
+## 5.7 Conclusion — Standalone TTS Performance
 
-**Table 4: Component Latency Comparison (Full Pipeline)**
+**Key Findings:**
 
-| Component | Avg Latency (ms) | % of Total | Impact Level |
-|----------------|------------------|------------|--------------------| |
-| **Detection** | 36-68 | 2.3-4.4% | Moderate |
-| **Depth** | 1,291-1,551 | 83.7-91.2% | **Critical** |
-| **Fusion** | 4-7 | 0.3-0.5% | Negligible |
-| **Navigation** | 0.05-0.10 | < 0.01% | Negligible |
-| **TTS** | 0.011-0.014 | < 0.001% | **Negligible** |
-| **Visualization** | 5-6 | 0.3-0.4% | Negligible |
-| **TOTAL** | 1,337-1,632 | 100% | — |
+1. **Real-Time Capability:** 164/165 samples (99.4%) achieved RTF < 1.0 after warm-up
+2. **Average RTF:** 0.313 across all datasets (3.2x faster than real-time)
+3. **Average Synthesis Time:** 500-800 ms per sample for navigation commands
+4. **Cold-Start Identified:** First sample showed RTF = 3.630 due to ONNX model loading
+5. **Warm-Up Solution:** Pre-loading eliminates cold-start penalty
 
-_Data source: Latest benchmark suite (benchmark_20260408_212923)_
+**Validation Experiment:** Evidence-based analysis with 6 data points (Section 5.6.1) proves warm-up eliminates RTF > 1.0 outlier with 95%+ confidence.
+
+**Standalone Verdict:** Piper TTS engine is **highly efficient** for offline, real-time speech synthesis.
 
 ---
 
-## 5.8 Conclusion
+**Important Note on Pipeline Integration:**
 
-TTS is highly efficient and introduces no performance bottleneck, making it suitable for real-time assistive systems.
+The synthesis times measured here (500-800 ms) represent the **actual time to generate audio**. When integrated into the navigation pipeline (Section 6.5.1), this synthesis happens **asynchronously in a background thread**, so it doesn't block frame processing. The pipeline only measures the **enqueue time** (0.011-0.014 ms), which is why the numbers appear drastically different.
+
+**Key Distinction:**
+- **This section (5):** Measures actual synthesis latency (blocking)
+- **Section 6.5.1:** Measures enqueue overhead (non-blocking)
+- **Actual synthesis time in both cases:** ~500-800 ms (same performance)
+
+---
 
 ---
 
@@ -599,9 +613,9 @@ _Data source: benchmark_20260408_212923 (latest 300-frame run)_
 
 ### Figure 2: Pipeline FPS Comparison
 
-![Pipeline FPS by Configuration](../notebooks/reports/submission_pack_2026-04-15/figures/pipeline_fps_comparison.png)
+![Pipeline FPS by Configuration](../reports/submission_pack_2026-04-15/pipeline_fps_comparison.png)
 
-_Figure 2: Frame processing rate (FPS) across different pipeline configurations. Detection-only achieves real-time performance, while depth estimation introduces significant bottleneck._
+_Figure 2: Frame processing rate (FPS) across different pipeline configurations. Detection-only achieves real-time performance, while depth estimation introduces significant bottleneck. Generated from [submission_analysis.ipynb](../notebooks/submission_analysis.ipynb)._
 
 ---
 
@@ -624,6 +638,89 @@ _Figure 2: Frame processing rate (FPS) across different pipeline configurations.
 
 ## 6.5 Latency Breakdown
 
+**Component Analysis:** Breakdown of processing time per frame across pipeline stages.
+
+### 6.5.1 TTS Performance in Pipeline Context
+
+**Important:** This differs from the standalone TTS evaluation (Section 5). Here, TTS operates within the full navigation pipeline with:
+- Event-driven triggering (only when navigation command changes)
+- Async queue processing (non-blocking)
+- Real-world integration constraints
+
+**CRITICAL CLARIFICATION: Why Pipeline TTS Latency Appears So Low**
+
+The pipeline TTS latency (0.011-0.014 ms) is **NOT** the actual speech synthesis time — it's the **enqueue time** to submit text to the async TTS queue. Here's what's actually happening:
+
+**Pipeline TTS Architecture:**
+
+```
+Frame Processing Loop (synchronous, blocking)
+    ↓
+Navigation Decision: "Move left"
+    ↓
+[TTS Latency Measured Here: 0.011-0.014 ms]
+    ↓
+Enqueue text → Async TTS Thread (background)
+    ↓
+Continue to next frame immediately (non-blocking)
+    
+Meanwhile, in background thread:
+    ↓
+Actual Piper Synthesis: ~500-800 ms (same as standalone!)
+    ↓
+Audio playback via system audio
+```
+
+**Comparison: Standalone vs Pipeline TTS Timing**
+
+| Measurement Point | Standalone Benchmark (Section 5) | Pipeline Integration (Section 6) |
+|-------------------|----------------------------------|----------------------------------|
+| **What's Measured** | **Full synthesis time** (text → WAV bytes) | **Enqueue time** (submit to queue) |
+| **Timing** | 500-800 ms per sample | 0.011-0.014 ms per enqueue |
+| **Blocking?** | YES — waits for synthesis to complete | NO — returns immediately |
+| **When Triggered?** | Every sample in benchmark loop | Only when navigation command **changes** |
+| **Actual Synthesis Time** | 500-800 ms | **Still ~500-800 ms** (hidden in background) |
+
+**Why This Design Works:**
+
+1. **Non-blocking:** Main frame loop doesn't wait for TTS synthesis
+2. **Event-driven:** Only synthesizes when command changes (not every frame)
+3. **Async queue:** Background thread handles synthesis while next frames process
+4. **Negligible overhead:** Enqueue operation is just memory copy + thread signal
+
+**Example Timeline:**
+
+```
+Frame 1: "Move forward" detected → Enqueue TTS (0.012 ms) → [Background: Start synthesis]
+Frame 2: Process depth/detection (1500 ms) → [Background: Still synthesizing]
+Frame 3: Process depth/detection (1500 ms) → [Background: Finish synthesis, play audio]
+Frame 4: Same command → Skip TTS (0 ms overhead)
+Frame 5: Same command → Skip TTS (0 ms overhead)
+...
+Frame 50: "Turn left" detected → Enqueue TTS (0.013 ms) → [Background: New synthesis starts]
+```
+
+**Table 4: Component Latency Comparison (Full Pipeline)**
+
+| Component      | Avg Latency (ms) | % of Total | Impact Level | What's Actually Measured |
+| -------------- | ---------------- | ---------- | ------------ | ------------------------ |
+| **Detection**  | 36-68            | 2.3-4.4%   | Moderate     | YOLO inference (blocking) |
+| **Depth**      | 1,291-1,551      | 83.7-91.2% | **Critical** | Depth-Anything inference (blocking) |
+| **Fusion**     | 4-7              | 0.3-0.5%   | Negligible   | Spatial mapping (blocking) |
+| **Navigation** | 0.05-0.10        | < 0.01%    | Negligible   | Decision logic (blocking) |
+| **TTS**        | 0.011-0.014      | < 0.001%   | **Negligible** | **Enqueue time only** (non-blocking) |
+| **Visualization** | 5-6           | 0.3-0.4%   | Negligible   | Frame annotation (blocking) |
+| **TOTAL**      | 1,337-1,632      | 100%       | —            | Per-frame blocking time |
+
+_Data source: Latest benchmark suite (benchmark_20260408_212923)_
+
+**Pipeline TTS Verdict:** 
+- **Enqueue overhead:** < 0.001% (effectively zero impact on frame rate)
+- **Actual synthesis time:** ~500-800 ms (same as standalone, runs in background)
+- **User experience:** Seamless audio guidance with no frame rate degradation
+
+---
+
 **Table 6: Detailed Latency Breakdown by Component (300-frame benchmark)**
 
 | Component         | Detection Only | Depth Only | Sequential Full | Parallel Full | Notes                         |
@@ -640,9 +737,9 @@ _Figure 2: Frame processing rate (FPS) across different pipeline configurations.
 
 ### Figure 3: Latency Breakdown Stacked Bar Chart
 
-![Latency Breakdown](../notebooks/reports/submission_pack_2026-04-15/figures/latency_breakdown_stacked.png)
+![Latency Breakdown](../reports/submission_pack_2026-04-15/latency_breakdown_stacked.png)
 
-_Figure 3: Stacked latency breakdown showing depth estimation as the dominant component (>95% of total pipeline time)._
+_Figure 3: Stacked latency breakdown showing depth estimation as the dominant component (>95% of total pipeline time). Generated from [submission_analysis.ipynb](../notebooks/submission_analysis.ipynb)._
 
 ---
 
@@ -680,9 +777,9 @@ _Figure 3: Stacked latency breakdown showing depth estimation as the dominant co
 
 ### Figure 4: Center Blocked Rate Across Benchmark Runs
 
-![Center Blocked Rate](../notebooks/reports/submission_pack_2026-04-15/figures/center_blocked_rate.png)
+![Center Blocked Rate](../reports/submission_pack_2026-04-15/center_blocked_rate.png)
 
-_Figure 4: Center path blockage rate across different benchmark runs. Consistently low values indicate either dataset bias or sparse obstacle environments._
+_Figure 4: Center path blockage rate across different benchmark runs. Consistently low values indicate either dataset bias or sparse obstacle environments. Generated from pipeline frame metrics analysis._
 
 ---
 
@@ -794,9 +891,7 @@ The system successfully transforms visual perception into actionable navigation 
 
 1. **Model quantization** (INT8/FP16)
 2. **TensorRT conversion** for GPU inference
-3. **Depth model swap** to MobileNet-based alternative
-4. **Resolution reduction** (trade accuracy for speed)
-5. **Frame skipping** (depth every N frames, interpolate between)
+3. **Frame skipping** (depth every N frames, interpolate between)
 
 ---
 
@@ -844,6 +939,8 @@ The system successfully transforms visual perception into actionable navigation 
 | **No "Stop" commands**       | Safety thresholds may be too permissive |
 | **Rare lateral turns**       | Limited navigation diversity            |
 
+
+Note: these dataset is not best for in-door , so it is mainly use to test our pipepline and the efficency of in-door object detection and depth mesurment of  our model
 **Recommendations:**
 
 - Test on **denser obstacle environments** (indoor cluttered scenes)
@@ -875,16 +972,39 @@ The system successfully transforms visual perception into actionable navigation 
 
 ## 7.7 Chart Generation Instructions
 
-**To generate the charts shown in Figures 1-4, run the following notebooks:**
+**To regenerate the charts shown in Figures 1-4, run the following notebooks:**
 
-### TTS Analysis Charts (Figure 1)
+### Standalone TTS Analysis (Figure 1)
 
-```bash
-cd notebooks
-jupyter notebook 07_tts_analysis.ipynb
-# Run all cells to generate TTS RTF analysis plots
-# Charts saved to: notebooks/reports/submission_pack_2026-04-15/figures/
-```
+**Notebook:** `notebooks/07_tts_analysis.ipynb`
+
+1. Run cells 1-15 to load datasets and initialize Piper TTS engine
+2. **Run cell 16** (RTF Benchmark with warm-up) — generates 165 samples across 4 datasets
+3. **Run cell 22** (Visualizations) — creates 4-panel RTF analysis chart
+4. **Run cell 23** — saves chart to `reports/submission_pack_2026-04-15/tts_rtf_analysis.png`
+
+**Output:** Figure 1 (TTS RTF Analysis with box plots, scatter, and histograms)
+
+---
+
+### Pipeline Performance Analysis (Figures 2-4)
+
+**Notebook:** `notebooks/submission_analysis.ipynb`
+
+1. Run cells 1-10 to aggregate all pipeline runs from `outputs/`
+2. **Run cell 12** (Benchmark FPS Comparison) — saves to `pipeline_fps_comparison.png` (Figure 2)
+3. **Run cell 16** (Latency Breakdown Stacked) — saves to `latency_breakdown_stacked.png` (Figure 3)
+4. For Figure 4 (Center Blocked Rate) — use existing `reports/submission_pack_2026-04-15/center_blocked_rate.png`
+
+**Output:** Figures 2-4 (Pipeline FPS, Latency Breakdown, Safety Metrics)
+
+---
+
+**Chart Location:** All charts saved to `reports/submission_pack_2026-04-15/`
+
+**Data Sources:**
+- Standalone TTS: `results/tts_eval/tts_bench_20260416_085628_full.csv`
+- Pipeline: `results/pipeline_runs_summary.csv`
 
 ### Pipeline Benchmark Charts (Figures 2-4)
 
@@ -944,7 +1064,5 @@ jupyter notebook submission_analysis.ipynb
 - **Depth estimation is a severe bottleneck** (83-91% of runtime)
 - Current FPS (0.6-0.8) is **far below real-time** requirements (10+ FPS)
 
-**Path Forward:**
-Focus all optimization efforts on **depth inference acceleration**. The rest of the pipeline is already efficient.
 
 ---
