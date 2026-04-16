@@ -406,7 +406,6 @@ for text in sample_texts:
 
 ![TTS RTF Analysis](./submission_pack_2026-04-15/tts_rtf_analysis.png)
 
-
 _Figure 1: Piper TTS Real-Time Factor across different text lengths and datasets (standalone benchmark). Box plot shows quartile distribution with outliers marked. Generated from [07_tts_analysis.ipynb](../notebooks/07_tts_analysis.ipynb)._
 
 ---
@@ -883,7 +882,6 @@ The system successfully transforms visual perception into actionable navigation 
   - Vision Transformer (ViT-S) architecture is compute-intensive
   - Metric depth head requires additional processing
   - No GPU optimization (TensorRT/ONNX not applied)
-  
 
 **Recommended Optimizations:**
 
@@ -964,37 +962,6 @@ Note: these dataset is not best for in-door , so it is mainly use to test our pi
 - **Navigation:** < 10 ms [PASS] (currently < 0.1 ms)
 - **TTS:** < 50 ms [PASS] (currently < 0.02 ms)
 - **Total:** < 300 ms for responsive navigation [FAIL] (currently 1500+ ms)
-
----
-
-## 7.7 Chart Generation Instructions
-
-**To regenerate the charts shown in Figures 1-3, run the following notebooks:**
-
-### Standalone TTS Analysis (Figure 1)
-
-**Notebook:** `notebooks/07_tts_analysis.ipynb`
-
-1. Run cells 1-15 to load datasets and initialize Piper TTS engine
-2. **Run cell 16** (RTF Benchmark with warm-up) — generates 165 samples across 4 datasets
-3. **Run cell 22** (Visualizations) — creates 4-panel RTF analysis chart
-4. **Run cell 23** — saves chart to `reports/submission_pack_2026-04-15/tts_rtf_analysis.png`
-
-**Output:** Figure 1 (TTS RTF Analysis with box plots, scatter, and histograms)
-
----
-
-### Pipeline Performance Analysis (Figures 2-3)
-
-**Notebook:** `notebooks/submission_analysis.ipynb`
-
-1. Run cells 1-10 to aggregate all pipeline runs from `outputs/`
-2. **Run cell 12** (Benchmark FPS Comparison) — saves to `pipeline_fps_comparison.png` (Figure 2)
-3. **Run cell 16** (Latency Breakdown Stacked) — saves to `latency_breakdown_stacked.png` (Figure 3)
-
-**Output:** Figures 2-3 (Pipeline FPS, Latency Breakdown)
-
----
 
 ---
 
