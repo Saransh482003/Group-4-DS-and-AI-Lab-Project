@@ -1,16 +1,18 @@
 # TTS and Pipeline Performance Report — Milestone 6
 
 **Date:** April 16, 2026  
-**Report Type:** Technical Evaluation & Benchmark Analysis  
+**Report Type:** Technical Evaluation & Benchmark Analysis
 
 **Data Sources:**
 
 **Standalone TTS Evaluation (Section 5):**
+
 - Notebook: `notebooks/07_tts_analysis.ipynb`
 - Data: `results/tts_eval/tts_bench_20260416_085628_full.csv` (165 samples across 4 datasets)
 - Purpose: Pure TTS engine performance (Navigation, CMU Arctic, LJ Speech, LibriSpeech)
 
 **Pipeline Evaluation (Section 6):**
+
 - Notebook: `notebooks/submission_analysis.ipynb`
 - Data: `results/pipeline_runs_summary.csv` (8 benchmark configurations)
 - Purpose: End-to-end system performance with integrated TTS
@@ -402,7 +404,8 @@ for text in sample_texts:
 
 ### Figure 1: TTS Latency vs Text Length
 
-![TTS RTF Analysis](../reports/submission_pack_2026-04-15/tts_rtf_analysis.png)
+![TTS RTF Analysis](./submission_pack_2026-04-15/tts_rtf_analysis.png)
+
 
 _Figure 1: Piper TTS Real-Time Factor across different text lengths and datasets (standalone benchmark). Box plot shows quartile distribution with outliers marked. Generated from [07_tts_analysis.ipynb](../notebooks/07_tts_analysis.ipynb)._
 
@@ -458,6 +461,7 @@ _Figure 1: Piper TTS Real-Time Factor across different text lengths and datasets
 The synthesis times measured here (500-800 ms) represent the **actual time to generate audio**. When integrated into the navigation pipeline (Section 6.5.1), this synthesis happens **asynchronously in a background thread**, so it doesn't block frame processing. The pipeline only measures the **enqueue time** (0.011-0.014 ms), which is why the numbers appear drastically different.
 
 **Key Distinction:**
+
 - **This section (5):** Measures actual synthesis latency (blocking)
 - **Section 6.5.1:** Measures enqueue overhead (non-blocking)
 - **Actual synthesis time in both cases:** ~500-800 ms (same performance)
@@ -613,7 +617,7 @@ _Data source: benchmark_20260408_212923 (latest 300-frame run)_
 
 ### Figure 2: Pipeline FPS Comparison
 
-![Pipeline FPS by Configuration](../reports/submission_pack_2026-04-15/pipeline_fps_comparison.png)
+![Pipeline FPS by Configuration](../reports/submission_pack_2026-04-15/pipeline_fps.png)
 
 _Figure 2: Frame processing rate (FPS) across different pipeline configurations. Detection-only achieves real-time performance, while depth estimation introduces significant bottleneck. Generated from [submission_analysis.ipynb](../notebooks/submission_analysis.ipynb)._
 
@@ -643,6 +647,7 @@ _Figure 2: Frame processing rate (FPS) across different pipeline configurations.
 ### 6.5.1 TTS Performance in Pipeline Context
 
 **Important:** This differs from the standalone TTS evaluation (Section 5). Here, TTS operates within the full navigation pipeline with:
+
 - Event-driven triggering (only when navigation command changes)
 - Async queue processing (non-blocking)
 - Real-world integration constraints
@@ -663,7 +668,7 @@ Navigation Decision: "Move left"
 Enqueue text → Async TTS Thread (background)
     ↓
 Continue to next frame immediately (non-blocking)
-    
+
 Meanwhile, in background thread:
     ↓
 Actual Piper Synthesis: ~500-800 ms (same as standalone!)
@@ -673,13 +678,13 @@ Audio playback via system audio
 
 **Comparison: Standalone vs Pipeline TTS Timing**
 
-| Measurement Point | Standalone Benchmark (Section 5) | Pipeline Integration (Section 6) |
-|-------------------|----------------------------------|----------------------------------|
-| **What's Measured** | **Full synthesis time** (text → WAV bytes) | **Enqueue time** (submit to queue) |
-| **Timing** | 500-800 ms per sample | 0.011-0.014 ms per enqueue |
-| **Blocking?** | YES — waits for synthesis to complete | NO — returns immediately |
-| **When Triggered?** | Every sample in benchmark loop | Only when navigation command **changes** |
-| **Actual Synthesis Time** | 500-800 ms | **Still ~500-800 ms** (hidden in background) |
+| Measurement Point         | Standalone Benchmark (Section 5)           | Pipeline Integration (Section 6)             |
+| ------------------------- | ------------------------------------------ | -------------------------------------------- |
+| **What's Measured**       | **Full synthesis time** (text → WAV bytes) | **Enqueue time** (submit to queue)           |
+| **Timing**                | 500-800 ms per sample                      | 0.011-0.014 ms per enqueue                   |
+| **Blocking?**             | YES — waits for synthesis to complete      | NO — returns immediately                     |
+| **When Triggered?**       | Every sample in benchmark loop             | Only when navigation command **changes**     |
+| **Actual Synthesis Time** | 500-800 ms                                 | **Still ~500-800 ms** (hidden in background) |
 
 **Why This Design Works:**
 
@@ -702,19 +707,20 @@ Frame 50: "Turn left" detected → Enqueue TTS (0.013 ms) → [Background: New s
 
 **Table 4: Component Latency Comparison (Full Pipeline)**
 
-| Component      | Avg Latency (ms) | % of Total | Impact Level | What's Actually Measured |
-| -------------- | ---------------- | ---------- | ------------ | ------------------------ |
-| **Detection**  | 36-68            | 2.3-4.4%   | Moderate     | YOLO inference (blocking) |
-| **Depth**      | 1,291-1,551      | 83.7-91.2% | **Critical** | Depth-Anything inference (blocking) |
-| **Fusion**     | 4-7              | 0.3-0.5%   | Negligible   | Spatial mapping (blocking) |
-| **Navigation** | 0.05-0.10        | < 0.01%    | Negligible   | Decision logic (blocking) |
-| **TTS**        | 0.011-0.014      | < 0.001%   | **Negligible** | **Enqueue time only** (non-blocking) |
-| **Visualization** | 5-6           | 0.3-0.4%   | Negligible   | Frame annotation (blocking) |
-| **TOTAL**      | 1,337-1,632      | 100%       | —            | Per-frame blocking time |
+| Component         | Avg Latency (ms) | % of Total | Impact Level   | What's Actually Measured             |
+| ----------------- | ---------------- | ---------- | -------------- | ------------------------------------ |
+| **Detection**     | 36-68            | 2.3-4.4%   | Moderate       | YOLO inference (blocking)            |
+| **Depth**         | 1,291-1,551      | 83.7-91.2% | **Critical**   | Depth-Anything inference (blocking)  |
+| **Fusion**        | 4-7              | 0.3-0.5%   | Negligible     | Spatial mapping (blocking)           |
+| **Navigation**    | 0.05-0.10        | < 0.01%    | Negligible     | Decision logic (blocking)            |
+| **TTS**           | 0.011-0.014      | < 0.001%   | **Negligible** | **Enqueue time only** (non-blocking) |
+| **Visualization** | 5-6              | 0.3-0.4%   | Negligible     | Frame annotation (blocking)          |
+| **TOTAL**         | 1,337-1,632      | 100%       | —              | Per-frame blocking time              |
 
 _Data source: Latest benchmark suite (benchmark_20260408_212923)_
 
-**Pipeline TTS Verdict:** 
+**Pipeline TTS Verdict:**
+
 - **Enqueue overhead:** < 0.001% (effectively zero impact on frame rate)
 - **Actual synthesis time:** ~500-800 ms (same as standalone, runs in background)
 - **User experience:** Seamless audio guidance with no frame rate degradation
@@ -772,14 +778,6 @@ _Figure 3: Stacked latency breakdown showing depth estimation as the dominant co
 | **"Continue Straight"** | Dominant | Low obstacle density or dataset bias     |
 | **"Turn Left/Right"**   | Rare     | Limited lateral obstacles                |
 | **"Stop"**              | None     | No critical obstacles within safety zone |
-
----
-
-### Figure 4: Center Blocked Rate Across Benchmark Runs
-
-![Center Blocked Rate](../reports/submission_pack_2026-04-15/center_blocked_rate.png)
-
-_Figure 4: Center path blockage rate across different benchmark runs. Consistently low values indicate either dataset bias or sparse obstacle environments. Generated from pipeline frame metrics analysis._
 
 ---
 
@@ -885,7 +883,7 @@ The system successfully transforms visual perception into actionable navigation 
   - Vision Transformer (ViT-S) architecture is compute-intensive
   - Metric depth head requires additional processing
   - No GPU optimization (TensorRT/ONNX not applied)
-  - Running on CPU (if CUDA unavailable)
+  
 
 **Recommended Optimizations:**
 
@@ -939,8 +937,7 @@ The system successfully transforms visual perception into actionable navigation 
 | **No "Stop" commands**       | Safety thresholds may be too permissive |
 | **Rare lateral turns**       | Limited navigation diversity            |
 
-
-Note: these dataset is not best for in-door , so it is mainly use to test our pipepline and the efficency of in-door object detection and depth mesurment of  our model
+Note: these dataset is not best for in-door , so it is mainly use to test our pipepline and the efficency of in-door object detection and depth mesurment of our model
 **Recommendations:**
 
 - Test on **denser obstacle environments** (indoor cluttered scenes)
@@ -972,7 +969,7 @@ Note: these dataset is not best for in-door , so it is mainly use to test our pi
 
 ## 7.7 Chart Generation Instructions
 
-**To regenerate the charts shown in Figures 1-4, run the following notebooks:**
+**To regenerate the charts shown in Figures 1-3, run the following notebooks:**
 
 ### Standalone TTS Analysis (Figure 1)
 
@@ -987,44 +984,17 @@ Note: these dataset is not best for in-door , so it is mainly use to test our pi
 
 ---
 
-### Pipeline Performance Analysis (Figures 2-4)
+### Pipeline Performance Analysis (Figures 2-3)
 
 **Notebook:** `notebooks/submission_analysis.ipynb`
 
 1. Run cells 1-10 to aggregate all pipeline runs from `outputs/`
 2. **Run cell 12** (Benchmark FPS Comparison) — saves to `pipeline_fps_comparison.png` (Figure 2)
 3. **Run cell 16** (Latency Breakdown Stacked) — saves to `latency_breakdown_stacked.png` (Figure 3)
-4. For Figure 4 (Center Blocked Rate) — use existing `reports/submission_pack_2026-04-15/center_blocked_rate.png`
 
-**Output:** Figures 2-4 (Pipeline FPS, Latency Breakdown, Safety Metrics)
+**Output:** Figures 2-3 (Pipeline FPS, Latency Breakdown)
 
 ---
-
-**Chart Location:** All charts saved to `reports/submission_pack_2026-04-15/`
-
-**Data Sources:**
-- Standalone TTS: `results/tts_eval/tts_bench_20260416_085628_full.csv`
-- Pipeline: `results/pipeline_runs_summary.csv`
-
-### Pipeline Benchmark Charts (Figures 2-4)
-
-```bash
-cd notebooks
-jupyter notebook submission_analysis.ipynb
-# Run all cells to generate:
-# - Figure 2: Pipeline FPS comparison (Section 2)
-# - Figure 3: Latency breakdown stacked bar (Section 4)
-# - Figure 4: Center blocked rate (Section 5)
-```
-
-**Chart Files:**
-
-- `tts_rtf_analysis.png` — TTS latency vs text length
-- `pipeline_fps_comparison.png` — FPS by configuration
-- `latency_breakdown_stacked.png` — Component latency stacked bars
-- `center_blocked_rate.png` — Safety metric across runs
-
-**Note:** Charts are referenced but may need to be manually saved from notebook outputs. Use `plt.savefig()` in notebooks to export.
 
 ---
 
@@ -1063,6 +1033,5 @@ jupyter notebook submission_analysis.ipynb
 
 - **Depth estimation is a severe bottleneck** (83-91% of runtime)
 - Current FPS (0.6-0.8) is **far below real-time** requirements (10+ FPS)
-
 
 ---
