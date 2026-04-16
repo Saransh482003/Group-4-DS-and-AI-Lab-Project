@@ -221,7 +221,7 @@ _Data source: `results/tts_eval/tts_bench_20260416_085628_full.csv` (165 total s
 
 **Evidence for Cold-Start Hypothesis:**
 
-**Evidence 1: Sequential Position Pattern**
+**Analysis 1: Sequential Position Pattern**
 
 All 165 samples were processed sequentially. If RTF > 1.0 was due to text complexity, system load, or measurement error, we would expect random distribution. Instead:
 
@@ -237,7 +237,7 @@ All 165 samples were processed sequentially. If RTF > 1.0 was due to text comple
 
 ---
 
-**Evidence 2: Text Length Does NOT Correlate with Outlier**
+**Analysis 2: Text Length Does NOT Correlate with Outlier**
 
 If the outlier was due to text properties:
 
@@ -252,7 +252,7 @@ If the outlier was due to text properties:
 
 ---
 
-**Evidence 3: Cross-Dataset Validation**
+**Analysis 3: Cross-Dataset Validation**
 
 If system/measurement issue, we'd see multiple outliers across datasets:
 
@@ -268,7 +268,7 @@ If system/measurement issue, we'd see multiple outliers across datasets:
 
 ---
 
-**Evidence 4: Synthesis Time Breakdown**
+**Analysis 4: Synthesis Time Breakdown**
 
 Let's examine what could cause 5,572 ms synthesis time:
 
@@ -284,7 +284,7 @@ Let's examine what could cause 5,572 ms synthesis time:
 
 ---
 
-**Evidence 5: Notebook Implementation Confirms No Warm-up**
+**Artiface 2 : Notebook Implementation Confirms No Warm-up**
 
 From `07_tts_analysis.ipynb`, the benchmark code:
 
@@ -451,7 +451,7 @@ _Figure 1: Piper TTS Real-Time Factor across different text lengths and datasets
 
 **Validation Experiment:** Evidence-based analysis with 6 data points (Section 5.6.1) proves warm-up eliminates RTF > 1.0 outlier with 95%+ confidence.
 
-**Standalone Verdict:** Piper TTS engine is **highly efficient** for offline, real-time speech synthesis.
+**Standalone Verdict:** Piper TTS engine is **good** for offline, real-time speech synthesis.
 
 ---
 
@@ -594,6 +594,67 @@ graph LR
 4. Sequential vs Parallel performance analysis
 5. Safety metrics (center blocked rate)
 6. Navigation command distribution
+
+---
+
+### Raw Benchmark Data — All Pipeline Runs
+
+**Data Source:** `pipeline_runs_summary.csv` (31 benchmark runs)
+
+**Table 4: Complete Pipeline Benchmark Results**
+
+| run_name                                       |   total_frames |   duration_seconds |   avg_fps_instant |   avg_loop_total_latency_ms |   p95_loop_total_latency_ms |   avg_yolo_latency_ms |   avg_depth_latency_ms |   avg_tts_latency_ms |   center_blocked_rate |
+|:-----------------------------------------------|---------------:|-------------------:|------------------:|----------------------------:|----------------------------:|----------------------:|-----------------------:|---------------------:|----------------------:|
+| bench_depth_only_20260406_101723               |            100 |             163.88 |              0.62 |                     1628.75 |                     1758.14 |                nan    |                1553.69 |               nan    |                  0.00 |
+| bench_depth_only_20260408_204249               |            100 |             136.94 |              0.74 |                     1363.10 |                     1478.58 |                nan    |                1283.28 |               nan    |                  0.00 |
+| bench_depth_only_20260408_212937               |            300 |             383.85 |              0.78 |                     1278.91 |                     1372.04 |                nan    |                1249.52 |               nan    |                  0.00 |
+| bench_detection_only_20260406_101713           |            100 |               9.91 |             11.43 |                       88.92 |                      100.28 |                 34.23 |                 nan    |               nan    |                  0.00 |
+| bench_detection_only_20260408_204239           |            100 |               9.25 |             11.97 |                       84.73 |                      102.81 |                 25.95 |                 nan    |               nan    |                  0.00 |
+| bench_detection_only_20260408_212923           |            300 |              14.31 |             21.59 |                       47.06 |                       55.10 |                 25.53 |                 nan    |               nan    |                  0.00 |
+| bench_parallel_det_dep_20260406_102315         |            100 |             179.94 |              0.56 |                     1778.29 |                     1941.15 |                 67.48 |                1692.00 |               nan    |                  0.00 |
+| bench_parallel_det_dep_20260408_204730         |            100 |             143.47 |              0.70 |                     1426.99 |                     1523.93 |                 44.79 |                1342.58 |               nan    |                  0.00 |
+| bench_parallel_det_dep_20260408_214250         |            300 |             425.86 |              0.72 |                     1418.87 |                     1748.54 |                 59.53 |                1378.30 |               nan    |                  0.00 |
+| bench_parallel_full_no_tts_20260406_103213     |            100 |             167.86 |              0.60 |                     1665.44 |                     1727.20 |                 59.52 |                1581.43 |               nan    |                  0.00 |
+| bench_parallel_full_no_tts_20260408_205444     |            100 |             145.07 |              0.69 |                     1443.88 |                     1569.66 |                 49.83 |                1358.86 |               nan    |                  0.00 |
+| bench_parallel_full_no_tts_20260408_220522     |            300 |             478.36 |              0.63 |                     1593.81 |                     1845.19 |                 68.04 |                1550.73 |               nan    |                  0.00 |
+| bench_parallel_full_with_tts_20260406_103501   |            100 |             177.22 |              0.57 |                     1758.82 |                     2135.56 |                 65.92 |                1672.76 |                 0.01 |                  0.00 |
+| bench_parallel_full_with_tts_20260408_205709   |            100 |             147.46 |              0.68 |                     1466.76 |                     1600.79 |                 47.22 |                1380.07 |                 0.01 |                  0.00 |
+| bench_parallel_full_with_tts_20260408_221321   |            300 |             464.22 |              0.65 |                     1546.69 |                     1772.59 |                 67.62 |                1498.36 |                 0.01 |                  0.00 |
+| bench_sequential_det_dep_20260406_102007       |            100 |             187.94 |              0.54 |                     1865.51 |                     2089.52 |                 58.46 |                1714.07 |               nan    |                  0.00 |
+| bench_sequential_det_dep_20260408_204506       |            100 |             144.06 |              0.70 |                     1433.72 |                     1574.07 |                 35.89 |                1313.03 |               nan    |                  0.00 |
+| bench_sequential_det_dep_20260408_213601       |            300 |             409.47 |              0.74 |                     1364.25 |                     1512.28 |                 36.51 |                1291.29 |               nan    |                  0.00 |
+| bench_sequential_full_no_tts_20260406_102615   |            100 |             183.59 |              0.55 |                     1822.00 |                     2027.98 |                 54.58 |                1675.11 |               nan    |                  0.00 |
+| bench_sequential_full_no_tts_20260408_204953   |            100 |             144.48 |              0.70 |                     1437.96 |                     1561.35 |                 35.11 |                1317.19 |               nan    |                  0.00 |
+| bench_sequential_full_no_tts_20260408_214956   |            300 |             462.04 |              0.65 |                     1539.28 |                     1689.85 |                 46.39 |                1446.25 |               nan    |                  0.00 |
+| bench_sequential_full_with_tts_20260406_102918 |            100 |             174.41 |              0.58 |                     1730.35 |                     1892.98 |                 51.00 |                1594.47 |                 0.01 |                  0.00 |
+| bench_sequential_full_with_tts_20260408_205218 |            100 |             146.46 |              0.69 |                     1457.71 |                     1628.27 |                 36.97 |                1332.40 |                 0.01 |                  0.00 |
+| bench_sequential_full_with_tts_20260408_215739 |            300 |             463.73 |              0.65 |                     1544.93 |                     1670.02 |                 45.99 |                1451.19 |                 0.01 |                  0.00 |
+| dataset_eval_20260408_200832                   |            172 |             242.88 |              0.72 |                     1403.24 |                     1582.05 |                 39.40 |                1310.98 |                 0.01 |                  0.00 |
+| dataset_eval_20260415_235611                   |            376 |             197.68 |              3.22 |                      515.11 |                     1259.01 |                 42.65 |                 390.20 |                 0.02 |                  0.00 |
+| live_run_20260408_190608                       |             18 |              15.54 |              1.38 |                      756.49 |                      926.32 |                 39.55 |                 661.69 |                 0.00 |                  0.00 |
+| live_run_20260408_190643                       |             12 |              10.46 |              1.34 |                      761.89 |                      966.97 |                 44.88 |                 670.28 |                 0.01 |                  0.00 |
+| live_run_20260408_193418                       |            319 |             419.82 |              0.76 |                     1315.25 |                     1459.35 |                 36.42 |                1258.86 |                 0.01 |                  0.00 |
+| live_run_20260408_212251                       |             22 |              16.88 |              1.42 |                      716.77 |                      733.67 |                 38.57 |                 641.28 |                 0.01 |                  0.00 |
+| live_run_20260408_212608                       |             14 |              11.85 |              1.35 |                      765.77 |                     1107.04 |                 44.23 |                 680.81 |                 0.00 |                  0.00 |
+
+**Column Descriptions:**
+- **run_name**: Unique identifier for benchmark run
+- **total_frames**: Number of frames processed in the run
+- **duration_seconds**: Total execution time
+- **avg_fps_instant**: Average frames per second (instantaneous)
+- **avg_loop_total_latency_ms**: Average total frame processing latency
+- **p95_loop_total_latency_ms**: 95th percentile latency (captures spikes)
+- **avg_yolo_latency_ms**: Average YOLOv8 detection latency
+- **avg_depth_latency_ms**: Average Depth-Anything-V2 latency
+- **avg_tts_latency_ms**: Average TTS enqueue latency (not synthesis time)
+- **center_blocked_rate**: Percentage of frames with center path obstruction
+
+**Key Observations:**
+- **Detection-only runs** achieve real-time performance (11-21 FPS)
+- **Depth estimation** is the primary bottleneck (~1300ms average)
+- **TTS overhead** is negligible (0.01-0.02ms enqueue time)
+- **300-frame runs** show more stable performance than 100-frame runs
+- **All runs show 0% center blocked rate** (conservative depth thresholding)
 
 ---
 
@@ -948,10 +1009,10 @@ Note: these dataset is not best for in-door , so it is mainly use to test our pi
 
 **Hardware Requirements:**
 
-| Component   | Minimum Spec               | Recommended Spec        |
+| Component   | Tested Minimum Spec        | Recommended Spec        |
 | ----------- | -------------------------- | ----------------------- |
 | **GPU**     | NVIDIA GTX 1650 (4GB VRAM) | RTX 3060 or better      |
-| **CPU**     | 4-core Intel i5            | 8-core Intel i7/Ryzen 7 |
+| **CPU**     | 4-core Ryzen 7             | 8-core Intel i7/Ryzen 7 |
 | **RAM**     | 8 GB                       | 16 GB                   |
 | **Storage** | 5 GB (models + cache)      | SSD for faster I/O      |
 
@@ -992,7 +1053,7 @@ Note: these dataset is not best for in-door , so it is mainly use to test our pi
 **System Achievements:**
 
 - **Functional end-to-end pipeline** from webcam to audio navigation
-- **TTS integration is seamless** with negligible overhead
+- **TTS integration is asyc**
 - **Detection achieves real-time** (21+ FPS)
 - **Modular, maintainable architecture**
 
