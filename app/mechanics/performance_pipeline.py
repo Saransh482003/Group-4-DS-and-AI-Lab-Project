@@ -35,6 +35,7 @@ class PipelinePerformanceTracker:
 		return {
 			"yolo_latency_ms": None,
 			"depth_latency_ms": None,
+			"depth_hazard_latency_ms": None,
 			"spatial_latency_ms": None,
 			"navigation_latency_ms": None,
 			"deterministic_nav_latency_ms": None,
@@ -46,6 +47,10 @@ class PipelinePerformanceTracker:
 			"tts_mode": None,
 			"tts_error": None,
 			"detection_count": 0,
+			"depth_hazard_danger_pixel_count": 0,
+			"depth_hazard_warning_pixel_count": 0,
+			"depth_hazard_near_pixel_count": 0,
+			"depth_hazard_min_depth_m": None,
 			"frame_total_latency_ms": None,
 			"nav_mode_name": "deterministic" if nav_logic_mode == 0 else "slm",
 			"is_warmup": frame_idx <= warmup_frames,

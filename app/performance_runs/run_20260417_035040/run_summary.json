@@ -1,0 +1,18 @@
+{
+  "started_at_epoch": 1776378040.836304,
+  "finished_at_epoch": 1776378089.2115486,
+  "duration_seconds": 48.37524461746216,
+  "model_load_ms": 439.9769000010565,
+  "total_frames": 277,
+  "resource_samples": 28,
+  "run_config": {
+    "nav_logic_mode": 0,
+    "plot_stream_mode": 0,
+    "video_source": "1",
+    "show_windows": true,
+    "tts_enabled": true,
+    "yolo_weights": "E:\\dsai_group4_project\\model_training\\object_detection\\best-weights\\YOLO11s-Final-Training.pt",
+    "depth_model_dir": "E:\\dsai_group4_project\\model_training\\depth_estimation\\model_weights\\depth_anything_v2_metric_hypersim_vits.pth",
+    "platform": "Windows-11-10.0.26200-SP0"
+  }
+}

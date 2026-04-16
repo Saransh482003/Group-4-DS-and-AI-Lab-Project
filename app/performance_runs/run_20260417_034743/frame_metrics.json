@@ -1,0 +1,46 @@
+[
+  {
+    "frame_idx": 1,
+    "timestamp_epoch": 1776377865.575072,
+    "metrics": {
+      "yolo_latency_ms": 679.920199996559,
+      "depth_latency_ms": 194.05389999883482,
+      "depth_hazard_latency_ms": 30.29160000005504,
+      "spatial_latency_ms": 0.0033000032999552786,
+      "navigation_latency_ms": 0.04030000127386302,
+      "deterministic_nav_latency_ms": 0.03869999636663124,
+      "slm_nav_latency_ms": null,
+      "visualization_latency_ms": 2.989000000525266,
+      "tts_latency_ms": 0.04329999501351267,
+      "tts_should_speak": true,
+      "tts_skip_reason": null,
+      "tts_mode": "async_queue",
+      "tts_error": null,
+      "detection_count": 0,
+      "depth_hazard_danger_pixel_count": 838724,
+      "depth_hazard_warning_pixel_count": 82876,
+      "depth_hazard_near_pixel_count": 921600,
+      "depth_hazard_min_depth_m": 0.31914234161376953,
+      "frame_total_latency_ms": 930.9647000045516,
+      "nav_mode_name": "deterministic",
+      "is_warmup": true,
+      "resource_sampled": false,
+      "tts_enqueue_ok": true,
+      "tts_cache_hit": null,
+      "tts_worker_latency_ms": null,
+      "zone_risks": {
+        "left": 3.999339916087963,
+        "center": 3.4389784071180554,
+        "right": 3.9993037471064814
+      },
+      "nav_command": "Searching for path. Turn back.",
+      "tts_text": "Path blocked. Scan around.",
+      "capture_latency_ms": 33.8636000014958,
+      "video_write_latency_ms": 0.0,
+      "display_latency_ms": 49.35960000148043,
+      "app_loop_latency_ms": 1016.4160999993328,
+      "fps_instant": 0.9838490358433485
+    },
+    "resource": null
+  }
+]

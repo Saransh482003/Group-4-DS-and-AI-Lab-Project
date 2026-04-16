@@ -1,0 +1,19 @@
+
+path: /kaggle/input/datasets/ds22f1001123/dsai-unified-dataset
+
+train: /kaggle/working/train.txt
+val: /kaggle/working/val.txt
+test: /kaggle/working/test.txt
+
+names:
+  0: person
+  1: table
+  2: potted plant
+  3: chair
+  4: sofa
+  5: lamp
+  6: door
+  7: cabinet
+  8: wardrobe
+  9: refrigerator
+  10: bed
