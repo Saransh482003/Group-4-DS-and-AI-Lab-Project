@@ -1,0 +1,219 @@
+{
+  "run_info": {
+    "run_name": "module_eval_20260418_011313",
+    "run_dir": "E:\\dsai_group4_project\\app\\navigation_eval_outputs\\module_eval_20260418_011313",
+    "device": "cuda",
+    "model_load_ms": 6863.9784999832045,
+    "tts_prewarm_ms": 6093.359100021189,
+    "images_processed": 60,
+    "eval_stateful_nav": false,
+    "yolo_conf_threshold": 0.25,
+    "iou_threshold": 0.5,
+    "danger_threshold_m": 1.2,
+    "warning_threshold_m": 2.0,
+    "depth_hazard_danger_weight": 4.0,
+    "depth_hazard_warning_weight": 1.5,
+    "shorten_tts_commands": true,
+    "tts_use_in_memory": true,
+    "tts_save_audio_artifacts": false,
+    "tts_enable_phrase_cache": true,
+    "tts_phrase_cache_maxsize": 128
+  },
+  "yolo_detection": {
+    "tp": 114,
+    "fp": 82,
+    "fn": 183,
+    "precision": 0.5816326530612245,
+    "recall": 0.3838383838383838,
+    "f1": 0.46247464503042596,
+    "mean_iou": 0.8649772678979439
+  },
+  "depth_estimation": {
+    "depth_gt_mode_counts": {
+      "as_is": 60
+    },
+    "abs_rel_mean": 0.5352248637382723,
+    "rmse_m_mean": 46.79271390433307,
+    "delta1_mean": 0.5167456808874444,
+    "valid_ratio_mean": 1.0
+  },
+  "depth_hazard_detection": {
+    "danger_threshold_m": 1.2,
+    "warning_threshold_m": 2.0,
+    "danger_pixel_mean": 27714.483333333334,
+    "warning_pixel_mean": 156398.66666666666,
+    "near_pixel_mean": 184113.15,
+    "images_with_danger": 44,
+    "images_with_warning": 59,
+    "danger_ratio_mean": 0.07642395428738563,
+    "warning_ratio_mean": 0.43015615525153844,
+    "near_ratio_mean": 0.5065801095389241,
+    "hazard_min_depth_m_mean": 1.0789586436950553
+  },
+  "latency_ms": {
+    "yolo": {
+      "mean": 40.43296500167344,
+      "p50": 22.282099991571158,
+      "p95": 33.445610018679844
+    },
+    "depth": {
+      "mean": 107.09707833254167,
+      "p50": 99.66335001809057,
+      "p95": 125.30356501520146
+    },
+    "hazard_scan": {
+      "mean": 9.926593334724506,
+      "p50": 9.82020000810735,
+      "p95": 14.719480011262924
+    },
+    "navigation": {
+      "mean": 0.03498666774248704,
+      "p50": 0.03130000550299883,
+      "p95": 0.06196997564984485
+    },
+    "tts": {
+      "mean": 0.004161666826500247,
+      "p50": 0.003600012860260904,
+      "p95": 0.006445017061196259
+    },
+    "pipeline": {
+      "mean": 159.4996033333397,
+      "p50": 132.1546999970451,
+      "p95": 179.34002998517823
+    }
+  },
+  "navigation": {
+    "command_distribution": {
+      "Turn right.": 14,
+      "Go straight. The closest object is a chair, about 1.5 meters away.": 1,
+      "Go straight. The closest object is a chair, about 2.1 meters away.": 1,
+      "Go straight. The closest object is a sofa, about 1.7 meters away.": 1,
+      "Turn left": 8,
+      "The way ahead is clear. You can keep going straight.": 5,
+      "Go straight. The closest object is a table, about 1.2 meters away.": 1,
+      "Go straight. The closest object is a table, about 1.5 meters away.": 1,
+      "Go straight. The closest object is a sofa, about 1.5 meters away.": 1,
+      "Searching for path. Turn back.": 1,
+      "Go straight. The closest object is a refrigerator, about 2.3 meters away.": 1,
+      "Go straight. The closest object is a person, about 1.8 meters away.": 1,
+      "Go straight. The closest object is a bed, about 1.7 meters away.": 1,
+      "Go straight. The closest object is a chair, about 1.7 meters away.": 1,
+      "Go straight. The closest object is a potted plant, about 2.4 meters away.": 1,
+      "Go straight. The closest object is a chair, about 1.3 meters away.": 3,
+      "Go straight. The closest object is a chair, about 1.6 meters away.": 2,
+      "Go straight. The closest object is a refrigerator, about 1.6 meters away.": 1,
+      "Go straight. The closest object is a refrigerator, about 0.7 meters away.": 1,
+      "Obstacle ahead. Move slightly right.": 1,
+      "Go straight. The closest object is a person, about 1.3 meters away.": 1,
+      "Go straight. The closest object is a person, about 7.7 meters away.": 1,
+      "Go straight. The closest object is a chair, about 2.0 meters away.": 2,
+      "Go straight. The closest object is a person, about 2.0 meters away.": 1,
+      "Go straight. The closest object is a potted plant, about 1.6 meters away.": 1,
+      "Go straight. The closest object is a refrigerator, about 1.5 meters away.": 1,
+      "Go straight. The closest object is a table, about 2.6 meters away.": 1,
+      "Go straight. The closest object is a table, about 2.7 meters away.": 1,
+      "Go straight. The closest object is a table, about 2.4 meters away.": 1,
+      "Go straight. The closest object is a chair, about 2.8 meters away.": 1,
+      "Go straight. The closest object is a chair, about 1.9 meters away.": 1,
+      "Go straight. The closest object is a refrigerator, about 3.1 meters away.": 1
+    },
+    "unique_commands": 32
+  },
+  "tts": {
+    "audio_generated_count": 60,
+    "audio_saved_count": 0,
+    "audio_failed_count": 0
+  },
+  "classwise_yolo": {
+    "chair": {
+      "tp": 75,
+      "fp": 40,
+      "fn": 51,
+      "precision": 0.6521739130434783,
+      "recall": 0.5952380952380952,
+      "f1": 0.6224066390041495,
+      "mean_iou": 0.8369745808174087
+    },
+    "table": {
+      "tp": 26,
+      "fp": 12,
+      "fn": 5,
+      "precision": 0.6842105263157895,
+      "recall": 0.8387096774193549,
+      "f1": 0.7536231884057972,
+      "mean_iou": 0.8765807070552635
+    },
+    "potted plant": {
+      "tp": 2,
+      "fp": 2,
+      "fn": 8,
+      "precision": 0.5,
+      "recall": 0.2,
+      "f1": 0.28571428571428575,
+      "mean_iou": 0.8858288778255281
+    },
+    "door": {
+      "tp": 1,
+      "fp": 0,
+      "fn": 23,
+      "precision": 1.0,
+      "recall": 0.041666666666666664,
+      "f1": 0.07999999999999999,
+      "mean_iou": 0.8004442798963347
+    },
+    "sofa": {
+      "tp": 4,
+      "fp": 7,
+      "fn": 82,
+      "precision": 0.36363636363636365,
+      "recall": 0.046511627906976744,
+      "f1": 0.08247422680412372,
+      "mean_iou": 0.9047876954278135
+    },
+    "cabinet": {
+      "tp": 0,
+      "fp": 4,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": null,
+      "mean_iou": 0.0
+    },
+    "bed": {
+      "tp": 0,
+      "fp": 4,
+      "fn": 2,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": null,
+      "mean_iou": 0.0
+    },
+    "person": {
+      "tp": 2,
+      "fp": 7,
+      "fn": 6,
+      "precision": 0.2222222222222222,
+      "recall": 0.25,
+      "f1": 0.23529411764705882,
+      "mean_iou": 0.8855643959425028
+    },
+    "refrigerator": {
+      "tp": 4,
+      "fp": 6,
+      "fn": 3,
+      "precision": 0.4,
+      "recall": 0.5714285714285714,
+      "f1": 0.47058823529411764,
+      "mean_iou": 0.8394852913611481
+    },
+    "wardrobe": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 2,
+      "precision": null,
+      "recall": 0.0,
+      "f1": null,
+      "mean_iou": 0.0
+    }
+  }
+}

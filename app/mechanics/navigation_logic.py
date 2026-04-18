@@ -126,8 +126,7 @@ class NavigationLogic:
 		raw_zone_risks = self._blend_depth_hazard(raw_zone_risks, depth_hazard)
 
 		zone_risks = self._smooth_zone_risks(raw_zone_risks)
-		base_command = self._decide_stable_command(zone_risks, timestamp)
-		command = self._enrich_clear_path_command(base_command, detections)
+		command = self._decide_stable_command(zone_risks, timestamp)
 		return zone_risks, command
 
 	def _blend_depth_hazard(self, zone_risks, depth_hazard):
@@ -195,8 +194,8 @@ class NavigationLogic:
 		if not friendly_name:
 			friendly_name = "object"
 		return (
-			f"The way ahead is clear. Keep moving straight. "
-			f"The closest object is a {friendly_name}, about {distance:.1f} meters away."
+			f"Go straight."
+			# f"{friendly_name} is about {distance:.1f} meters away."
 		)
 
 	def _smooth_zone_risks(self, raw_zone_risks):
@@ -265,36 +264,36 @@ class NavigationLogic:
 				and right_risk + margin < left_risk
 				and right_risk < self.safety_threshold
 			):
-				return "Clear path on your right. Turn right."
+				return "Turn right."
 
 			if (
 				left_risk + margin < center_risk
 				and left_risk + margin < right_risk
 				and left_risk < self.safety_threshold
 			):
-				return "Clear path on your left. Turn left."
+				return "Turn left."
 
-			return "Path clear. Continue straight."
+			return "Go straight."
 
 		if (
 			left_risk + margin < center_risk
 			and left_risk + margin < right_risk
 			and left_risk < self.safety_threshold
 		):
-			return "Clear path on your left. Turn left."
+			return "Turn left."
 
 		if (
 			right_risk + margin < center_risk
 			and right_risk + margin < left_risk
 			and right_risk < self.safety_threshold
 		):
-			return "Clear path on your right. Turn right."
+			return "Turn right."
 
 		if center_risk >= left_risk and center_risk >= right_risk:
 			if left_risk <= right_risk and left_risk < self.safety_threshold:
-				return "Clear path on your left. Turn left."
+				return "Turn left."
 			if right_risk < self.safety_threshold:
-				return "Clear path on your right. Turn right."
+				return "Turn right."
 
 		if (
 			left_risk > self.high_risk_threshold
@@ -302,12 +301,12 @@ class NavigationLogic:
 			and right_risk > self.high_risk_threshold
 			and min(left_risk, center_risk, right_risk) >= self.safety_threshold
 		):
-			return "Path blocked. Please scan left and right."
+			return "Path blocked. Scan around."
 
 		if right_risk - left_risk > self.turn_hysteresis:
-			return "Obstacle ahead. Move slightly left."
+			return "Move slightly left."
 		if left_risk - right_risk > self.turn_hysteresis:
-			return "Obstacle ahead. Move slightly right."
+			return "Move slightly right."
 
 		return "Searching for path. Turn back."
 

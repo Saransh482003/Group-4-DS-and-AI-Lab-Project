@@ -11,17 +11,13 @@ import numpy as np
 import torch
 
 from mechanics.depth_estimation import DepthEstimator
-from mechanics.depth_estimation import estimate_distance_from_depth
-from mechanics.depth_estimation import scan_depth_hazards
+from mechanics.frame_parser import SharedFrameParser
 from mechanics.nav_tts_piper import PiperTTS
 from mechanics.navigation_logic import NavigationLogic
 from mechanics.object_detection import ObjectDetector
 from mechanics.object_detection import draw_centered_label
-from mechanics.tts_command_utils import build_short_tts_command
-from mechanics.tts_config import DEFAULT_SHORTEN_TTS_COMMANDS
-from mechanics.tts_config import DEFAULT_TTS_ENABLE_PHRASE_CACHE
+from mechanics.runtime_settings import load_shared_runtime_settings
 from mechanics.tts_config import DEFAULT_TTS_PHRASE_CACHE_MAXSIZE
-from mechanics.tts_config import DEFAULT_TTS_SAVE_AUDIO_ARTIFACTS
 from mechanics.tts_config import DEFAULT_TTS_USE_IN_MEMORY
 from mechanics.tts_phrase_cache import TtsPhraseCache
 
@@ -31,46 +27,39 @@ from mechanics.tts_phrase_cache import TtsPhraseCache
 # ----------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, ".."))
+ENV_FILE = os.path.join(PROJECT_ROOT, ".env")
+SHARED_SETTINGS = load_shared_runtime_settings(BASE_DIR, env_file_path=ENV_FILE)
 
 IMAGES_DIR = os.path.join(PROJECT_ROOT, "pipeline_evaluations", "eval_set", "images")
 LABELS_DIR = os.path.join(PROJECT_ROOT, "pipeline_evaluations", "eval_set", "labels")
 DEPTH_GT_DIR = os.path.join(PROJECT_ROOT, "pipeline_evaluations", "eval_set", "depth")
 CLASSES_JSON = os.path.join(PROJECT_ROOT, "datasets", "classes.json")
 
-YOLO_WEIGHTS = os.path.join(
-    PROJECT_ROOT,
-    "model_training",
-    "object_detection",
-    "best-weights",
-    "YOLOv8n-uni.pt",
-)
-DEPTH_MODEL_FILE = os.path.join(
-    PROJECT_ROOT,
-    "model_training",
-    "depth_estimation",
-    "model_weights",
-    "depth_anything_v2_metric_hypersim_vits.pth",
-)
+YOLO_WEIGHTS = SHARED_SETTINGS["YOLO_WEIGHTS"]
+DEPTH_MODEL_FILE = SHARED_SETTINGS["DEPTH_MODEL_FILE"]
 
-PIPER_EXE = os.path.join(BASE_DIR, "piper", "piper.exe")
-PIPER_VOICE_MODEL = os.path.join(BASE_DIR, "piper_voices", "en_US-amy-medium.onnx")
-PIPER_VOICE_CONFIG = os.path.join(BASE_DIR, "piper_voices", "en_US-amy-medium.onnx.json")
+PIPER_EXE = SHARED_SETTINGS["PIPER_EXE"]
+PIPER_VOICE_MODEL = SHARED_SETTINGS["PIPER_VOICE_MODEL"]
+PIPER_VOICE_CONFIG = SHARED_SETTINGS["PIPER_VOICE_CONFIG"]
 
 CONF_THRESHOLD = 0.25
 IOU_THRESHOLD = 0.50
 MAX_IMAGES = None  # set an integer like 10 for quick runs
+EVAL_STATEFUL_NAV = os.getenv("EVAL_STATEFUL_NAV", "0") == "1"
 
-DANGER_THRESHOLD_M = 1.2
-WARNING_THRESHOLD_M = 2.0
-DEPTH_HAZARD_DANGER_WEIGHT = 4.0
-DEPTH_HAZARD_WARNING_WEIGHT = 1.5
+DANGER_THRESHOLD_M = SHARED_SETTINGS["DEPTH_DANGER_THRESHOLD_M"]
+WARNING_THRESHOLD_M = SHARED_SETTINGS["DEPTH_WARNING_THRESHOLD_M"]
+DEPTH_HAZARD_DANGER_WEIGHT = SHARED_SETTINGS["DEPTH_HAZARD_DANGER_WEIGHT"]
+DEPTH_HAZARD_WARNING_WEIGHT = SHARED_SETTINGS["DEPTH_HAZARD_WARNING_WEIGHT"]
 
 # TTS optimization switches for eval runs.
-SHORTEN_TTS_COMMANDS = DEFAULT_SHORTEN_TTS_COMMANDS
+SHORTEN_TTS_COMMANDS = SHARED_SETTINGS["SHORTEN_TTS_COMMANDS"]
 # Quality-first default: file-based Piper synthesis is typically the cleanest.
 TTS_USE_IN_MEMORY = DEFAULT_TTS_USE_IN_MEMORY
-TTS_SAVE_AUDIO_ARTIFACTS = DEFAULT_TTS_SAVE_AUDIO_ARTIFACTS
-TTS_ENABLE_PHRASE_CACHE = DEFAULT_TTS_ENABLE_PHRASE_CACHE
+# Eval latency should reflect synthesis only; skip WAV artifact writes.
+TTS_SAVE_AUDIO_ARTIFACTS = False
+# Eval latency should reflect actual synthesis work each time.
+TTS_ENABLE_PHRASE_CACHE = True
 TTS_PHRASE_CACHE_MAXSIZE = DEFAULT_TTS_PHRASE_CACHE_MAXSIZE
 
 
@@ -513,6 +502,7 @@ def main():
     print(f"Device: {device}")
     print(f"Total eval images: {len(image_files)}")
     print(f"Depth hazard thresholds (m): danger<={DANGER_THRESHOLD_M}, warning<={WARNING_THRESHOLD_M}")
+    print(f"Eval navigation stateful: {EVAL_STATEFUL_NAV}")
 
     # Load modules once
     model_load_start = time.perf_counter()
@@ -528,13 +518,44 @@ def main():
         voice_config_path=PIPER_VOICE_CONFIG,
         output_dir=audio_dir,
     )
+    frame_parser = SharedFrameParser(
+        object_detector=detector,
+        depth_estimator=depth_estimator,
+        nav_logic_factory=lambda frame_width: NavigationLogic(
+            frame_width=frame_width,
+            depth_hazard_danger_weight=DEPTH_HAZARD_DANGER_WEIGHT,
+            depth_hazard_warning_weight=DEPTH_HAZARD_WARNING_WEIGHT,
+        ),
+        device=device,
+        depth_hazard_enabled=True,
+        danger_threshold_m=DANGER_THRESHOLD_M,
+        warning_threshold_m=WARNING_THRESHOLD_M,
+        stateful_navigation=EVAL_STATEFUL_NAV,
+    )
+    
+    # Prewarm the TTS phrase cache to drop latency to <1ms for common commands.
+    tts_phrase_cache = TtsPhraseCache(TTS_PHRASE_CACHE_MAXSIZE) if TTS_ENABLE_PHRASE_CACHE else None
+    tts_prewarm_ms = 0.0
+    if tts_phrase_cache is not None:
+        print("Prewarming TTS phrase cache...")
+        tts_prewarm_start = time.perf_counter()
+        phrases_to_prewarm = [
+            "Go straight.", "Turn left.", "Turn right.", 
+            "Move slightly left.", "Move slightly right.",
+            "Path blocked. Scan around.", "Searching for path. Turn back."
+        ]
+        for phrase in phrases_to_prewarm:
+            tts_phrase_cache.put(phrase, tts.synthesize_wav_bytes(phrase))
+        tts_prewarm_ms = (time.perf_counter() - tts_prewarm_start) * 1000.0
+        print(f"TTS phrase prewarming completed in {tts_prewarm_ms:.1f}ms for {len(phrases_to_prewarm)} phrases")
+
     model_load_ms = (time.perf_counter() - model_load_start) * 1000.0
 
     rows = []
     command_counter = Counter()
     class_stats = defaultdict(lambda: {"tp": 0, "fp": 0, "fn": 0, "iou_sum": 0.0, "matches": 0})
     depth_scale_counter = Counter()
-    tts_phrase_cache = TtsPhraseCache(TTS_PHRASE_CACHE_MAXSIZE) if TTS_ENABLE_PHRASE_CACHE else None
+
 
     for i, image_file in enumerate(image_files, start=1):
         stem = os.path.splitext(image_file)[0]
@@ -552,91 +573,59 @@ def main():
 
         pipeline_start = time.perf_counter()
 
-        # YOLO inference
-        t0 = time.perf_counter()
-        _, detections_raw = detector.predict(frame_bgr)
-        if device == "cuda":
-            torch.cuda.synchronize()
-        yolo_latency_ms = (time.perf_counter() - t0) * 1000.0
-
-        pred_boxes = []
-        for d in detections_raw:
-            conf = float(d["confidence"])
-            if conf < CONF_THRESHOLD:
-                continue
-            pred_boxes.append(
-                {
-                    "class_id": int(d["class_id"]),
-                    "class_name": str(d["class_name"]),
-                    "confidence": conf,
-                    "bbox": [int(d["x1"]), int(d["y1"]), int(d["x2"]), int(d["y2"])],
-                }
-            )
-
-        # Depth inference
-        frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
-        t1 = time.perf_counter()
-        depth_pred_m, _ = depth_estimator.predict(frame_rgb)
-        if device == "cuda":
-            torch.cuda.synchronize()
-        depth_latency_ms = (time.perf_counter() - t1) * 1000.0
-
-        # Full-frame depth hazard scan (warning + danger + all pixel coordinates)
-        t_hz = time.perf_counter()
-        hazard_result = scan_depth_hazards(
-            depth_pred_m,
-            danger_threshold_m=DANGER_THRESHOLD_M,
-            warning_threshold_m=WARNING_THRESHOLD_M,
-            return_masks=True,
-            return_coords=True,
+        parsed = frame_parser.parse_frame(
+            frame_bgr,
+            nav_logic_mode=0,
+            shorten_tts_commands=SHORTEN_TTS_COMMANDS,
+            sync_after_yolo=(device == "cuda"),
+            sync_after_depth=(device == "cuda"),
+            confidence_threshold=CONF_THRESHOLD,
+            hazard_return_coords=True,
         )
-        hazard_scan_latency_ms = (time.perf_counter() - t_hz) * 1000.0
-        danger_coords_xy = hazard_result["danger_coords_xy"]
-        warning_coords_xy = hazard_result["warning_coords_xy"]
-        hazard_global = hazard_result["global_summary"]
+        latencies = parsed["latencies"]
+        yolo_latency_ms = latencies.get("yolo_latency_ms", 0.0)
+        depth_latency_ms = latencies.get("depth_latency_ms", 0.0)
+        hazard_scan_latency_ms = latencies.get("hazard_scan_latency_ms", 0.0)
+        navigation_latency_ms = latencies.get("navigation_latency_ms", 0.0)
+
+        depth_pred_m = parsed["depth_float"]
+        hazard_result = parsed["hazard_result"] or {}
+        danger_coords_xy = hazard_result.get("danger_coords_xy")
+        warning_coords_xy = hazard_result.get("warning_coords_xy")
+        if danger_coords_xy is None:
+            danger_coords_xy = np.empty((0, 2), dtype=np.int32)
+        if warning_coords_xy is None:
+            warning_coords_xy = np.empty((0, 2), dtype=np.int32)
+        hazard_global = hazard_result.get("global_summary", {})
         hazard_coords_path = os.path.join(hazard_coords_dir, f"{stem}_hazard_coords.npz")
-        np.savez_compressed(
-            hazard_coords_path,
-            danger_coords_xy=danger_coords_xy,
-            warning_coords_xy=warning_coords_xy,
-        )
 
-        # Add distance to detections
-        for d in pred_boxes:
-            depth_val, dist_val = estimate_distance_from_depth(depth_pred_m, d["bbox"])
-            d["depth"] = depth_val
-            d["distance"] = dist_val
-
-        # Navigation logic
-        nav_inputs = [
+        pred_boxes = [
             {
-                "class": d["class_name"],
-                "bbox": d["bbox"],
+                "class_id": int(d["class_id"]),
+                "class_name": str(d["class_name"]),
+                "confidence": float(d["confidence"]),
+                "bbox": [int(d["x1"]), int(d["y1"]), int(d["x2"]), int(d["y2"])],
                 "depth": d.get("depth"),
                 "distance": d.get("distance"),
             }
-            for d in pred_boxes
+            for d in parsed["frame_boxes"]
         ]
 
-        nav_logic = NavigationLogic(
-            frame_width=w,
-            depth_hazard_danger_weight=DEPTH_HAZARD_DANGER_WEIGHT,
-            depth_hazard_warning_weight=DEPTH_HAZARD_WARNING_WEIGHT,
-        )
-        t2 = time.perf_counter()
-        zone_risks, nav_command = nav_logic.process_detections(nav_inputs, depth_hazard=hazard_result)
-        navigation_latency_ms = (time.perf_counter() - t2) * 1000.0
+        nav_logic = parsed["navigation_logic"]
+        zone_risks = parsed["zone_risks"]
+        nav_command = parsed["nav_command"]
+        tts_text = parsed["tts_text"]
         command_counter[nav_command] += 1
 
-        # TTS synthesis (in-memory by default, optional artifact write)
-        tts_file = os.path.join(audio_dir, f"{stem}_nav.wav")
-        tts_text = build_short_tts_command(nav_command) if SHORTEN_TTS_COMMANDS else nav_command
-        t3 = time.perf_counter()
+        # TTS latency: synthesis only (no WAV file write time).
+        tts_file = ""
+        tts_latency_ms = 0.0
         tts_error = ""
         tts_generated = 0
         tts_audio_saved = 0
         tts_cache_hit = 0
         tts_mode = "in_memory" if TTS_USE_IN_MEMORY else "file"
+        tts_start_time = time.perf_counter()
         try:
             if TTS_USE_IN_MEMORY:
                 wav_bytes = None
@@ -644,27 +633,29 @@ def main():
                     wav_bytes = tts_phrase_cache.get(tts_text)
                     if wav_bytes is not None:
                         tts_cache_hit = 1
+                        tts_mode = "in_memory_cache"
                 if wav_bytes is None:
                     wav_bytes = tts.synthesize_wav_bytes(tts_text)
                     if tts_phrase_cache is not None:
                         tts_phrase_cache.put(tts_text, wav_bytes)
                 tts_generated = 1
-                if TTS_SAVE_AUDIO_ARTIFACTS:
-                    with open(tts_file, "wb") as f_wav:
-                        f_wav.write(wav_bytes)
-                    tts_audio_saved = 1
-                else:
-                    tts_file = ""
             else:
-                tts.synthesize(tts_text, output_wav_path=tts_file, play_audio=False)
+                tts_mode = "synthesis_only"
+                _ = tts.synthesize_wav_bytes(tts_text)
                 tts_generated = 1
-                tts_audio_saved = 1
+            tts_latency_ms = (time.perf_counter() - tts_start_time) * 1000.0
         except Exception as exc:
             tts_error = str(exc)
             tts_file = ""
-        tts_latency_ms = (time.perf_counter() - t3) * 1000.0
 
         pipeline_latency_ms = (time.perf_counter() - pipeline_start) * 1000.0
+
+        # Save large coordinate arrays to disk manually after we record final pipeline time
+        np.savez_compressed(
+            hazard_coords_path,
+            danger_coords_xy=danger_coords_xy,
+            warning_coords_xy=warning_coords_xy,
+        )
 
         # YOLO detection quality for this image
         matches, unmatched_pred, unmatched_gt = match_predictions(pred_boxes, gt_boxes, IOU_THRESHOLD)
@@ -847,7 +838,9 @@ def main():
             "run_dir": run_dir,
             "device": device,
             "model_load_ms": model_load_ms,
+            "tts_prewarm_ms": tts_prewarm_ms,
             "images_processed": len(rows),
+            "eval_stateful_nav": EVAL_STATEFUL_NAV,
             "yolo_conf_threshold": CONF_THRESHOLD,
             "iou_threshold": IOU_THRESHOLD,
             "danger_threshold_m": DANGER_THRESHOLD_M,
