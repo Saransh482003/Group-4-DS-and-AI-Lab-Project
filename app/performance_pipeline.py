@@ -9,7 +9,6 @@ class PipelinePerformanceTracker:
 	def __init__(
 		self,
 		base_dir,
-		nav_logic_mode,
 		plot_stream_mode,
 		video_source,
 		show_windows,
@@ -20,7 +19,6 @@ class PipelinePerformanceTracker:
 	):
 		self.logger = PerformanceMetricsLogger(
 			base_dir=base_dir,
-			nav_logic_mode=nav_logic_mode,
 			plot_stream_mode=plot_stream_mode,
 			video_source=video_source,
 			show_windows=show_windows,
@@ -33,15 +31,13 @@ class PipelinePerformanceTracker:
 	def set_model_load_ms(self, value_ms):
 		self.logger.set_model_load_ms(value_ms)
 
-	def init_frame_metrics(self, frame_idx, nav_logic_mode, warmup_frames):
+	def init_frame_metrics(self, frame_idx, warmup_frames):
 		return {
 			"yolo_latency_ms": None,
 			"depth_latency_ms": None,
 			"depth_hazard_latency_ms": None,
 			"spatial_latency_ms": None,
 			"navigation_latency_ms": None,
-			"deterministic_nav_latency_ms": None,
-			"slm_nav_latency_ms": None,
 			"visualization_latency_ms": None,
 			"tts_latency_ms": 0.0,
 			"tts_should_speak": False,
@@ -54,7 +50,7 @@ class PipelinePerformanceTracker:
 			"depth_hazard_near_pixel_count": 0,
 			"depth_hazard_min_depth_m": None,
 			"frame_total_latency_ms": None,
-			"nav_mode_name": "deterministic" if nav_logic_mode == 0 else "slm",
+			"nav_mode_name": "deterministic",
 			"is_warmup": frame_idx <= warmup_frames,
 			"resource_sampled": False,
 			"tts_enqueue_ok": None,

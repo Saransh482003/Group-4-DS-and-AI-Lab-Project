@@ -575,7 +575,6 @@ def main():
 
         parsed = frame_parser.parse_frame(
             frame_bgr,
-            nav_logic_mode=0,
             shorten_tts_commands=SHORTEN_TTS_COMMANDS,
             sync_after_yolo=(device == "cuda"),
             sync_after_depth=(device == "cuda"),

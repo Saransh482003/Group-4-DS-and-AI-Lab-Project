@@ -25,7 +25,6 @@ from mechanics.tts_config import DEFAULT_TTS_USE_RUNTIME_SYNTHESIS
 from mechanics.tts_config import DEFAULT_TTS_USE_PROCESS_WORKER
 from mechanics.text_to_speech import TextToSpeech
 from mechanics.text_to_speech import TTSRuntimeController
-# from nav_slm_augment_logic import NavigationSLMAugmentLogic
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -47,9 +46,6 @@ RESOURCE_SAMPLE_EVERY_N_FRAMES = int(os.getenv("RESOURCE_SAMPLE_EVERY_N_FRAMES",
 DISABLE_DISPLAY_FOR_BENCHMARK = os.getenv("DISABLE_DISPLAY_FOR_BENCHMARK", "0") == "1"
 ENABLE_ASYNC_TTS = os.getenv("ENABLE_ASYNC_TTS", "1") == "1"
 GPU_TIMING_STRICT_SYNC = os.getenv("GPU_TIMING_STRICT_SYNC", "0") == "1"
-
-# 0 = deterministic navigation, 1 = SLM-augmented navigation
-NAV_LOGIC_MODE = int(os.getenv("NAV_LOGIC_MODE", "0"))
 
 TTS_ENABLED = os.getenv("TTS_ENABLED", "1") == "1"
 # Quality-first defaults for cleaner audio output.
@@ -124,8 +120,6 @@ def validate_inputs():
 		raise FileNotFoundError(f"Depth model file not found: {DEPTH_MODEL_DIR}")
 	if PLOT_STREAM_MODE not in (0, 1):
 		raise ValueError("PLOT_STREAM_MODE must be 0 (RGB) or 1 (depth map).")
-	if NAV_LOGIC_MODE not in (0, 1):
-		raise ValueError("NAV_LOGIC_MODE must be 0 (deterministic) or 1 (SLM).")
 	if DEPTH_DANGER_THRESHOLD_M <= 0:
 		raise ValueError("DEPTH_DANGER_THRESHOLD_M must be > 0.")
 	if DEPTH_WARNING_THRESHOLD_M < DEPTH_DANGER_THRESHOLD_M:
@@ -243,20 +237,17 @@ def process_frame(
 	frame_idx,
 	frame_bgr,
 	frame_parser,
-	slm_navigation_logic,
 	tts_controller,
 	performance_tracker,
 ):
 	frame_start = time.perf_counter()
-	frame_metrics = performance_tracker.init_frame_metrics(frame_idx, NAV_LOGIC_MODE, WARMUP_FRAMES)
+	frame_metrics = performance_tracker.init_frame_metrics(frame_idx, WARMUP_FRAMES)
 	frame_metrics["frame_skipped"] = False
 	frame_metrics["skip_reason"] = None
 	frame_metrics["inference_reused"] = False
 
 	parsed = frame_parser.parse_frame(
 		frame_bgr,
-		nav_logic_mode=NAV_LOGIC_MODE,
-		slm_navigation_logic=slm_navigation_logic,
 		shorten_tts_commands=SHORTEN_TTS_COMMANDS,
 		sync_after_yolo=True,
 		sync_after_depth=GPU_TIMING_STRICT_SYNC,
@@ -292,8 +283,6 @@ def process_frame(
 		apply_depth_hazard_overlay(plot_frame, hazard_result)
 	frame_metrics["spatial_latency_ms"] = latencies.get("spatial_latency_ms")
 	_draw_detection_boxes(plot_frame, frame_boxes)
-	frame_metrics["deterministic_nav_latency_ms"] = latencies.get("deterministic_nav_latency_ms")
-	frame_metrics["slm_nav_latency_ms"] = latencies.get("slm_nav_latency_ms")
 	frame_metrics["navigation_latency_ms"] = latencies.get("navigation_latency_ms")
 
 	visualization_start = time.perf_counter()
@@ -334,7 +323,7 @@ def process_frame(
 
 def render_cached_frame(frame_idx, frame_bgr, navigation_logic, performance_tracker, cached_inference):
 	frame_start = time.perf_counter()
-	frame_metrics = performance_tracker.init_frame_metrics(frame_idx, NAV_LOGIC_MODE, WARMUP_FRAMES)
+	frame_metrics = performance_tracker.init_frame_metrics(frame_idx, WARMUP_FRAMES)
 	frame_metrics["frame_skipped"] = True
 	frame_metrics["skip_reason"] = "policy_nth_frame_skip"
 	frame_metrics["inference_reused"] = True
@@ -388,7 +377,6 @@ def main():
 	device = "cuda" if torch.cuda.is_available() else "cpu"
 	print(f"Using device: {device}")
 	print(f"Plot stream mode: {PLOT_STREAM_MODE} ({'rgb' if PLOT_STREAM_MODE == 0 else 'depth'})")
-	print(f"Navigation logic mode: {NAV_LOGIC_MODE} ({'deterministic' if NAV_LOGIC_MODE == 0 else 'slm'})")
 	print(f"Max inference duration: {INFERENCE_DURATION_MINUTES} minutes")
 	print(f"Warmup frames: {WARMUP_FRAMES}")
 	print(f"Resource sampling interval: every {RESOURCE_SAMPLE_EVERY_N_FRAMES} frames")
@@ -405,7 +393,6 @@ def main():
 
 	performance_tracker = PipelinePerformanceTracker(
 		base_dir=BASE_DIR,
-		nav_logic_mode=NAV_LOGIC_MODE,
 		plot_stream_mode=PLOT_STREAM_MODE,
 		video_source=VIDEO_SOURCE,
 		show_windows=SHOW_WINDOWS,
@@ -438,7 +425,6 @@ def main():
 		raise RuntimeError(f"Cannot open video source: {VIDEO_SOURCE}")
 
 	navigation_logic = None
-	slm_navigation_logic = None
 	tts_controller = None
 	captured_frame_idx = 0
 	processed_frame_idx = 0
@@ -512,7 +498,6 @@ def main():
 					processed_frame_idx,
 					frame_bgr,
 					frame_parser,
-					slm_navigation_logic,
 					tts_controller,
 					performance_tracker,
 				)

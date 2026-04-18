@@ -155,49 +155,6 @@ class NavigationLogic:
 
 		return blended
 
-	def _nearest_object_info(self, detections):
-		nearest_name = None
-		nearest_distance = None
-
-		for det in detections:
-			distance = det.get("distance")
-			if distance is None:
-				continue
-
-			try:
-				distance_value = float(distance)
-			except (TypeError, ValueError):
-				continue
-
-			if distance_value <= 0:
-				continue
-
-			if nearest_distance is None or distance_value < nearest_distance:
-				nearest_distance = distance_value
-				nearest_name = det.get("class") or det.get("class_name") or "object"
-
-		if nearest_distance is None:
-			return None
-
-		return str(nearest_name), nearest_distance
-
-	def _enrich_clear_path_command(self, command, detections):
-		if command != "Path clear. Continue straight.":
-			return command
-
-		nearest_info = self._nearest_object_info(detections)
-		if nearest_info is None:
-			return "The way ahead is clear. You can keep going straight."
-
-		name, distance = nearest_info
-		friendly_name = str(name).replace("_", " ").strip()
-		if not friendly_name:
-			friendly_name = "object"
-		return (
-			f"Go straight."
-			# f"{friendly_name} is about {distance:.1f} meters away."
-		)
-
 	def _smooth_zone_risks(self, raw_zone_risks):
 		if not self._has_history:
 			self._smoothed_risks = raw_zone_risks.copy()

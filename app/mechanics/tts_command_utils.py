@@ -1,18 +1,3 @@
-import re
-
-
-def _strip_verbose_distance_sentences(text):
-	# Drop verbose trailing object-distance narration from nav commands.
-	compact = re.sub(
-		r"\s*[^.!?]*\b(?:closest object|object is)\b[^.!?]*\bmeters?\b[^.!?]*(?:[.!?]|$)",
-		" ",
-		text,
-		flags=re.IGNORECASE,
-	)
-	compact = re.sub(r"\s+", " ", compact).strip()
-	return compact
-
-
 def build_short_tts_command(nav_command):
 	cmd = str(nav_command or "").strip()
 	if not cmd:

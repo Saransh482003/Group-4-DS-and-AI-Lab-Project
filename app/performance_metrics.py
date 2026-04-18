@@ -11,7 +11,6 @@ class PerformanceMetricsLogger:
 	def __init__(
 		self,
 		base_dir,
-		nav_logic_mode,
 		plot_stream_mode,
 		video_source,
 		show_windows,
@@ -30,7 +29,6 @@ class PerformanceMetricsLogger:
 		self.resource_samples = []
 
 		self.run_config = {
-			"nav_logic_mode": nav_logic_mode,
 			"plot_stream_mode": plot_stream_mode,
 			"video_source": str(video_source),
 			"show_windows": bool(show_windows),

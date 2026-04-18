@@ -1,2 +1,0 @@
-model,epochs,imgsz,batch,optimizer,lr0,weight_decay,box,cls,dfl,mixup,scale,mAP50,mAP50_95,precision,recall
-YOLO11s,80,768,32,AdamW,0.001,0.0001,10.0,0.5,2.0,0.2,0.7,0.657912716884153,0.44145940734774625,0.6931943097299657,0.5976889216572455
