@@ -1,0 +1,11 @@
+ultralytics==8.4.23
+torch
+torchvision
+torchaudio
+streamlit>=1.40.0
+numpy
+opencv-python-headless
+piper-tts
+scipy
+huggingface_hub
+Pillow
