@@ -2,7 +2,8 @@ ultralytics==8.4.23
 torch
 torchvision
 torchaudio
-streamlit>=1.40.0
+gradio>=5.0.0
+spaces
 numpy
 opencv-python-headless
 piper-tts

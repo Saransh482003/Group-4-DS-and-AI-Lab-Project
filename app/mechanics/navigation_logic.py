@@ -21,8 +21,8 @@ class NavigationLogic:
 		turn_hysteresis=0.5,
 		command_hold_seconds=0.7,
 		switch_confirm_frames=3,
-		depth_hazard_danger_weight=4.0,
-		depth_hazard_warning_weight=1.5,
+		depth_hazard_danger_weight=25.0,
+		depth_hazard_warning_weight=8.0,
 	):
 		# Tunable thresholds used by risk scoring and command selection.
 		self.frame_width = float(frame_width)

@@ -5,7 +5,12 @@ import cv2
 import numpy as np
 import torch
 
-REPO_PATH = r"E:\dsai_group4_project\Depth-Anything-V2"
+def get_base_root():
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        return sys._MEIPASS
+    return os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+REPO_PATH = os.path.join(get_base_root(), "Depth-Anything-V2")
 METRIC_PATH = os.path.join(REPO_PATH, "metric_depth")
 
 if os.path.exists(METRIC_PATH) and METRIC_PATH not in sys.path:

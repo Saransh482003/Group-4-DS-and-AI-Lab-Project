@@ -44,8 +44,8 @@ def load_models():
     def fallback_nav_logic_factory(frame_width):
         return NavigationLogic(
             frame_width=frame_width,
-            depth_hazard_danger_weight=SHARED_SETTINGS.get("DEPTH_HAZARD_DANGER_WEIGHT", 3.0),
-            depth_hazard_warning_weight=SHARED_SETTINGS.get("DEPTH_HAZARD_WARNING_WEIGHT", 1.0),
+            depth_hazard_danger_weight=SHARED_SETTINGS.get("DEPTH_HAZARD_DANGER_WEIGHT", 25.0),
+            depth_hazard_warning_weight=SHARED_SETTINGS.get("DEPTH_HAZARD_WARNING_WEIGHT", 8.0),
         )
 
     frame_parser = SharedFrameParser(
@@ -171,11 +171,11 @@ def draw_nav_zones(frame, nav_logic, zone_risks):
     left_end = int(getattr(nav_logic, "left_end", int(0.30 * w)))
     center_end = int(getattr(nav_logic, "center_end", int(0.70 * w)))
 
-    overlay = frame.copy()
-    cv2.rectangle(overlay, (0, 0), (left_end, h), (0, 0, 255), -1)
-    cv2.rectangle(overlay, (left_end, 0), (center_end, h), (0, 255, 0), -1)
-    cv2.rectangle(overlay, (center_end, 0), (w, h), (0, 0, 255), -1)
-    cv2.addWeighted(overlay, 0.10, frame, 0.90, 0, frame)
+    # overlay = frame.copy()
+    # cv2.rectangle(overlay, (0, 0), (left_end, h), (0, 0, 255), -1)
+    # cv2.rectangle(overlay, (left_end, 0), (center_end, h), (0, 255, 0), -1)
+    # cv2.rectangle(overlay, (center_end, 0), (w, h), (0, 0, 255), -1)
+    # cv2.addWeighted(overlay, 0.10, frame, 0.90, 0, frame)
 
     cv2.rectangle(frame, (0, 0), (left_end, h), (0, 0, 255), 2)
     cv2.rectangle(frame, (left_end, 0), (center_end, h), (0, 255, 0), 2)
