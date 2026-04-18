@@ -1,3 +1,13 @@
+---
+title: DSAI Blind Navigation Assistant
+emoji: 🤖
+colorFrom: blue
+colorTo: indigo
+sdk: streamlit
+app_file: app/streamlit_app.py
+pinned: false
+---
+
 # Action-Oriented Indoor Navigation Assistance for the Visually Impaired
 
 ## Overview

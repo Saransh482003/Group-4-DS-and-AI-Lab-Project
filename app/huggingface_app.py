@@ -9,45 +9,6 @@ import torch
 import tempfile
 import sys
 import shutil
-import subprocess
-
-# --- Hugging Face Space Cold Start Checks ---
-def _ensure_hf_dependencies():
-    # 1. Ensure Depth-Anything-V2 exists locally for imports
-    depth_path = os.path.join(os.path.dirname(__file__), "..", "Depth-Anything-V2")
-    if not os.path.exists(depth_path):
-        print("Depth-Anything-V2 missing. Cloning...")
-        subprocess.run(["git", "clone", "https://github.com/LiheYoung/Depth-Anything-V2.git", depth_path], check=True)
-    sys.path.insert(0, depth_path)
-
-    # 2. Ensure Piper Voice is downloaded if ignored by .gitignore
-    voice_dir = os.path.join(os.path.dirname(__file__), "piper_voices")
-    os.makedirs(voice_dir, exist_ok=True)
-    voice_model = os.path.join(voice_dir, "en_US-amy-medium.onnx")
-    voice_json = voice_model + ".json"
-    if not os.path.exists(voice_model):
-        print("Downloading Piper Voice Model...")
-        import urllib.request
-        urllib.request.urlretrieve("https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/amy/medium/en_US-amy-medium.onnx?download=true", voice_model)
-    if not os.path.exists(voice_json):
-        print("Downloading Piper Voice Config...")
-        import urllib.request
-        urllib.request.urlretrieve("https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/amy/medium/en_US-amy-medium.onnx.json?download=true", voice_json)
-
-    # 3. Ensure Piper executable is downloaded for linux (Hugging Face)
-    if sys.platform != "win32":
-        piper_exe = os.path.join(os.path.dirname(__file__), "piper", "piper")
-        if not os.path.exists(os.path.join(os.path.dirname(__file__), "piper")): # Download Linux Piper binary
-            print("Downloading Piper Linux Binary...")
-            import urllib.request
-            import tarfile
-            piper_tar = "/tmp/piper_linux.tar.gz"
-            urllib.request.urlretrieve("https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_linux_x86_64.tar.gz", piper_tar)
-            with tarfile.open(piper_tar, "r:gz") as tar:
-                tar.extractall(path=os.path.dirname(__file__)) # extracts to app/piper
-            os.chmod(piper_exe, 0o755)
-            
-_ensure_hf_dependencies()
 
 from mechanics.depth_estimation import DepthEstimator
 from mechanics.frame_parser import SharedFrameParser
@@ -67,7 +28,7 @@ ENV_FILE = os.path.abspath(os.path.join(BASE_DIR, "..", ".env"))
 SHARED_SETTINGS = load_shared_runtime_settings(env_file_path=ENV_FILE)
 
 # System-level Piper fallback for Hugging Face Spaces (Linux Container) vs Windows.
-PIPER_EXE = os.path.join(BASE_DIR, "piper", "piper") if sys.platform != "win32" else SHARED_SETTINGS.get("PIPER_EXE", "piper")
+PIPER_EXE = "piper" if sys.platform != "win32" else SHARED_SETTINGS.get("PIPER_EXE", "piper")
 
 # Initialize Models Once Globally
 print("Loading Models into Memory...")
@@ -82,7 +43,7 @@ def fallback_nav_logic_factory(frame_width):
     return NavigationLogic(
         frame_width=frame_width,
         depth_hazard_danger_weight=SHARED_SETTINGS.get("DEPTH_HAZARD_DANGER_WEIGHT", 25.0),
-        depth_hazard_warning_weight=SHARED_SETTINGS.get("DEPTH_HAZARD_WARNING_WEIGHT", 8.0),
+        depth_hazard_warning_weight=SHARED_SETTINGS.get("DEPTH_HAZARD_WARNING_WEIGHT", 20.0),
     )
 
 frame_parser = SharedFrameParser(
@@ -91,8 +52,8 @@ frame_parser = SharedFrameParser(
     nav_logic_factory=fallback_nav_logic_factory,
     device="cpu", # Handled dynamically below
     depth_hazard_enabled=True,
-    danger_threshold_m=SHARED_SETTINGS.get("DEPTH_DANGER_THRESHOLD_M", 1.2),
-    warning_threshold_m=SHARED_SETTINGS.get("DEPTH_WARNING_THRESHOLD_M", 2.0),
+    danger_threshold_m=SHARED_SETTINGS.get("DEPTH_DANGER_THRESHOLD_M", 1.8),
+    warning_threshold_m=SHARED_SETTINGS.get("DEPTH_WARNING_THRESHOLD_M", 2.5),
     stateful_navigation=False
 )
 

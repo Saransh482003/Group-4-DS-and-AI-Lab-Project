@@ -78,9 +78,9 @@ def load_shared_runtime_settings(env_file_path=None):
             "PIPER_VOICE_CONFIG_REL" if not is_frozen() else "IGNORE_PIPER_CONFIG",
             os.path.join("piper_voices", "en_US-amy-medium.onnx.json"),
         ),
-        "DEPTH_DANGER_THRESHOLD_M": _env_float("DEPTH_DANGER_THRESHOLD_M", 1.2),
-        "DEPTH_WARNING_THRESHOLD_M": _env_float("DEPTH_WARNING_THRESHOLD_M", 2.0),
+        "DEPTH_DANGER_THRESHOLD_M": _env_float("DEPTH_DANGER_THRESHOLD_M", 1.8),
+        "DEPTH_WARNING_THRESHOLD_M": _env_float("DEPTH_WARNING_THRESHOLD_M", 2.5),
         "DEPTH_HAZARD_DANGER_WEIGHT": _env_float("DEPTH_HAZARD_DANGER_WEIGHT", 25.0),
-        "DEPTH_HAZARD_WARNING_WEIGHT": _env_float("DEPTH_HAZARD_WARNING_WEIGHT", 8.0),
+        "DEPTH_HAZARD_WARNING_WEIGHT": _env_float("DEPTH_HAZARD_WARNING_WEIGHT", 20.0),
         "SHORTEN_TTS_COMMANDS": _env_bool("SHORTEN_TTS_COMMANDS", DEFAULT_SHORTEN_TTS_COMMANDS),
     }
