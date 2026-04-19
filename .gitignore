@@ -5,4 +5,4 @@ app/piper/
 */__pycache__/*
 */.log/
 Depth-Anything-V2/
-*.pyc
+app/mechanics/__pycache__/*.pyc
