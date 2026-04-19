@@ -29,7 +29,7 @@ from mechanics.text_to_speech import TTSRuntimeController
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ENV_FILE = os.path.abspath(os.path.join(BASE_DIR, "..", ".env"))
-SHARED_SETTINGS = load_shared_runtime_settings(BASE_DIR, env_file_path=ENV_FILE)
+SHARED_SETTINGS = load_shared_runtime_settings(env_file_path=ENV_FILE)
 
 YOLO_WEIGHTS = SHARED_SETTINGS["YOLO_WEIGHTS"]
 DEPTH_MODEL_DIR = SHARED_SETTINGS["DEPTH_MODEL_FILE"]

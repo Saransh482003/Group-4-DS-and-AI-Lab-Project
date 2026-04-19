@@ -28,7 +28,7 @@ from mechanics.tts_phrase_cache import TtsPhraseCache
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, ".."))
 ENV_FILE = os.path.join(PROJECT_ROOT, ".env")
-SHARED_SETTINGS = load_shared_runtime_settings(BASE_DIR, env_file_path=ENV_FILE)
+SHARED_SETTINGS = load_shared_runtime_settings(env_file_path=ENV_FILE)
 
 IMAGES_DIR = os.path.join(PROJECT_ROOT, "pipeline_evaluations", "eval_set", "images")
 LABELS_DIR = os.path.join(PROJECT_ROOT, "pipeline_evaluations", "eval_set", "labels")

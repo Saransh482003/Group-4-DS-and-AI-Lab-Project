@@ -32,6 +32,3 @@ ENV STREAMLIT_SERVER_ADDRESS="0.0.0.0"
 ENV STREAMLIT_BROWSER_GATHER_USAGE_STATS="false"
 
 CMD ["streamlit", "run", "app/streamlit_app.py"]
-
-# CMD to start the Hugging Face App
-CMD ["python", "app/huggingface_app.py"]

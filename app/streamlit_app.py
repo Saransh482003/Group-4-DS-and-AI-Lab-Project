@@ -18,6 +18,12 @@ from mechanics.nav_tts_piper import PiperTTS
 from mechanics.tts_phrase_cache import TtsPhraseCache
 from mechanics.tts_config import DEFAULT_TTS_PHRASE_CACHE_MAXSIZE
 
+st.set_page_config(
+    page_title="DSAI Blind Navigation Tool",
+    page_icon="🤖",
+    layout="wide"
+)
+
 # ========================================================
 # 1. INITIALIZATION & SETUP
 # ========================================================
@@ -44,8 +50,8 @@ def load_models():
     def fallback_nav_logic_factory(frame_width):
         return NavigationLogic(
             frame_width=frame_width,
-            depth_hazard_danger_weight=SHARED_SETTINGS.get("DEPTH_HAZARD_DANGER_WEIGHT", 3.0),
-            depth_hazard_warning_weight=SHARED_SETTINGS.get("DEPTH_HAZARD_WARNING_WEIGHT", 1.0),
+            depth_hazard_danger_weight=SHARED_SETTINGS.get("DEPTH_HAZARD_DANGER_WEIGHT", 25.0),
+            depth_hazard_warning_weight=SHARED_SETTINGS.get("DEPTH_HAZARD_WARNING_WEIGHT", 20.0),
         )
 
     frame_parser = SharedFrameParser(
@@ -54,8 +60,8 @@ def load_models():
         nav_logic_factory=fallback_nav_logic_factory,
         device=device,
         depth_hazard_enabled=True,
-        danger_threshold_m=SHARED_SETTINGS.get("DEPTH_DANGER_THRESHOLD_M", 1.2),
-        warning_threshold_m=SHARED_SETTINGS.get("DEPTH_WARNING_THRESHOLD_M", 2.0),
+        danger_threshold_m=SHARED_SETTINGS.get("DEPTH_DANGER_THRESHOLD_M", 1.8),
+        warning_threshold_m=SHARED_SETTINGS.get("DEPTH_WARNING_THRESHOLD_M", 2.5),
         stateful_navigation=False
     )
 
@@ -171,11 +177,11 @@ def draw_nav_zones(frame, nav_logic, zone_risks):
     left_end = int(getattr(nav_logic, "left_end", int(0.30 * w)))
     center_end = int(getattr(nav_logic, "center_end", int(0.70 * w)))
 
-    overlay = frame.copy()
-    cv2.rectangle(overlay, (0, 0), (left_end, h), (0, 0, 255), -1)
-    cv2.rectangle(overlay, (left_end, 0), (center_end, h), (0, 255, 0), -1)
-    cv2.rectangle(overlay, (center_end, 0), (w, h), (0, 0, 255), -1)
-    cv2.addWeighted(overlay, 0.10, frame, 0.90, 0, frame)
+    # overlay = frame.copy()
+    # cv2.rectangle(overlay, (0, 0), (left_end, h), (0, 0, 255), -1)
+    # cv2.rectangle(overlay, (left_end, 0), (center_end, h), (0, 255, 0), -1)
+    # cv2.rectangle(overlay, (center_end, 0), (w, h), (0, 0, 255), -1)
+    # cv2.addWeighted(overlay, 0.10, frame, 0.90, 0, frame)
 
     cv2.rectangle(frame, (0, 0), (left_end, h), (0, 0, 255), 2)
     cv2.rectangle(frame, (left_end, 0), (center_end, h), (0, 255, 0), 2)
@@ -207,51 +213,67 @@ def draw_depth_hazard_overlay(frame, hazard_result, alpha=0.30):
 # 3. STREAMLIT UI & LOGIC
 # ========================================================
 
-st.title("🤖 Wearable Blind Navigation Assistant")
+# Use a highly similar layout to Gradio
+st.markdown(
+    """
+    <style>
+    /* Make the images fit better without aggressive scrolling */
+    .stImage > img {
+        max-height: 45vh;
+        object-fit: contain;
+    }
+    </style>
+    """, unsafe_allow_html=True
+)
 
-# Move file uploader and controls to the sidebar to save screen space
-with st.sidebar:
-    st.header("Input Controls")
-    st.markdown("Upload an image of an indoor environment to see object detections and Depth Anything hazard maps.")
-    uploaded_file = st.file_uploader("Upload Subject Image", type=["jpg", "jpeg", "png", "webp"])
-    
+st.title("🤖 Wearable Blind Navigation Assistant")
+st.markdown("Upload an image of an indoor environment to see the YOLO object detections and Depth Anything hazard map in action. The tool calculates a safe navigation path and reads it aloud using Piper TTS.")
+
+col_left, col_right = st.columns([1, 3])
+
+with col_left:
+    st.markdown("### Input Controls")
+    uploaded_file = st.file_uploader("Upload Subject Image", type=["jpg", "jpeg", "png", "webp"], label_visibility="collapsed")
     analyze_btn = False
     if uploaded_file is not None:
         analyze_btn = st.button("Analyze Environment", type="primary", use_container_width=True)
-        
-    st.divider()
-    st.markdown("### About")
-    st.caption("This tool calculates a safe navigation path using depth grids and YOLO detections, then reads it aloud using Piper TTS.")
+    st.markdown("---")
+    st.markdown("This tool runs locally on your machine.")
+    
+    if uploaded_file is not None:
+        # Convert uploaded file to opencv image format
+        file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
+        frame_rgb = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
+        st.markdown("### Original Image")
+        st.image(cv2.cvtColor(frame_rgb, cv2.COLOR_BGR2RGB), use_container_width=True)
 
 if uploaded_file is not None:
-    # Convert uploaded file to opencv image format
-    file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
-    frame_bgr = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
-
-    # Use a two-column layout for immediate side-by-side comparison
-    col_img, col_res = st.columns([1.2, 1])
-
-    with col_img:
-        if not analyze_btn:
-            st.subheader("Original Image")
-            st.image(cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB), use_container_width=True)
-            st.info("👈 Click **Analyze Environment** in the sidebar to start processing.")
+    if not analyze_btn:
+        with col_right:
+            st.markdown("### Analyzed View")
+            st.info("👈 Click **Analyze Environment** to start processing...")
+            st.markdown("### Results Dashboard")
+            st.markdown("Waiting for analysis...")
 
     if analyze_btn:
-        with col_img:
-            st.subheader("Analyzed View")
-            # Create a placeholder in col_img for the spinner so it shows up where the image will be
-            img_placeholder = st.empty()
-            
-        with col_res:
-            st.subheader("Results Dashboard")
-            res_placeholder = st.empty()
-            
+        with col_right:
+            img_col, dash_col = st.columns([5, 3])
+            with img_col:
+                st.markdown("### Analyzed View")
+                img_placeholder = st.empty()
+                
+            with dash_col:
+                st.markdown("### Results Dashboard")
+                res_placeholder = st.empty()
+                
         with img_placeholder.container():
             with st.spinner("Running ML Pipeline & Generating Audio..."):
                 try:
                     pipeline_start = time.perf_counter()
                     
+                    frame_gray = cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2GRAY)
+                    frame_bgr = cv2.cvtColor(frame_gray, cv2.COLOR_GRAY2BGR)
+
                     device_str = "cuda" if torch.cuda.is_available() else "cpu"
                     parsed = frame_parser.parse_frame(
                         frame_bgr, 
@@ -345,26 +367,26 @@ if uploaded_file is not None:
                     st.error(f"An error occurred during processing: {e}")
                     st.code(traceback.format_exc())
                     
-        # Populate the Results Dashboard in the right column
+        # Populate the Results Dashboard in the right column next to the image
         if 'parsed' in locals():
-            with col_res:
-                st.success("Analysis Complete!")
+            with res_placeholder.container():
+                if nav_command:
+                    command_str = nav_command.value if hasattr(nav_command, "value") else str(nav_command)
+                    st.markdown(f"**Nav Command:** {command_str}")
+                    
+                st.markdown("### Spoken Navigation Warning")
+                if wav_bytes is not None:
+                    st.audio(wav_bytes, format='audio/wav')
                 
                 st.markdown("### TTS Transcript")
                 st.info(tts_text)
-                
-                if wav_bytes is not None:
-                    st.markdown("### Spoken Navigation Warning")
-                    st.audio(wav_bytes, format='audio/wav')
-                
-                st.divider()
+            
                 st.markdown("### Latency Breakdown")
-                st.metric("Total Pipeline", f"{pipeline_latency_ms:.1f} ms")
-                metrics_col1, metrics_col2 = st.columns(2)
-                metrics_col1.metric("YOLO", f"{yolo_latency_ms:.1f} ms")
-                metrics_col2.metric("Depth", f"{depth_latency_ms:.1f} ms")
-                metrics_col1.metric("Hazard Scan", f"{hazard_scan_latency_ms:.1f} ms")
-                metrics_col2.metric("TTS Generation", f"{tts_latency_ms:.1f} ms")
+                st.markdown(f"- **Total Pipeline:** {pipeline_latency_ms:.1f} ms\n"
+                            f"- **YOLO Detection:** {yolo_latency_ms:.1f} ms\n"
+                            f"- **Depth Estimation:** {depth_latency_ms:.1f} ms\n"
+                            f"- **Hazard Scanning:** {hazard_scan_latency_ms:.1f} ms\n"
+                            f"- **TTS Generation:** {tts_latency_ms:.1f} ms")
 else:
     # Landing page state
-    st.info("Please upload an image from the sidebar to begin.")
+    pass
