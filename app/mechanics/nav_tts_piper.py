@@ -135,22 +135,7 @@ class PiperTTS:
 
 		# Use the persistent process via stdin write / stdout read chunking
 		if hasattr(self, '_process') and self._process.poll() is None:
-			self._process.stdin.write(command_text.encode("utf-8") + b"\n")
-			self._process.stdin.flush()
-			# When using --output_raw, Piper just writes PCM bytes then stops making noise for that chunk.
-			# But without knowing the length, a naive blocking read won't work perfectly.
-			# A quick and dirty fix for persistent subprocess stream is to wait briefly then read1.
-			time.sleep(0.5)
-			try:
-				pcm_bytes = self._process.stdout.read1(65536)
-			except Exception:
-				pcm_bytes = b""
-			if pcm_bytes:
-				wav_bytes = self._pcm_to_wav_bytes(pcm_bytes)
-				if self._is_valid_wav_bytes(wav_bytes):
-					return wav_bytes
-
-		# Attempt 1 (quality-first): synthesize to a temporary WAV file then read bytes.
+			pass
 		tmp_wav_path = None
 		try:
 			fd, tmp_wav_path = tempfile.mkstemp(suffix=".wav", dir=str(self.output_dir))

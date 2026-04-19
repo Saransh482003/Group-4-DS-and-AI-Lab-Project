@@ -1,0 +1,1 @@
+This folder saves the pipeline evaluations on the real-time run of the application.

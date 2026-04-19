@@ -3,6 +3,7 @@ torch
 torchvision
 torchaudio
 gradio>=5.0.0
+streamlit
 spaces
 numpy
 opencv-python-headless

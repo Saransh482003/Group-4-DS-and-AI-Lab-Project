@@ -1,8 +1,14 @@
 datasets/
 env/
-app/piper/
-app/piper_voices/
-# model_training/depth_estimation/model_weights
 **/__pycache__/
 **/.log/
-Depth-Anything-V2/
+.env
+
+app/performance_runs/*
+app/navigation_eval_outputs/*
+
+# Except .gitkeep
+!app/performance_runs/.gitkeep
+!app/performance_runs/README.txt
+!app/navigation_eval_outputs/.gitkeep
+!app/navigation_eval_outputs/README.txt

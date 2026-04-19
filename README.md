@@ -3,14 +3,44 @@ title: DSAI Blind Navigation Assistant
 emoji: 🤖
 colorFrom: blue
 colorTo: indigo
-sdk: streamlit
-app_file: app/streamlit_app.py
+sdk: docker
 pinned: false
 ---
 
 # Action-Oriented Indoor Navigation Assistance for the Visually Impaired
 
-## Overview
+## Quick Setup for New Users
+
+### Method 1: The One-Click Docker Setup (Recommended)
+If you have Docker installed, you can skip configuring Python, creating virtual environments, and wrestling with dependencies entirely:
+
+1. Clone the repository.
+2. Run this command in the project root:
+   ```bash
+   docker compose up --build
+   ```
+3. Open `http://localhost:7860` in your browser!
+
+---
+
+### Method 2: Standard Local Setup
+If you want to run it directly on your machine (e.g., to use your local GPU for much faster frame processing):
+
+**For Windows Users:**
+Just double-click `setup.bat` (or run it from your terminal). It will:
+1. Auto-create your `.env` file from the example
+2. Create a Python virtual environment (`env`)
+3. Install all required dependencies
+4. Launch the Streamlit application for you.
+
+**For Mac/Linux Users:**
+Run the setup shell script:
+```bash
+chmod +x setup.sh
+./setup.sh
+```
+
+---
 
 Visually impaired individuals navigating indoor environments often rely
 on assistive technologies that announce detected objects. However,
