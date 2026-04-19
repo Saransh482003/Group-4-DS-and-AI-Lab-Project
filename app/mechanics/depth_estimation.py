@@ -100,8 +100,8 @@ def estimate_distance_from_depth(depth_map, bbox):
 
 def scan_depth_hazards(
     depth_map,
-    danger_threshold_m=1.2,
-    warning_threshold_m=2.0,
+    danger_threshold_m=1.8,
+    warning_threshold_m=2.5,
     return_masks=True,
     return_coords=True,
 ):
