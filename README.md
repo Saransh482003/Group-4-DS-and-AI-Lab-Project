@@ -1,12 +1,3 @@
----
-title: DSAI Blind Navigation Assistant
-emoji: 🤖
-colorFrom: blue
-colorTo: indigo
-sdk: docker
-pinned: false
----
-
 # Action-Oriented Indoor Navigation Assistance for the Visually Impaired
 
 ## Quick Setup for New Users
@@ -99,7 +90,7 @@ to generate **concise navigation prompts**.
 ------------------------------------------------------------------------
 
 # System Architecture
-```
+```text
 Webcam Input
      │
      ▼
@@ -118,6 +109,12 @@ Rule-Based Reasoning Engine
 Navigation Guidance
 (Audio Output)
 ```
+
+### Object Detection Pipeline
+![Object Detection Flowchart](model_training/object_detection/Object%20Detection%20Flowchart.png)
+
+### Depth Estimation Pipeline
+![Depth Estimation Flowchart](model_training/depth_estimation/Depth%20Estimation%20Flowchart.png)
 
 ------------------------------------------------------------------------
 
@@ -193,8 +190,8 @@ Evaluation will be conducted in a **controlled indoor obstacle course**.
 
 ### Participants
 
--   **Minimum 5 blindfolded participants**
--   Blindfolding ensures **consistent testing conditions**
+-   **Minimum 5 simulated visually impaired participants**
+-   Simulating visual impairment ensures **consistent testing conditions**
 
 ### Trials
 

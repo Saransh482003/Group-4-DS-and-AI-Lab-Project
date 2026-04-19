@@ -10,8 +10,8 @@ def main():
     # Define source paths
     yolo_src = os.path.join(root_dir, "model_training", "object_detection", "best-weights", "YOLO11s-Final-Training.pt")
     depth_src = os.path.join(root_dir, "model_training", "depth_estimation", "model_weights", "depth_anything_v2_metric_hypersim_vits.pth")
-    piper_src = os.path.join(root_dir, "app", "piper")
-    piper_voices_src = os.path.join(root_dir, "app", "piper_voices")
+    piper_src = os.path.join(root_dir, "piper")
+    piper_voices_src = os.path.join(root_dir, "piper", "piper_voices")
     depth_anything_src = os.path.join(root_dir, "Depth-Anything-V2")
 
     # The format for --add-data is "source;destination" on Windows, but let's use the CLI's standard format since we pass via Python

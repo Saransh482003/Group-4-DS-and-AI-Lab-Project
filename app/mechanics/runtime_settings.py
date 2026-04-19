@@ -66,17 +66,17 @@ def load_shared_runtime_settings(env_file_path=None):
         "PIPER_EXE": _env_rel_path(
             base_dir, 
             "PIPER_EXE_REL" if not is_frozen() else "IGNORE_PIPER", 
-            os.path.join("piper", "piper.exe")
+            os.path.join("..", "piper", "piper.exe") if not is_frozen() else os.path.join("piper", "piper.exe")
         ),
         "PIPER_VOICE_MODEL": _env_rel_path(
             base_dir,
             "PIPER_VOICE_MODEL_REL" if not is_frozen() else "IGNORE_PIPER_VOICE",
-            os.path.join("piper_voices", "en_US-amy-medium.onnx"),
+            os.path.join("..", "piper", "piper_voices", "en_US-amy-medium.onnx") if not is_frozen() else os.path.join("piper_voices", "en_US-amy-medium.onnx"),
         ),
         "PIPER_VOICE_CONFIG": _env_rel_path(
             base_dir,
             "PIPER_VOICE_CONFIG_REL" if not is_frozen() else "IGNORE_PIPER_CONFIG",
-            os.path.join("piper_voices", "en_US-amy-medium.onnx.json"),
+            os.path.join("..", "piper", "piper_voices", "en_US-amy-medium.onnx.json") if not is_frozen() else os.path.join("piper_voices", "en_US-amy-medium.onnx.json"),
         ),
         "DEPTH_DANGER_THRESHOLD_M": _env_float("DEPTH_DANGER_THRESHOLD_M", 1.8),
         "DEPTH_WARNING_THRESHOLD_M": _env_float("DEPTH_WARNING_THRESHOLD_M", 2.5),

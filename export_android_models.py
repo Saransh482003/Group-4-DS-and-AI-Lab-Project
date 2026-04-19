@@ -88,4 +88,4 @@ def export_depth_anything():
 if __name__ == "__main__":
     export_yolo()
     export_depth_anything()
-    print("\n[+] Note: Piper TTS is already exported to ONNX format and located in 'app/piper_voices/en_US-amy-medium.onnx'")
+    print("\n[+] Note: Piper TTS is already exported to ONNX format and located in 'piper/piper_voices/en_US-amy-medium.onnx'")
