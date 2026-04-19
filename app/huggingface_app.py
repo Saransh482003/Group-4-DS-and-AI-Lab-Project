@@ -291,8 +291,8 @@ theme = gr.themes.Soft(
     secondary_hue="slate",
 )
 
-with gr.Blocks(title="DSAI Blind Navigation Tool", theme=theme) as demo:
-    gr.Markdown("# 🤖 Wearable Blind Navigation Assistant")
+with gr.Blocks(title="DSAI Visually Impaired Navigation Tool", theme=theme) as demo:
+    gr.Markdown("# 🤖 Navigation Assistant for the Visually Impaired")
     gr.Markdown("Upload an image of an indoor environment to see the YOLO object detections and Depth Anything hazard map in action. The tool calculates a safe navigation path and reads it aloud using Piper TTS.")
     
     with gr.Row():

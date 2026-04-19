@@ -290,9 +290,9 @@ class PiperTTS:
 if __name__ == "__main__":
 	cwd = os.getcwd()
 
-	piper_exe = os.path.abspath(os.path.join(cwd, "app", "piper", "piper.exe"))
-	voice_model = os.path.abspath(os.path.join(cwd, "app", "piper_voices", "en_US-amy-medium.onnx"))
-	voice_config = os.path.abspath(os.path.join(cwd, "app", "piper_voices", "en_US-amy-medium.onnx.json"))
+	piper_exe = os.path.abspath(os.path.join(cwd, "piper", "piper.exe"))
+	voice_model = os.path.abspath(os.path.join(cwd, "piper", "piper_voices", "en_US-amy-medium.onnx"))
+	voice_config = os.path.abspath(os.path.join(cwd, "piper", "piper_voices", "en_US-amy-medium.onnx.json"))
 
 	tts = PiperTTS(
 		piper_executable=piper_exe,

@@ -7,7 +7,7 @@ import sys
 import torch
 import streamlit as st
 
-st.set_page_config(page_title="DSAI Blind Navigation Tool", page_icon="??", layout="wide")
+st.set_page_config(page_title="DSAI Visually Impaired Navigation Tool", page_icon="🧭", layout="wide")
 
 from mechanics.depth_estimation import DepthEstimator
 from mechanics.frame_parser import SharedFrameParser
@@ -19,7 +19,7 @@ from mechanics.tts_phrase_cache import TtsPhraseCache
 from mechanics.tts_config import DEFAULT_TTS_PHRASE_CACHE_MAXSIZE
 
 st.set_page_config(
-    page_title="DSAI Blind Navigation Tool",
+    page_title="DSAI Visually Impaired Navigation Tool",
     page_icon="🤖",
     layout="wide"
 )
@@ -226,7 +226,7 @@ st.markdown(
     """, unsafe_allow_html=True
 )
 
-st.title("🤖 Wearable Blind Navigation Assistant")
+st.title("🤖 Wearable Navigation Assistant for the Visually Impaired")
 st.markdown("Upload an image of an indoor environment to see the YOLO object detections and Depth Anything hazard map in action. The tool calculates a safe navigation path and reads it aloud using Piper TTS.")
 
 col_left, col_right = st.columns([1, 3])

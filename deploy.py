@@ -29,7 +29,8 @@ api.upload_folder(
         "model_training/object_detection/best-weights/*.pt",   # Explicit model inclusions
         "mechanics/**",         # Any other core utilities
         "Depth-Anything-V2/**", # Your models dependencies
-        "piper_voices/**",     # Explicitly include Piper voices
+        "piper/**",             # Explicitly include Piper execution
+        "piper/piper_voices/**",# Explicitly include Piper voices
         "Dockerfile",           # The docker configuration
         "requirements-hf.txt",  # Specific HF space requirements
         "README.md"             # Used by Hugging Face to configure the space
