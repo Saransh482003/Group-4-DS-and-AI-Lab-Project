@@ -1,0 +1,12 @@
+class_id,class_name,ground_truth_count,predicted_count,difference
+0,person,1825,1559,-266
+1,table,490,472,-18
+2,potted plant,581,671,90
+3,chair,623,555,-68
+4,sofa,268,333,65
+5,lamp,239,250,11
+6,door,134,136,2
+7,cabinet,453,250,-203
+8,wardrobe,47,73,26
+9,refrigerator,360,379,19
+10,bed,159,176,17

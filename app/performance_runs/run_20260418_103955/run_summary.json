@@ -1,0 +1,68 @@
+{
+  "started_at_epoch": 1776488995.732208,
+  "finished_at_epoch": 1776489033.6163912,
+  "duration_seconds": 37.884183168411255,
+  "model_load_ms": 647.8115000063553,
+  "total_frames": 293,
+  "total_frames_captured": 293,
+  "total_frames_processed": 147,
+  "total_frames_skipped": 146,
+  "skip_ratio": 0.49829351535836175,
+  "effective_capture_fps": 7.734098388699336,
+  "processed_fps": 3.8802473144669025,
+  "resource_samples": 30,
+  "run_config": {
+    "nav_logic_mode": 0,
+    "plot_stream_mode": 0,
+    "video_source": "1",
+    "show_windows": true,
+    "tts_enabled": true,
+    "yolo_weights": "E:\\dsai_group4_project\\model_training\\object_detection\\best-weights\\YOLO11s-Final-Training.pt",
+    "depth_model_dir": "E:\\dsai_group4_project\\model_training\\depth_estimation\\model_weights\\depth_anything_v2_metric_hypersim_vits.pth",
+    "process_every_n_frames": 2,
+    "frame_skipping_enabled": true,
+    "platform": "Windows-11-10.0.26200-SP0"
+  },
+  "module_latencies": {
+    "yolo_latency_ms": {
+      "mean": 27.260889795958857,
+      "p50": 19.03259998653084,
+      "p95": 33.16849999828264
+    },
+    "depth_latency_ms": {
+      "mean": 135.47695238047382,
+      "p50": 135.0834000040777,
+      "p95": 138.56270001269877
+    },
+    "depth_hazard_latency_ms": {
+      "mean": 17.810206123798782,
+      "p50": 18.213900009868667,
+      "p95": 21.53500000713393
+    },
+    "navigation_latency_ms": {
+      "mean": 0.03232380836967658,
+      "p50": 0.031499977922067046,
+      "p95": 0.04980000085197389
+    },
+    "tts_latency_ms": {
+      "mean": 0.005614335204509592,
+      "p50": 0.0050000089686363935,
+      "p95": 0.017000013031065464
+    },
+    "frame_total_latency_ms": {
+      "mean": 114.33141706553097,
+      "p50": 175.17980001866817,
+      "p95": 215.2269000071101
+    },
+    "app_loop_latency_ms": {
+      "mean": 124.16226006869493,
+      "p50": 183.82909998763353,
+      "p95": 224.6129999984987
+    },
+    "fps_instant": {
+      "mean": 18.837387036250796,
+      "p50": 5.439835151601523,
+      "p95": 44.969488202886076
+    }
+  }
+}

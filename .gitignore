@@ -1,7 +1,8 @@
 datasets/
 env/
 app/piper/
+app/piper_voices/
 # model_training/depth_estimation/model_weights
-*/__pycache__/
-*/.log/
+**/__pycache__/
+**/.log/
 Depth-Anything-V2/
