@@ -74,9 +74,9 @@ Our setup scripts (`setup.bat` / `setup.sh`) will automatically generate a `.env
 The training pipeline utilizes multiple distinct datasets. *A dedicated dataset setup script (`data_setup.py`) is planned to automatically download and structure these datasets in the future.*
 
 ### Dataset Sources
-* **Object Detection (YOLO):** Hosted on Kaggle [LINK_PENDING]
-* **Depth Estimation:** Based on the NYU Depth V2 dataset [LINK_PENDING]
-* **Text-to-Speech (TTS):** Custom generated dataset [LINK_PENDING]
+* **Object Detection (YOLO):** Hosted on Kaggle [DSAI Unified Indoor Dataset](https://www.kaggle.com/datasets/ds22f1001123/dsai-unified-dataset). Downloadable via the `kagglehub` package.
+* **Depth Estimation:** Based on the [NYU Depth V2 dataset](http://horatio.cs.nyu.edu/mit/silberman/nyu_depth_v2/nyu_depth_v2_labeled.mat). The `.mat` (v7.3) array requires `h5py` for direct extraction.
+* **Text-to-Speech (TTS):** 165 evaluation samples compiled and cross-benchmarked from Navigation Commands, CMU Arctic, LJ Speech, and LibriSpeech Test Clean (detailed in Milestone 6 pipeline report).
 * **Evaluation Sequences:** Recorded navigation sequences hosted on Kaggle [LINK_PENDING]
 
 ### Data Format

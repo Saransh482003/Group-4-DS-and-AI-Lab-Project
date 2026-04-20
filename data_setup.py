@@ -2,23 +2,14 @@ import os
 import zipfile
 import urllib.request
 import subprocess
+import kagglehub
 
 # Define the local directories where datasets will be stored
 DATASETS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "datasets")
 
-# ========================================================
-# FILL IN THE BLANKS BELOW ONCE YOU HAVE THE LINKS/COMMANDS
-# ========================================================
-# Example: "kaggle datasets download -d user/yolo-dataset"
-KAGGLE_YOLO_CMD = "" 
-KAGGLE_DEPTH_CMD = ""
-KAGGLE_TTS_CMD = ""
-
-# Example: "https://example.com/dataset.zip"
-DIRECT_URL_YOLO = ""
-DIRECT_URL_DEPTH = ""
-DIRECT_URL_TTS = ""
-# ========================================================
+# NYU Depth V2 MAT File URL
+DIRECT_URL_DEPTH = "http://horatio.cs.nyu.edu/mit/silberman/nyu_depth_v2/nyu_depth_v2_labeled.mat"
+DIRECT_URL_SPLITS = "http://horatio.cs.nyu.edu/mit/silberman/nyu_depth_v2/splits.mat"
 
 
 def ensure_dir(path):
@@ -77,31 +68,68 @@ def setup_datasets():
     ensure_dir(DATASETS_DIR)
 
     # 1. Object Detection (YOLO)
-    yolo_dir = os.path.join(DATASETS_DIR, "object_detection")
+    yolo_dir = os.path.join(DATASETS_DIR, "dsai-unified")
     ensure_dir(yolo_dir)
     print("\n--- Setting up YOLO Dataset ---")
-    if KAGGLE_YOLO_CMD:
-        download_via_kaggle(KAGGLE_YOLO_CMD, yolo_dir)
-    elif DIRECT_URL_YOLO:
-        download_via_url(DIRECT_URL_YOLO, yolo_dir)
+    try:
+        print("Downloading dsai-unified-dataset via kagglehub...")
+        path = kagglehub.dataset_download("ds22f1001123/dsai-unified-dataset")
+        print(f"Dataset successfully downloaded to: {path}")
+    except Exception as e:
+        print(f"Failed to download YOLO dataset via kagglehub: {e}")
 
     # 2. Depth Estimation Dataset
-    depth_dir = os.path.join(DATASETS_DIR, "depth_estimation")
+    depth_dir = os.path.join(DATASETS_DIR, "depth_nyu_dataset")
     ensure_dir(depth_dir)
     print("\n--- Setting up Depth Estimation Dataset ---")
-    if KAGGLE_DEPTH_CMD:
-        download_via_kaggle(KAGGLE_DEPTH_CMD, depth_dir)
-    elif DIRECT_URL_DEPTH:
-        download_via_url(DIRECT_URL_DEPTH, depth_dir)
+    mat_file_path = os.path.join(depth_dir, "nyu_depth_v2_labeled.mat")
+    splits_file_path = os.path.join(depth_dir, "splits.mat")
+    
+    if not os.path.exists(mat_file_path):
+        download_via_url(DIRECT_URL_DEPTH, depth_dir, filename="nyu_depth_v2_labeled.mat")
+    else:
+        print("NYU Depth V2 MAT file already exists. Skipping download.")
+        
+    if not os.path.exists(splits_file_path):
+        download_via_url(DIRECT_URL_SPLITS, depth_dir, filename="splits.mat")
+    else:
+        print("NYU splits.mat file already exists. Skipping download.")
+        
+    try:
+        from scipy.io import loadmat
+        import h5py
+        
+        print("Verifying Depth data configurations using Eigen split...")
+        
+        # Load test split (Eigen split: what we had used)
+        splits = loadmat(splits_file_path)
+        test_idx = splits["testNdxs"].flatten() - 1
+        
+        # Load the dataset
+        with h5py.File(mat_file_path, 'r') as f:
+            rgb_data = f["images"]    # Shape should be (~1449, 3, 640, 480)
+            depth_data = f["depths"]  # Shape should be (~1449, 640, 480)
+            
+            print(f"Original RGB Shape: {rgb_data.shape}, Original Depth Shape: {depth_data.shape}")
+            print(f"Verified Test Indices Count: {len(test_idx)}")
+            print("Note: For each sample, RGB is stored as (3, H, W) -> we transpose to (H, W, 3). Depth is (H, W) and already aligned.")
+    except Exception as e:
+        print("Failed to verify depth matrices. Ensure scipy and h5py are installed.", e)
 
     # 3. Custom TTS Dataset
     tts_dir = os.path.join(DATASETS_DIR, "text_to_speech")
     ensure_dir(tts_dir)
     print("\n--- Setting up Custom TTS Dataset ---")
-    if KAGGLE_TTS_CMD:
-        download_via_kaggle(KAGGLE_TTS_CMD, tts_dir)
-    elif DIRECT_URL_TTS:
-        download_via_url(DIRECT_URL_TTS, tts_dir)
+    print("TTS dataset consists of 165 samples compiled from Navigation Commands, CMU Arctic, LJ Speech, and LibriSpeech as detailed in the Milestone 6 report.")
+    print("Generating a reference JSON...")
+    import json
+    tts_metadata = {
+        "description": "Text-to-Speech Baseline Evaluation Data",
+        "total_samples": 165,
+        "datasets": ["Navigation Commands (15)", "CMU Arctic (50)", "LJ Speech (50)", "LibriSpeech Test Clean (50)"]
+    }
+    with open(os.path.join(tts_dir, "tts_metadata.json"), "w") as f:
+        json.dump(tts_metadata, f, indent=4)
 
     print("\nDataset Setup Complete. Check the 'datasets/' directory.")
 

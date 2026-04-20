@@ -12,3 +12,5 @@ scipy
 huggingface_hub
 Pillow
 pyngrok
+kagglehub
+h5py
