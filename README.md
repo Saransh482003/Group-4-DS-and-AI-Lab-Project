@@ -130,8 +130,8 @@ We have completed over 60 hyperparameter tuning runs for our custom models.
 ## 7. End-to-End Reproducibility
 
 To reproduce our results on a clean machine:
-1. **Clone the repo:** `git clone https://github.com/[org]/dsai_group4_project.git && cd dsai_group4_project`
-2. **Run setup:** `./setup.sh` (or `setup.bat` on Windows)
+1. **Clone the repo:** `git clone https://github.com/Saransh482003/Group-4-DS-and-AI-Lab-Project.git && cd Group-4-DS-and-AI-Lab-Project`
+2. **Run setup:** `./setup.bat` (or `setup.sh` on Linux)
 3. **Set Secrets:** Edit the generated `.env` file with your `HF_TOKEN` and preferred `CAMERA_INDEX`.
 4. **Download Models:** Copy the finalized `.pt` and `.onnx` models into the designated model folders (or wait for the automated script).
 5. **Start system:** `python app/app.py`
@@ -145,7 +145,7 @@ If you have Docker installed, you can skip Python virtual environments entirely:
 ```bash
 docker-compose up --build
 ```
-* Acces the web app locally at `http://localhost:7860`.
+* Access the web app locally at `http://localhost:7860`.
 
 ### Hosting Limitations
 Due to real-time latency checks, deploying the webcam streaming script on a remote cloud server is not recommended. Video streaming latency through standard web protocols makes spatial guidance unsafe. Local or Edge deployment is mandatory for actual user testing.
