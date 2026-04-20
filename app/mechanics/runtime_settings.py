@@ -52,6 +52,10 @@ def load_shared_runtime_settings(env_file_path=None):
         yolo_path = os.path.join("..", "model_training", "object_detection", "best-weights", "YOLO11s-Final-Training.pt")
         depth_path = os.path.join("..", "model_training", "depth_estimation", "model_weights", "depth_anything_v2_metric_hypersim_vits.pth")
 
+    import platform
+    is_windows = platform.system() == "Windows"
+    piper_executable = "piper.exe" if is_windows else "piper"
+
     return {
         "YOLO_WEIGHTS": _env_rel_path(
             base_dir,
@@ -66,7 +70,7 @@ def load_shared_runtime_settings(env_file_path=None):
         "PIPER_EXE": _env_rel_path(
             base_dir, 
             "PIPER_EXE_REL" if not is_frozen() else "IGNORE_PIPER", 
-            os.path.join("..", "piper", "piper.exe") if not is_frozen() else os.path.join("piper", "piper.exe")
+            os.path.join("..", "piper", piper_executable) if not is_frozen() else os.path.join("piper", piper_executable)
         ),
         "PIPER_VOICE_MODEL": _env_rel_path(
             base_dir,

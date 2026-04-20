@@ -23,3 +23,47 @@ This document tracks individual contributions made by team members across projec
 - **Rohit Prajapat** – Exploration of depth estimation datasets and repository setup for dataset sources, documentation of dataset links, and preparation for integration of monocular depth estimation (MiDaS) into the project pipeline. Worked alongwith Samyuktha in the depth estimation module.
 - **Divyang Panchasara** – Identified and collected suitable datasets for the TTS and Lightweight LLM module.
 - **Prasoon Shukla** - Identified and collected suitable dataset for object detection model
+
+---
+
+## Milestone 3
+
+###  Dataset Preparation
+- **Saransh Saini** – 
+- **Samyuktha Shriram** – Conducted comparative benchmarking of multiple depth estimation models (MiDaS Small in particular) on the NYU Depth V2 dataset using ground truth depth maps. Analyzed performance using standard metrics and visual comparisons, contributing to the selection of Depth Anything V2 (Indoor Metric Small) as the final model. Prepared depth module slides and contributed to the milestone report documentation.
+- **Rohit Prajapat** – 
+- **Divyang Panchasara** – 
+- **Prasoon Shukla** - 
+
+---
+
+## Milestone 4
+
+###  Dataset Preparation
+- **Saransh Saini** – 
+- **Samyuktha Shriram** – Focused on improving depth prediction stability through post-processing techniques, including temporal smoothing using EMA and scale alignment methods (direct inference, median scaling, scale-shift alignment). Conducted qualitative failure analysis across challenging scenarios (reflections, motion, low light) via live-cam images captured and evaluated the impact of smoothing on prediction consistency. Prepared depth module slides and contributed to the milestone report.
+- **Rohit Prajapat** – 
+- **Divyang Panchasara** – 
+- **Prasoon Shukla** - 
+
+---
+
+## Milestone 5
+
+###  Dataset Preparation
+- **Saransh Saini** – 
+- **Samyuktha Shriram** – Evaluated the depth module through real-world testing and structured failure case analysis, including multiple live scenarios. Contributed to identifying limitations of object-dependent navigation and proposed the use of depth-based hazard zones as an improvement. Participated in system-level evaluation, interpretation of metrics, and documentation. Prepared depth module slides and contributed to the milestone report.
+- **Rohit Prajapat** – 
+- **Divyang Panchasara** – 
+- **Prasoon Shukla** - 
+
+---
+
+## Milestone 6
+
+###  Dataset Preparation
+- **Saransh Saini** – 
+- **Samyuktha Shriram** – Contributed to final system integration and documentation, including articulation of depth module behavior, hazard zone logic, and system-level evaluation in the final report. Assisted in ideation of deployment-ready components and aided in testing-review of the Streamlit web app made. Contributed to presentation preparation and final documentation.
+- **Rohit Prajapat** – 
+- **Divyang Panchasara** – 
+- **Prasoon Shukla** - 
