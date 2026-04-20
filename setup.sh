@@ -19,6 +19,6 @@ python3 -m pip install --upgrade pip
 pip install -r requirements-hf.txt
 
 echo ""
-echo "[SUCCESS] Setup complete! Starting Streamlit app..."
+echo "[SUCCESS] Setup complete!"
 echo "=============================================================="
-streamlit run app/streamlit_app.py
+python3 run_public_ui.py
