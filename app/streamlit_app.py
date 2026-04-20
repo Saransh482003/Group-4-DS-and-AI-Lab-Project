@@ -6,8 +6,20 @@ import tempfile
 import sys
 import torch
 import streamlit as st
+from PIL import Image
 
-st.set_page_config(page_title="DSAI Visually Impaired Navigation Tool", page_icon="🧭", layout="wide")
+# Setup base paths
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ASSETS_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "assets"))
+LOGO_ICON = os.path.join(ASSETS_DIR, "dsai-project-icon-white.png")
+LOGO_PATH = os.path.join(ASSETS_DIR, "dsai-project-icon-white.png")
+
+try:
+    page_icon_img = Image.open(LOGO_ICON)
+except Exception:
+    page_icon_img = "🧭"
+
+st.set_page_config(page_title="DSAI Visually Impaired Navigation Tool", page_icon=page_icon_img, layout="wide")
 
 from mechanics.depth_estimation import DepthEstimator
 from mechanics.frame_parser import SharedFrameParser
@@ -17,12 +29,6 @@ from mechanics.runtime_settings import load_shared_runtime_settings
 from mechanics.nav_tts_piper import PiperTTS
 from mechanics.tts_phrase_cache import TtsPhraseCache
 from mechanics.tts_config import DEFAULT_TTS_PHRASE_CACHE_MAXSIZE
-
-st.set_page_config(
-    page_title="DSAI Visually Impaired Navigation Tool",
-    page_icon="🤖",
-    layout="wide"
-)
 
 # ========================================================
 # 1. INITIALIZATION & SETUP
@@ -226,10 +232,25 @@ st.markdown(
     """, unsafe_allow_html=True
 )
 
-st.title("🤖 Wearable Navigation Assistant for the Visually Impaired")
+try:
+    if hasattr(st, "logo"):
+        st.logo(LOGO_PATH)
+except Exception:
+    pass
+
+col_logo, col_title = st.columns([1, 10])
+with col_logo:
+    try:
+        st.image(Image.open(LOGO_PATH), use_container_width=True)
+    except Exception:
+        st.markdown("<h1>🧭</h1>", unsafe_allow_html=True)
+with col_title:
+    st.title("Navigation Assistant for the Visually Impaired")
+
 st.markdown("Upload an image of an indoor environment to see the YOLO object detections and Depth Anything hazard map in action. The tool calculates a safe navigation path and reads it aloud using Piper TTS.")
 
-col_left, col_right = st.columns([1, 3])
+# Use standard columns with static ratios so the layout doesn't jiggle when populated
+col_left, col_right = st.columns([1, 2])
 
 with col_left:
     st.markdown("### Input Controls")
@@ -238,33 +259,35 @@ with col_left:
     if uploaded_file is not None:
         analyze_btn = st.button("Analyze Environment", type="primary", use_container_width=True)
     st.markdown("---")
-    st.markdown("This tool runs locally on your machine.")
+    st.markdown("This tool takes some time to process the image. Hold tight.")
     
     if uploaded_file is not None:
         # Convert uploaded file to opencv image format
         file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
         frame_rgb = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
         st.markdown("### Original Image")
+        # Ensure image uses standard container width to constrain layout stretching
         st.image(cv2.cvtColor(frame_rgb, cv2.COLOR_BGR2RGB), use_container_width=True)
 
 if uploaded_file is not None:
     if not analyze_btn:
         with col_right:
-            st.markdown("### Analyzed View")
-            st.info("👈 Click **Analyze Environment** to start processing...")
-            st.markdown("### Results Dashboard")
-            st.markdown("Waiting for analysis...")
+            # Wrap the placeholders in containers so the column width stays solid
+            with st.container():
+                st.markdown("### Analyzed View")
+                st.info("👈 Click **Analyze Environment** to start processing...")
+                st.markdown("### Results Dashboard")
+                st.markdown("Waiting for analysis...")
 
     if analyze_btn:
         with col_right:
-            img_col, dash_col = st.columns([5, 3])
-            with img_col:
-                st.markdown("### Analyzed View")
-                img_placeholder = st.empty()
-                
-            with dash_col:
-                st.markdown("### Results Dashboard")
-                res_placeholder = st.empty()
+            # Avoid nesting more columns inside the right column, as that causes the horizontal jittering
+            st.markdown("### Analyzed View")
+            img_placeholder = st.empty()
+            
+            st.markdown("---")
+            st.markdown("### Results Dashboard")
+            res_placeholder = st.empty()
                 
         with img_placeholder.container():
             with st.spinner("Running ML Pipeline & Generating Audio..."):
@@ -356,8 +379,7 @@ if uploaded_file is not None:
                         dist_label = "dist: N/A" if d.get("distance") is None else f"dist: {d['distance']:.2f}m"
                         draw_centered_label(vis, dist_label, cx, cy)
 
-                    # Wrapped command text at bottom.
-                    draw_wrapped_command(vis, nav_command)
+                        draw_wrapped_command(vis, str(nav_command))
                     
                     # Display the final annotated image
                     st.image(cv2.cvtColor(vis, cv2.COLOR_BGR2RGB), use_container_width=True)
@@ -367,26 +389,50 @@ if uploaded_file is not None:
                     st.error(f"An error occurred during processing: {e}")
                     st.code(traceback.format_exc())
                     
-        # Populate the Results Dashboard in the right column next to the image
+        # Populate the Results Dashboard right below the analyzed image block
         if 'parsed' in locals():
             with res_placeholder.container():
-                if nav_command:
-                    command_str = nav_command.value if hasattr(nav_command, "value") else str(nav_command)
-                    st.markdown(f"**Nav Command:** {command_str}")
-                    
-                st.markdown("### Spoken Navigation Warning")
-                if wav_bytes is not None:
-                    st.audio(wav_bytes, format='audio/wav')
                 
-                st.markdown("### TTS Transcript")
-                st.info(tts_text)
-            
-                st.markdown("### Latency Breakdown")
-                st.markdown(f"- **Total Pipeline:** {pipeline_latency_ms:.1f} ms\n"
-                            f"- **YOLO Detection:** {yolo_latency_ms:.1f} ms\n"
-                            f"- **Depth Estimation:** {depth_latency_ms:.1f} ms\n"
-                            f"- **Hazard Scanning:** {hazard_scan_latency_ms:.1f} ms\n"
-                            f"- **TTS Generation:** {tts_latency_ms:.1f} ms")
+                # Split dash into columns to keep layout tight vertically
+                dash_col1, dash_col2 = st.columns([1, 1])
+                
+                with dash_col1:
+                    if nav_command:
+                        command_str = nav_command.value if hasattr(nav_command, "value") else str(nav_command)
+                        st.markdown(f"**Nav Command:** {command_str}")
+                        
+                    st.markdown("### Spoken Navigation Warning")
+                    if wav_bytes is not None:
+                        st.audio(wav_bytes, format='audio/wav')
+                    
+                    st.markdown("### TTS Transcript")
+                    st.info(tts_text)
+                
+                with dash_col2:
+                    st.markdown("### Latency Breakdown")
+                    st.markdown(f"- **Total Pipeline:** {pipeline_latency_ms:.1f} ms\n"
+                                f"- **YOLO Detection:** {yolo_latency_ms:.1f} ms\n"
+                                f"- **Depth Estimation:** {depth_latency_ms:.1f} ms\n"
+                                f"- **Hazard Scanning:** {hazard_scan_latency_ms:.1f} ms\n"
+                                f"- **TTS Generation:** {tts_latency_ms:.1f} ms")
 else:
     # Landing page state
     pass
+
+st.markdown("---")
+with st.expander("ℹ️ About the Project & Creators"):
+    st.markdown("""
+    ### Data Science and Artificial Intelligence Lab - Group 4 Project
+    
+    This application was developed as part of the DSAI Lab curriculum to assist visually impaired individuals with safe, real-time indoor navigation by fusing YOLO object detection, Monocular Depth estimation, and Piper Text-to-Speech (TTS) generation.
+
+    **Creators (Group 4):**
+    - Saransh Saini
+    - Samyuktha Shriram
+    - Rohit Prajapat
+    - Divyang Panchasara
+    - Prasoon Shukla
+    - Client: Mr. M Nagarajan
+    
+    🔗 [**View our source code on GitHub**](https://github.com/Saransh482003/Group-4-DS-and-AI-Lab-Project)
+    """)
