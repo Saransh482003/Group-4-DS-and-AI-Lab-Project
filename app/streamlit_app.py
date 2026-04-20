@@ -219,17 +219,19 @@ def draw_depth_hazard_overlay(frame, hazard_result, alpha=0.30):
 # 3. STREAMLIT UI & LOGIC
 # ========================================================
 
-# Use a highly similar layout to Gradio
+# Inject CSS to force stable layout and prevent jitter
 st.markdown(
     """
     <style>
-    /* Make the images fit better without aggressive scrolling */
-    .stImage > img {
-        max-height: 45vh;
-        object-fit: contain;
+    html {
+        overflow-y: scroll !important;
+    }
+    .stApp {
+        overflow-x: hidden;
     }
     </style>
-    """, unsafe_allow_html=True
+    """,
+    unsafe_allow_html=True
 )
 
 try:
@@ -249,175 +251,178 @@ with col_title:
 
 st.markdown("Upload an image of an indoor environment to see the YOLO object detections and Depth Anything hazard map in action. The tool calculates a safe navigation path and reads it aloud using Piper TTS.")
 
-# Use standard columns with static ratios so the layout doesn't jiggle when populated
+# Use standard columns with static ratios
 col_left, col_right = st.columns([1, 2])
 
 with col_left:
     st.markdown("### Input Controls")
     uploaded_file = st.file_uploader("Upload Subject Image", type=["jpg", "jpeg", "png", "webp"], label_visibility="collapsed")
     analyze_btn = False
-    if uploaded_file is not None:
-        analyze_btn = st.button("Analyze Environment", type="primary", use_container_width=True)
-    st.markdown("---")
-    st.markdown("This tool takes some time to process the image. Hold tight.")
     
     if uploaded_file is not None:
+        analyze_btn = st.button("Analyze Environment", type="primary", use_container_width=True)
+        st.markdown("---")
+        st.markdown("This tool takes some time to process the image. Hold tight.")
+        
         # Convert uploaded file to opencv image format
         file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
         frame_rgb = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
         st.markdown("### Original Image")
-        # Ensure image uses standard container width to constrain layout stretching
-        st.image(cv2.cvtColor(frame_rgb, cv2.COLOR_BGR2RGB), use_container_width=True)
+        st.image(cv2.cvtColor(frame_rgb, cv2.COLOR_BGR2RGB), width=360)
 
-if uploaded_file is not None:
-    if not analyze_btn:
-        with col_right:
-            # Wrap the placeholders in containers so the column width stays solid
-            with st.container():
-                st.markdown("### Analyzed View")
-                st.info("👈 Click **Analyze Environment** to start processing...")
-                st.markdown("### Results Dashboard")
-                st.markdown("Waiting for analysis...")
+with col_right:
+    analyzed_view_slot = st.empty()
+    dashboard_slot = st.empty()
 
-    if analyze_btn:
-        with col_right:
-            # Avoid nesting more columns inside the right column, as that causes the horizontal jittering
+    if uploaded_file is None:
+        with analyzed_view_slot.container():
             st.markdown("### Analyzed View")
-            img_placeholder = st.empty()
-            
-            st.markdown("---")
+            st.info("Upload an image to preview the analysis output here.")
+
+        with dashboard_slot.container():
             st.markdown("### Results Dashboard")
-            res_placeholder = st.empty()
+            st.markdown("Waiting for analysis...")
+
+    elif not analyze_btn:
+        with analyzed_view_slot.container():
+            st.markdown("### Analyzed View")
+            st.info("👈 Click **Analyze Environment** to start processing...")
+
+        with dashboard_slot.container():
+            st.markdown("### Results Dashboard")
+            st.markdown("Waiting for analysis...")
+
+    else:
+        with analyzed_view_slot.container():
+            st.markdown("### Analyzed View")
+            st.info("Running ML Pipeline & Generating Audio...")
+        
+        with st.spinner("Running ML Pipeline & Generating Audio..."):
+            try:
+                pipeline_start = time.perf_counter()
                 
-        with img_placeholder.container():
-            with st.spinner("Running ML Pipeline & Generating Audio..."):
+                frame_gray = cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2GRAY)
+                frame_bgr = cv2.cvtColor(frame_gray, cv2.COLOR_GRAY2BGR)
+
+                device_str = "cuda" if torch.cuda.is_available() else "cpu"
+                parsed = frame_parser.parse_frame(
+                    frame_bgr, 
+                    shorten_tts_commands=SHARED_SETTINGS.get("SHORTEN_TTS_COMMANDS", True),
+                    sync_after_yolo=(device_str == "cuda"),
+                    sync_after_depth=(device_str == "cuda"),
+                    confidence_threshold=0.25,
+                    hazard_return_coords=True
+                )
+                
+                latencies = parsed.get("latencies", {})
+                yolo_latency_ms = latencies.get("yolo_latency_ms", 0.0)
+                depth_latency_ms = latencies.get("depth_latency_ms", 0.0)
+                hazard_scan_latency_ms = latencies.get("hazard_scan_latency_ms", 0.0)
+                navigation_latency_ms = latencies.get("navigation_latency_ms", 0.0)
+                
+                tts_text = parsed["tts_text"]
+                nav_command = parsed["nav_command"]
+                frame_boxes = parsed["frame_boxes"]
+                hazard_result = parsed.get("hazard_result", {})
+                hazard_global = hazard_result.get("global_summary", {}) if hazard_result else {}
+                
+                nav_logic = parsed.get("navigation_logic")
+                zone_risks = parsed.get("zone_risks", {})
+
+                # Audio Synthesis 
+                tts_start_time = time.perf_counter()
+                wav_bytes = None
+                
                 try:
-                    pipeline_start = time.perf_counter()
-                    
-                    frame_gray = cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2GRAY)
-                    frame_bgr = cv2.cvtColor(frame_gray, cv2.COLOR_GRAY2BGR)
-
-                    device_str = "cuda" if torch.cuda.is_available() else "cpu"
-                    parsed = frame_parser.parse_frame(
-                        frame_bgr, 
-                        shorten_tts_commands=SHARED_SETTINGS.get("SHORTEN_TTS_COMMANDS", True),
-                        sync_after_yolo=(device_str == "cuda"),
-                        sync_after_depth=(device_str == "cuda"),
-                        confidence_threshold=0.25,
-                        hazard_return_coords=True
-                    )
-                    
-                    latencies = parsed.get("latencies", {})
-                    yolo_latency_ms = latencies.get("yolo_latency_ms", 0.0)
-                    depth_latency_ms = latencies.get("depth_latency_ms", 0.0)
-                    hazard_scan_latency_ms = latencies.get("hazard_scan_latency_ms", 0.0)
-                    navigation_latency_ms = latencies.get("navigation_latency_ms", 0.0)
-                    
-                    tts_text = parsed["tts_text"]
-                    nav_command = parsed["nav_command"]
-                    frame_boxes = parsed["frame_boxes"]
-                    hazard_result = parsed.get("hazard_result", {})
-                    hazard_global = hazard_result.get("global_summary", {}) if hazard_result else {}
-                    
-                    nav_logic = parsed.get("navigation_logic")
-                    zone_risks = parsed.get("zone_risks", {})
-
-                    # Audio Synthesis 
-                    tts_start_time = time.perf_counter()
-                    wav_bytes = None
-                    
-                    try:
-                        tts_engine._validate_paths()
-                        
-                        # First try cache to eliminate generation latency
-                        wav_bytes = tts_cache.get(tts_text)
-                        
-                        # If cache miss, generate audio and put into cache
-                        if wav_bytes is None:
-                            wav_bytes = tts_engine.synthesize_wav_bytes(tts_text)
-                            tts_cache.put(tts_text, wav_bytes)
-                    except Exception as e:
-                        st.error(f"TTS synthesis error: {e}")
-                        
-                    tts_latency_ms = (time.perf_counter() - tts_start_time) * 1000.0
-                    pipeline_latency_ms = (time.perf_counter() - pipeline_start) * 1000.0
-
-                    # Overlay Drawing Logic
-                    vis = frame_bgr.copy()
-                    h, w = vis.shape[:2]
-                    
-                    draw_depth_hazard_overlay(vis, hazard_result, alpha=0.30)
-                    draw_nav_zones(vis, nav_logic, zone_risks)
-
-                    # Draw Hazard Pixel summary
-                    if hazard_global:
-                        cv2.putText(
-                            vis,
-                            f"Hazard px (D/W): {hazard_global.get('danger_pixel_count', 0)}/{hazard_global.get('warning_pixel_count', 0)}",
-                            (10, max(60, h - 90)),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            0.6,
-                            (255, 255, 255),
-                            2,
-                        )
-
-                    # Draw YOLO Boxes
-                    for d in frame_boxes:
-                        x1, y1, x2, y2 = int(d["x1"]), int(d["y1"]), int(d["x2"]), int(d["y2"])
-                        cv2.rectangle(vis, (x1, y1), (x2, y2), (80, 220, 255), 2)
-                        cv2.putText(
-                            vis,
-                            f"{d['class_name']} {d.get('confidence', 0.0):.2f}",
-                            (x1, max(20, y1 - 8)),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            0.45,
-                            (80, 220, 255),
-                            2,
-                        )
-                        cx = (x1 + x2) // 2
-                        cy = (y1 + y2) // 2
-                        dist_label = "dist: N/A" if d.get("distance") is None else f"dist: {d['distance']:.2f}m"
-                        draw_centered_label(vis, dist_label, cx, cy)
-
-                        draw_wrapped_command(vis, str(nav_command))
-                    
-                    # Display the final annotated image
-                    st.image(cv2.cvtColor(vis, cv2.COLOR_BGR2RGB), use_container_width=True)
-                    
+                    tts_engine._validate_paths()
+                    wav_bytes = tts_cache.get(tts_text)
+                    if wav_bytes is None:
+                        wav_bytes = tts_engine.synthesize_wav_bytes(tts_text)
+                        tts_cache.put(tts_text, wav_bytes)
                 except Exception as e:
-                    import traceback
-                    st.error(f"An error occurred during processing: {e}")
-                    st.code(traceback.format_exc())
+                    st.error(f"TTS synthesis error: {e}")
                     
-        # Populate the Results Dashboard right below the analyzed image block
-        if 'parsed' in locals():
-            with res_placeholder.container():
+                tts_latency_ms = (time.perf_counter() - tts_start_time) * 1000.0
+                pipeline_latency_ms = (time.perf_counter() - pipeline_start) * 1000.0
+
+                # Overlay Drawing Logic
+                vis = frame_bgr.copy()
+                h, w = vis.shape[:2]
                 
-                # Split dash into columns to keep layout tight vertically
-                dash_col1, dash_col2 = st.columns([1, 1])
+                draw_depth_hazard_overlay(vis, hazard_result, alpha=0.30)
+                draw_nav_zones(vis, nav_logic, zone_risks)
+
+                # Draw Hazard Pixel summary
+                if hazard_global:
+                    cv2.putText(
+                        vis,
+                        f"Hazard px (D/W): {hazard_global.get('danger_pixel_count', 0)}/{hazard_global.get('warning_pixel_count', 0)}",
+                        (10, max(60, h - 90)),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.6,
+                        (255, 255, 255),
+                        2,
+                    )
+
+                # Draw YOLO Boxes
+                for d in frame_boxes:
+                    x1, y1, x2, y2 = int(d["x1"]), int(d["y1"]), int(d["x2"]), int(d["y2"])
+                    cv2.rectangle(vis, (x1, y1), (x2, y2), (80, 220, 255), 2)
+                    cv2.putText(
+                        vis,
+                        f"{d['class_name']} {d.get('confidence', 0.0):.2f}",
+                        (x1, max(20, y1 - 8)),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.45,
+                        (80, 220, 255),
+                        2,
+                    )
+                    cx = (x1 + x2) // 2
+                    cy = (y1 + y2) // 2
+                    dist_label = "dist: N/A" if d.get("distance") is None else f"dist: {d['distance']:.2f}m"
+                    draw_centered_label(vis, dist_label, cx, cy)
+
+                    draw_wrapped_command(vis, str(nav_command))
                 
-                with dash_col1:
-                    if nav_command:
-                        command_str = nav_command.value if hasattr(nav_command, "value") else str(nav_command)
-                        st.markdown(f"**Nav Command:** {command_str}")
-                        
-                    st.markdown("### Spoken Navigation Warning")
-                    if wav_bytes is not None:
-                        st.audio(wav_bytes, format='audio/wav')
+                # Render the final annotated image
+                analyzed_view_slot.empty()
+                with analyzed_view_slot.container():
+                    st.markdown("### Analyzed View")
+                    st.image(cv2.cvtColor(vis, cv2.COLOR_BGR2RGB), width=760)
+                
+            except Exception as e:
+                import traceback
+                st.error(f"An error occurred during processing: {e}")
+                st.code(traceback.format_exc())
+                
+        # Dashboard renders immediately after the spinner block finishes
+        dashboard_slot.empty()
+        
+        # Split dash into columns
+        with dashboard_slot.container():
+            st.markdown("### Results Dashboard")
+            st.markdown("---")
+            dash_col1, dash_col2 = st.columns([1, 1])
+            
+            with dash_col1:
+                if nav_command:
+                    command_str = nav_command.value if hasattr(nav_command, "value") else str(nav_command)
+                    st.markdown(f"**Nav Command:** {command_str}")
                     
-                    st.markdown("### TTS Transcript")
-                    st.info(tts_text)
+                st.markdown("### Spoken Navigation Warning")
+                if wav_bytes is not None:
+                    st.audio(wav_bytes, format='audio/wav')
                 
-                with dash_col2:
-                    st.markdown("### Latency Breakdown")
-                    st.markdown(f"- **Total Pipeline:** {pipeline_latency_ms:.1f} ms\n"
-                                f"- **YOLO Detection:** {yolo_latency_ms:.1f} ms\n"
-                                f"- **Depth Estimation:** {depth_latency_ms:.1f} ms\n"
-                                f"- **Hazard Scanning:** {hazard_scan_latency_ms:.1f} ms\n"
-                                f"- **TTS Generation:** {tts_latency_ms:.1f} ms")
-else:
-    # Landing page state
-    pass
+                st.markdown("### TTS Transcript")
+                st.info(tts_text)
+            
+            with dash_col2:
+                st.markdown("### Latency Breakdown")
+                st.markdown(f"- **Total Pipeline:** {pipeline_latency_ms:.1f} ms\n"
+                            f"- **YOLO Detection:** {yolo_latency_ms:.1f} ms\n"
+                            f"- **Depth Estimation:** {depth_latency_ms:.1f} ms\n"
+                            f"- **Hazard Scanning:** {hazard_scan_latency_ms:.1f} ms\n"
+                            f"- **TTS Generation:** {tts_latency_ms:.1f} ms")
 
 st.markdown("---")
 with st.expander("ℹ️ About the Project & Creators"):

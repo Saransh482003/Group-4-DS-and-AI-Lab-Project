@@ -42,6 +42,7 @@ api.upload_folder(
     repo_type="space",
     allow_patterns=[
         "app/**",               # Include Streamlit app folder and all its contents
+        "assets/**",
         "model_training/depth_estimation/model_weights/*.pth", # Explicit model inclusions
         "model_training/object_detection/best-weights/*.pt",   # Explicit model inclusions
         "mechanics/**",         # Any other core utilities
