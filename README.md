@@ -1,295 +1,228 @@
 # Action-Oriented Indoor Navigation Assistance for the Visually Impaired
 
-## Quick Setup for New Users
+## 1. Project Overview
 
-### Method 1: The One-Click Docker Setup (Recommended)
-If you have Docker installed, you can skip configuring Python, creating virtual environments, and wrestling with dependencies entirely:
+Visually impaired individuals navigating indoor environments often rely on assistive technologies that announce detected objects. However, object identification alone does not indicate whether an obstacle lies directly in the user's walking path or requires an immediate change in movement. Hearing *"chair detected"* does not inform the user whether they are about to collide with it or can safely continue forward.
 
-1. Clone the repository.
-2. Run this command in the project root:
-   ```bash
-   docker compose up --build
-   ```
-3. Open `http://localhost:7860` in your browser!
+This project focuses on **action-oriented indoor navigation assistance**, where visual perception is converted into **movement guidance rather than descriptive awareness**. Instead of reporting objects, the system provides directional instructions such as *"Move Left"* or *"Move Right"* when obstacles pose a risk.
+
+### Key Features
+* **Real-time Object Detection:** Identifies indoor objects using custom-trained YOLO models.
+* **Monocular Depth Estimation:** Calculates depth maps dynamically to gauge object proximity.
+* **Spatial Risk Assessment:** Explicit rule-based reasoning engine decides if an object falls in the user's "Walking Zone."
+* **Actionable Audio Guidance:** Converts decisions to near-instant Text-to-Speech (TTS) commands instead of listing obstacles.
+
+### High-Level Architecture
+```text
+Webcam Input
+     │
+     ▼
+Object Detection Model  ──►  Monocular Depth Estimation
+                                  │
+     ┌────────────────────────────┘
+     ▼
+Spatial Risk Assessment (Walking Zone Overlap Check)
+     │
+     ▼
+Rule-Based Reasoning Engine (Lateral Clearance Calculation)
+     │
+     ▼
+Navigation Guidance (Audio Output via Custom TTS)
+```
 
 ---
 
-### Method 2: Standard Local Setup
-If you want to run it directly on your machine (e.g., to use your local GPU for much faster frame processing):
+## 2. Environment Setup
+
+* **Python:** 3.9+ (Recommended 3.10)
+* **OS:** Windows / Linux / macOS
+* **Hardware Requirements:** CPU is supported, but a CUDA-enabled GPU (NVIDIA) is strongly recommended for real-time inference (YOLO + Depth). 
+
+### Quick OS-Specific Setup
 
 **For Windows Users:**
-Just double-click `setup.bat` (or run it from your terminal). It will:
-1. Auto-create your `.env` file from the example
-2. Create a Python virtual environment (`env`)
-3. Install all required dependencies
-4. Launch the Streamlit application for you.
+Run the batch script from the repository root. It will create a virtual environment (`env`), install dependencies, and setup the `.env` file.
+```cmd
+setup.bat
+```
 
-**For Mac/Linux Users:**
-Run the setup shell script:
+**For Linux/macOS Users:**
 ```bash
 chmod +x setup.sh
 ./setup.sh
 ```
 
+*Note: The setup scripts install dependencies from both `requirements.txt` and `requirements-hf.txt` as necessary.*
+
 ---
 
-Visually impaired individuals navigating indoor environments often rely
-on assistive technologies that announce detected objects. However,
-object identification alone does not indicate whether an obstacle lies
-directly in the user's walking path or requires an immediate change in
-movement.
+## 3. Configuration & Secrets
 
-For example, hearing *"chair detected"* does not inform the user whether
-they are about to collide with it or can safely continue forward.
+The application depends on environment variables to manage access tokens and file paths. 
 
-This project focuses on **action-oriented indoor navigation
-assistance**, where visual perception is converted into **movement
-guidance rather than descriptive awareness**.
+### Setting up `.env`
+Our setup scripts (`setup.bat` / `setup.sh`) will automatically generate a `.env` file from `.env.example`. Make sure you configure the following variables inside `.env`:
 
-Instead of only reporting objects, the system provides **directional
-instructions such as "move left" or "move right" when obstacles pose a
-collision risk.**
+* `HF_TOKEN`: Your Hugging Face access token (required to download certain model checkpoints or push logs).
+* `MODEL_DIR`: Custom directory if you wish to store the downloaded checkpoints somewhere other than the default paths.
+* `CAMERA_INDEX`: Default camera index (typically `0` for the built-in webcam, `1` for external USB cameras).
 
-------------------------------------------------------------------------
+---
 
-# Problem Statement
+## 4. Data & Inputs
 
-Existing assistive systems typically perform **object detection and
-verbal announcements**, but they do not:
+The training pipeline utilizes multiple distinct datasets. *A dedicated dataset setup script (`data_setup.py`) is planned to automatically download and structure these datasets in the future.*
 
--   Identify whether the object lies **within the user's walking path**
--   Estimate **collision risk**
--   Provide **immediate movement guidance**
+### Dataset Sources
+* **Object Detection (YOLO):** Hosted on Kaggle [LINK_PENDING]
+* **Depth Estimation:** Based on the NYU Depth V2 dataset [LINK_PENDING]
+* **Text-to-Speech (TTS):** Custom generated dataset [LINK_PENDING]
+* **Evaluation Sequences:** Recorded navigation sequences hosted on Kaggle [LINK_PENDING]
 
-As a result, visually impaired users may still face difficulty
-determining how to safely navigate around obstacles.
+### Data Format
+* YOLO bounding box annotations (`.txt` format with `class x_center y_center width height`).
+* Depth maps processed as normalized arrays corresponding to RGB inputs.
 
-------------------------------------------------------------------------
+---
 
-# Proposed Solution
+## 5. Running the Application (Local Deployment)
 
-The system performs **real-time perception and rule-based reasoning** to
-convert visual inputs into **actionable navigation instructions**.
+You have multiple ways to interact with the project: Real-time camera streaming, isolated image testing, or Docker deployment.
 
-The solution focuses specifically on two indoor navigation risks:
+### A. Real-Time Streaming (Main Application)
+To run the live navigation assistant with your webcam:
+```bash
+python app/app.py --camera 0
+```
+*(You can override the `.env` default camera by providing the `--camera` argument).* 
 
-1.  **Obstacle Collision**
-2.  **Blocked Walking Path**
-
-within a **near-field range of 0--3 meters**.
-
-The system uses:
-
--   **Webcam input** (proof-of-concept)
--   **Real-time object detection**
--   **Monocular depth estimation**
--   **Rule-based spatial reasoning**
-
-to generate **concise navigation prompts**.
-
-------------------------------------------------------------------------
-
-# System Architecture
-```text
-Webcam Input
-     │
-     ▼
-Object Detection Model
-     │
-     ▼
-Monocular Depth Estimation
-     │
-     ▼
-Spatial Risk Assessment
-     │
-     ▼
-Rule-Based Reasoning Engine
-     │
-     ▼
-Navigation Guidance
-(Audio Output)
+### B. Single Image Testing (Streamlit)
+If you want to test the pipeline on static images, run the Streamlit interface:
+```bash
+streamlit run app/streamlit_app.py
 ```
 
-### Object Detection Pipeline
-![Object Detection Flowchart](model_training/object_detection/Object%20Detection%20Flowchart.png)
+### C. Gradio Web Interface
+For an alternative interactive web UI, you can run the Hugging Face Gradio app:
+```bash
+python app/huggingface_app.py
+```
 
-### Depth Estimation Pipeline
-![Depth Estimation Flowchart](model_training/depth_estimation/Depth%20Estimation%20Flowchart.png)
+*Note: A future executable script that automatically tunnels the Gradio/Streamlit UI via `ngrok` for public URL sharing is heavily requested and in the roadmap.*
 
-------------------------------------------------------------------------
+---
 
-# Key Concepts
+## 6. Model / Pipeline Execution
 
-### Walking Zone
+### Working with Model Checkpoints
+We have completed over 60 hyperparameter tuning runs for our custom models. 
 
-The **walking zone** represents the **central region of the camera
-frame**, corresponding to the user's forward movement path.
+> **Note on Checkpoint Hosting:** Storing all the heavily iterated model checkpoints in a Git repository bloats the repository size. Therefore, the models and their 60 tuning variations are hosted on Kaggle. 
+> *Recommendation:* The absolute *best/final* weights (e.g., `best.pt`) should be hosted via GitHub Releases or Hugging Face Model Hub so users can download just the required weights seamlessly during inference startup.
 
-### Collision Risk
+### Inference Steps
+1. Checkpoints should be placed in the `model_training/` subdirectories.
+2. The pipeline handles initialization automatically when `app.py`, `huggingface_app.py`, or `streamlit_app.py` is invoked. 
+3. During execution, it will log the current frames processed, detected bounding boxes overlaying the depth mask, and output audio cues.
 
-An obstacle is considered a **collision risk** when:
+---
 
--   It lies **within the walking zone**
--   Its **distance falls below a predefined threshold**
+## 7. End-to-End Reproducibility
 
-A **collision** is defined as **any physical contact between the
-participant and an obstacle during navigation.**
+To reproduce our results on a clean machine:
+1. **Clone the repo:** `git clone https://github.com/[org]/dsai_group4_project.git && cd dsai_group4_project`
+2. **Run setup:** `./setup.sh` (or `setup.bat` on Windows)
+3. **Set Secrets:** Edit the generated `.env` file with your `HF_TOKEN` and preferred `CAMERA_INDEX`.
+4. **Download Models:** Copy the finalized `.pt` and `.onnx` models into the designated model folders (or wait for the automated script).
+5. **Start system:** `python app/app.py`
 
-### Directional Guidance
+---
 
-If the walking zone is blocked, the system evaluates **lateral zones**
-to determine a safer path and generates instructions such as:
+## 8. Deployment Details
 
--   **Move Left**
--   **Move Right**
+### Local Docker Deployment (Recommended)
+If you have Docker installed, you can skip Python virtual environments entirely:
+```bash
+docker-compose up --build
+```
+* Acces the web app locally at `http://localhost:7860`.
 
-------------------------------------------------------------------------
+### Hosting Limitations
+Due to real-time latency checks, deploying the webcam streaming script on a remote cloud server is not recommended. Video streaming latency through standard web protocols makes spatial guidance unsafe. Local or Edge deployment is mandatory for actual user testing.
 
-# Reasoning Framework
+---
 
-The navigation decisions are generated using an **explicit rule-based
-reasoning system**.
+## 9. Evaluation & Results
 
-Rules rely on:
+The reasoning rule engine is continually evaluated on both recorded video sequences and static benchmarks.
 
--   Object distance from the user
--   Spatial overlap with the walking zone
--   Lateral clearance in adjacent zones
+* **Evaluation Dataset:** Captured scenarios representing complex indoor obstacles.
+* **Concrete Outputs:** Evaluation metrics (Collision counts, Navigation completion times, Corrective stops) and pipeline inferences are recorded and maintained in the `app/navigation_eval_outputs/` directory.
+* *Real-Time Metrics:* Pending field-testing trials.
+* **Limitations:** Current latency is highly hardware-dependent. Monocular depth generation can occasionally misrepresent specular reflections (glass/mirrors) as empty pathways.
 
-This approach ensures:
+---
 
--   **Interpretability**
--   **Deterministic behavior**
--   **Feasibility within the project timeline**
-
-------------------------------------------------------------------------
-
-# Baseline Comparison
-
-To evaluate the effectiveness of action-oriented navigation guidance,
-the proposed system will be compared with a **baseline system**.
-
-  System     Output
-  ---------- ----------------------------------------------
-  Baseline   Object labels only (e.g., "Chair detected")
-  Proposed   Directional instructions (e.g., "Move Left")
-
-Both systems will use the **same detection and depth estimation models**
-to ensure fair comparison.
-
-------------------------------------------------------------------------
-
-# Experimental Setup
-
-Evaluation will be conducted in a **controlled indoor obstacle course**.
-
-### Environment
-
--   Indoor path length: **10 meters**
--   **5 standardized obstacles**
-
-### Participants
-
--   **Minimum 5 simulated visually impaired participants**
--   Simulating visual impairment ensures **consistent testing conditions**
-
-### Trials
-
--   **3 trials per system mode per participant**
--   Total: **15+ navigation trials**
-
-Multiple trials help reduce **learning effects and randomness**.
-
-------------------------------------------------------------------------
-
-# Evaluation Metrics
-
-System performance will be evaluated using the following metrics:
-
--   **Collision Count** -- Number of physical contacts with obstacles.
--   **Navigation Completion Time** -- Total time required to complete
-    the obstacle course.
--   **Corrective Stops** -- A stop is counted when the participant halts
-    ≥3 seconds, steps backward, or requires manual intervention.
--   **Reaction Time** -- Time between audio instruction delivery and
-    user response movement.
-
-------------------------------------------------------------------------
-
-# Latency and Usability Requirements
-
-End-to-end latency is measured from:
-
-Obstacle enters walking zone → System processes scene → Navigation
-instruction delivered
-
-The system must satisfy two usability criteria:
-
-1.  Users should **react smoothly without abrupt stopping**
-2.  Users should **walk continuously without frequent pauses caused by
-    delayed feedback**
-
-------------------------------------------------------------------------
-
-# Implementation Constraints
-
--   **Offline execution**
--   **Webcam-based input**
--   **Audio feedback via earphones**
--   Indoor navigation only
--   Near-field obstacle detection (0--3 meters)
-
-------------------------------------------------------------------------
-
-# Project Objective
-
-The objective of this project is to evaluate whether **translating
-visual perception into actionable navigation guidance** can improve
-**safe indoor mobility for visually impaired individuals** compared to
-traditional object announcement systems.
-
-------------------------------------------------------------------------
-
-# Repository Structure
+## 10. Repository Structure
 
 ```
-project-root
+dsai_group4_project
 │
-├── app
-│   └── app.py                     # Main application script
+├── app/                         # Core Application logic and web UIs
+│   ├── mechanics/               # Submodules: Depth, Object Detect, TTS, Logic
+│   ├── app.py                   # Main real-time streaming entrypoint
+│   ├── streamlit_app.py         # Static image tester via Streamlit
+│   ├── huggingface_app.py       # Static image tester via Gradio
+│   └── navigation_eval_outputs/ # Concrete evaluation logs & results
 │
-├── data
-│   └── dataset_links.md           # Dataset references and links
+├── data_sources/                # Data preparation & inspection notebooks
+├── datasets/                    # Processing scripts & YAML definitions
+├── Depth-Anything-V2/           # Depth Estimation submodule reference
+├── model_training/              # Training logic for the model components
+├── pipeline_evaluations/        # Scripts evaluating E2E pipeline accuracy
+├── piper/                       # TTS (Text-to-Speech) dependencies
 │
-├── docs
-│   └── problem-statement.pdf      # Project problem statement
-│
-├── feedbacks
-│   ├── Milestone1.md              # Feedback for milestone 1
-│   └── Milestone2.md              # Feedback for milestone 2
-│
-├── Review Meeting PPTs
-│   ├── Milestone1_Presentation.md              # Presentation for milestone 1
-│   └── Milestone2_Presentation.md              # Presentation for milestone 2
-│
-├── reports
-│   ├── Milestone1.pdf             # Milestone 1 report
-│   └── Milestone2.pdf             # Milestone 2 report
-│
-├── CHANGELOG.md                   # Contribution log of team members
-│
-└── README.md                      # Project documentation
+├── setup.bat / setup.sh         # Environment and dependency bootstrappers
+├── requirements.txt             # Core python dependencies
+├── docker-compose.yml           # Docker deployment definitions
+├── CHANGELOG.md                 # Project contribution records
+└── README.md                    # This documentation file
 ```
-# Team Details
 
-**Group Number:** 4\
-**Client:** Mr. M Nagarajan\
-**Number of Members:** 5
+---
 
-| Name               | Email                                                                   | GitHub           |
-| ------------------ | ----------------------------------------------------------------------- | ---------------- |
-| Saransh Saini      | [22f1001123@ds.study.iitm.ac.in](mailto:22f1001123@ds.study.iitm.ac.in) | Saransh482003    |
-| Divyang Panchasara | [22f1000411@ds.study.iitm.ac.in](mailto:22f1000411@ds.study.iitm.ac.in) | 22f1000411       |
-| Samyuktha Shriram  | [22f2001444@ds.study.iitm.ac.in](mailto:22f2001444@ds.study.iitm.ac.in) | SamyukthaSh24    |
-| Prasoon Shukla     | [23f3003434@ds.study.iitm.ac.in](mailto:23f3003434@ds.study.iitm.ac.in) | 23f3003434       |
-| Rohit Prajapat     | [22f1001536@ds.study.iitm.ac.in](mailto:22f1001536@ds.study.iitm.ac.in) | rohitblpprajapat |
+## 11. Troubleshooting
+
+* **Webcam Not Opening / Blank Feed:** Check your `CAMERA_INDEX` in the `.env` file or pass it as an argument (`python app/app.py --camera 1`). Ensure privacy settings allow terminal/python apps to use the camera.
+* **CUDA Out of Memory (OOM):** `Depth-Anything-V2` can be memory-intensive. Lower the processing resolution dynamically in the `.env` file or switch to CPU inference if you have <4GB VRAM.
+* **Missing Dependencies:** Ensure you have activated your virtual environment before running (`env/Scripts/activate` on Windows, or `source env/bin/activate` on Linux) and ran the setup scripts properly.
+* **Environment file missing:** Copy the `.env.example` to `.env` if the automatic setup script fails.
+
+---
+
+## 12. Contribution Summary
+
+Detailed contribution records are logged iteratively inside [`CHANGELOG.md`](CHANGELOG.md).
+
+**Team Details:**
+**Group Number:** 4 | **Client:** Mr. M Nagarajan | **Number of Members:** 5
+
+| Name               | Email                              | GitHub           |
+| ------------------ | ---------------------------------- | ---------------- |
+| Saransh Saini      | 22f1001123@ds.study.iitm.ac.in      | Saransh482003    |
+| Divyang Panchasara | 22f1000411@ds.study.iitm.ac.in      | 22f1000411       |
+| Samyuktha Shriram  | 22f2001444@ds.study.iitm.ac.in      | SamyukthaSh24    |
+| Prasoon Shukla     | 23f3003434@ds.study.iitm.ac.in      | 23f3003434       |
+| Rohit Prajapat     | 22f1001536@ds.study.iitm.ac.in      | rohitblpprajapat |
+
+---
+
+## 13. Future Improvements / Limitations
+
+Our immediate and long-term milestones for this system include:
+
+1. **Edge Deployment:** Porting the models (via quantization / TensorRT) to run efficiently on an edge device (e.g., Raspberry Pi or Jetson Nano), moving towards a functional wearable prototype.
+2. **Latency & Accuracy Optimizations:** Further reducing the processing loop overhead. We heavily prioritize depth hazard accuracy as the source of truth for collision prevention, aiming for near-zero False Negatives.
+3. **Public Dataset Setup Script:** Releasing scripts to fully automate downloading and compiling the Kaggle/NYU datasets into the repo structure.
+4. **Ngrok Public Exposer:** Adding a one-click executable to expose the Gradio/Streamlit validation interfaces publicly via Ngrok.
+5. **Research Publication:** Preparing our evaluation methodology and real-time inference metrics into a comprehensive research paper on assistive navigation technologies.

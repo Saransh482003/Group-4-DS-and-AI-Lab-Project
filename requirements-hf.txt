@@ -11,3 +11,4 @@ piper-tts
 scipy
 huggingface_hub
 Pillow
+pyngrok

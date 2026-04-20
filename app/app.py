@@ -373,9 +373,20 @@ def render_cached_frame(frame_idx, frame_bgr, navigation_logic, performance_trac
 
 
 def main():
+	import argparse
+	
+	parser = argparse.ArgumentParser(description="Action-Oriented Indoor Navigation System")
+	parser.add_argument("--camera", type=int, help="Camera index to use (overrides .env VIDEO_SOURCE)")
+	args = parser.parse_args()
+
+	global VIDEO_SOURCE
+	if args.camera is not None:
+		VIDEO_SOURCE = args.camera
+
 	validate_inputs()
 	device = "cuda" if torch.cuda.is_available() else "cpu"
 	print(f"Using device: {device}")
+	print(f"Video source (Camera): {VIDEO_SOURCE}")
 	print(f"Plot stream mode: {PLOT_STREAM_MODE} ({'rgb' if PLOT_STREAM_MODE == 0 else 'depth'})")
 	print(f"Max inference duration: {INFERENCE_DURATION_MINUTES} minutes")
 	print(f"Warmup frames: {WARMUP_FRAMES}")
