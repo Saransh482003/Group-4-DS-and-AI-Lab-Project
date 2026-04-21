@@ -1,5 +1,8 @@
 # Action-Oriented Indoor Navigation Assistance for the Visually Impaired
 
+## Demo Video
+[![Watch the Demo Video](assets/thumbnail.png)](https://www.loom.com/share/e44c35ec0c944b599ca8e2982694145c)
+
 ## 1. Project Overview
 
 Visually impaired individuals navigating indoor environments often rely on assistive technologies that announce detected objects. However, object identification alone does not indicate whether an obstacle lies directly in the user's walking path or requires an immediate change in movement. Hearing *"chair detected"* does not inform the user whether they are about to collide with it or can safely continue forward.
@@ -52,7 +55,7 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
-*Note: The setup scripts install dependencies from both `requirements.txt` and `requirements-hf.txt` as necessary.*
+*Note: The setup scripts install dependencies and auto-clone the full `Depth-Anything-V2` repository if it is not already present.*
 
 ---
 
